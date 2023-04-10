@@ -33,11 +33,9 @@ export default {
     display: flex;
     .content {
         width: 870px;
-        background-color: red;
     }
     .aside {
         width: 300px;
-        background-color: yellow;
     }
 }
 </style>

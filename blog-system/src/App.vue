@@ -5,8 +5,9 @@
 
 <script>
 // import 'normalize.css/normalize.css'
-import '@/css/cssReset.css'
-import navbar from '@/components/Navbar.vue'
+import '@/assets/css/cssReset.css'
+import navbar from '@/components/Navbar'
+
 export default {
     components: {
         navbar,

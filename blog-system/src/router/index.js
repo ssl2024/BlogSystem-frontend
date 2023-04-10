@@ -3,6 +3,7 @@ import Attention from '@/views/Attention'
 import Recommend from '@/views/Recommend'
 import Foreend from '@/views/Foreend'
 import Backend from '@/views/Backend'
+import BlogDetail from '@/views/BlogDetail'
 
 const routes = [
     {
@@ -22,7 +23,11 @@ const routes = [
         component: Backend,
     },
     {
-        path: '/:any',
+        path: '/blogDetail/:id',
+        redirect: BlogDetail,
+    },
+    {
+        path: '/',
         redirect: '/recommend',
     },
 ]

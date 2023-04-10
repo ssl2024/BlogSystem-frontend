@@ -2,17 +2,20 @@
     <div>
         <div>后端</div>
         <div class="container">
-            <div class="content">
-                <blog></blog>
-                <blog></blog>
-                <blog></blog>
-                <blog></blog>
-                <blog></blog>
-                <blog></blog>
-                <blog></blog>
-                <blog></blog>
-                <blog></blog>
-                <blog></blog>
+            <div class="list_container">
+                <list-header></list-header>
+                <div class="list_wrap">
+                    <blog></blog>
+                    <blog></blog>
+                    <blog></blog>
+                    <blog></blog>
+                    <blog></blog>
+                    <blog></blog>
+                    <blog></blog>
+                    <blog></blog>
+                    <blog></blog>
+                    <blog></blog>
+                </div>
             </div>
             <div class="aside"></div>
         </div>
@@ -21,9 +24,12 @@
 
 <script>
 import blog from '@/components/Blog'
+import listHeader from '@/components/ListHeader'
+
 export default {
     components: {
         blog,
+        listHeader,
     },
 }
 </script>
@@ -31,13 +37,12 @@ export default {
 <style lang="scss" scoped>
 .container {
     display: flex;
-    .content {
+    .list_container {
         width: 820px;
-        background-color: red;
     }
     .aside {
         width: 350px;
-        background-color: yellow;
+        background: yellow;
     }
 }
 </style>
