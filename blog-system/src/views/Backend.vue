@@ -17,7 +17,81 @@
                     <blog></blog>
                 </div>
             </div>
-            <div class="aside"></div>
+            <div class="aside">
+                <div class="hot_list">
+                    <div class="hot_list_header">热度榜单</div>
+                    <div class="hot_list_fields">
+                        <span>排名</span>
+                        <span>用户</span>
+                        <span>热度</span>
+                    </div>
+                    <ul class="hot_list_data">
+                        <li class="hot_item">
+                            <div class="hot_sort">1</div>
+                            <div class="user_info">
+                                <span class="avatar">
+                                    <img
+                                        src="https://iph.href.lu/40x40"
+                                        alt="热度榜单用户头像"
+                                    />
+                                </span>
+                                <span>石松林_前端基础</span>
+                            </div>
+                            <div class="hot_score">789</div>
+                        </li>
+                        <li class="hot_item">
+                            <div class="hot_sort">2</div>
+                            <div class="user_info">
+                                <span class="avatar">
+                                    <img
+                                        src="https://iph.href.lu/40x40"
+                                        alt="热度榜单用户头像"
+                                    />
+                                </span>
+                                <span>这真是一个难做的项目</span>
+                            </div>
+                            <div class="hot_score">600</div>
+                        </li>
+                        <li class="hot_item">
+                            <div class="hot_sort">3</div>
+                            <div class="user_info">
+                                <span class="avatar">
+                                    <img
+                                        src="https://iph.href.lu/40x40"
+                                        alt="热度榜单用户头像"
+                                    />
+                                </span>
+                                <span>这真是一个难做的项目</span>
+                            </div>
+                            <div class="hot_score">499</div>
+                        </li>
+                        <li class="hot_item">
+                            <div class="hot_sort">4</div>
+                            <div class="user_info">
+                                <img
+                                    src="https://iph.href.lu/40x40"
+                                    alt="热度榜单用户头像"
+                                />
+                                <span>这真是一个难做的项目</span>
+                            </div>
+                            <div class="hot_score">456</div>
+                        </li>
+                        <li class="hot_item">
+                            <div class="hot_sort">5</div>
+                            <div class="user_info">
+                                <span class="avatar">
+                                    <img
+                                        src="https://iph.href.lu/40x40"
+                                        alt="热度榜单用户头像"
+                                    />
+                                </span>
+                                <span>这真是一个难做的项目</span>
+                            </div>
+                            <div class="hot_score">388</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -38,11 +112,45 @@ export default {
 .container {
     display: flex;
     .list_container {
-        width: 820px;
+        width: 860px;
     }
     .aside {
-        width: 350px;
+        flex: 1;
+        padding: 0 20px;
         background: yellow;
+        .hot_list {
+            margin-top: 30px;
+            background-color: pink;
+            .hot_list_header {
+                height: 40px;
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 40px;
+                text-align: center;
+            }
+            .hot_list_fields {
+                display: flex;
+                height: 40px;
+                padding: 0 20px;
+                justify-content: space-between;
+            }
+            .hot_item {
+                display: flex;
+                height: 45px;
+                padding: 0 20px;
+                line-height: 45px;
+                justify-content: space-between;
+                .user_info {
+                    overflow: hidden;
+                    width: 135px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    img {
+                        border-radius: 50%;
+                    }
+                }
+            }
+        }
     }
 }
 </style>

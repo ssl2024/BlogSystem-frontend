@@ -1,9 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Attention from '@/views/Attention'
-import Recommend from '@/views/Recommend'
+import Rcommd from '@/views/Rcommd'
 import Foreend from '@/views/Foreend'
 import Backend from '@/views/Backend'
 import BlogDetail from '@/views/BlogDetail'
+import Center from '@/views/Center'
+import Entry from '@/views/center/Entry'
+import Like from '@/views/center/Like'
+import Follow from '@/views/center/Follow'
 
 const routes = [
     {
@@ -11,8 +15,8 @@ const routes = [
         component: Attention,
     },
     {
-        path: '/recommend',
-        component: Recommend,
+        path: '/rcommd',
+        component: Rcommd,
     },
     {
         path: '/foreend',
@@ -27,8 +31,38 @@ const routes = [
         redirect: BlogDetail,
     },
     {
+        path: '/center',
+        component: Center,
+        children: [
+            {
+                path: '/center/entry',
+                component: Entry,
+            },
+            {
+                path: '/center/like',
+                component: Like,
+            },
+            {
+                path: '/center/follow',
+                component: Follow,
+            },
+            {
+                path: '/center/',
+                redirect: '/center/entry',
+            },
+            {
+                path: '/center/:any',
+                redirect: '/center/entry',
+            },
+        ],
+    },
+    {
         path: '/',
-        redirect: '/recommend',
+        redirect: '/rcommd',
+    },
+    {
+        path: '/:any',
+        redirect: '/rcommd',
     },
 ]
 

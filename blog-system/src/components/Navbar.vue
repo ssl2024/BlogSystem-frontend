@@ -10,7 +10,7 @@
                     关注
                 </li>
             </router-link>
-            <router-link to="/recommend" custom v-slot="{ navigate, isActive }">
+            <router-link to="/rcommd" custom v-slot="{ navigate, isActive }">
                 <li @click="navigate" :class="isActive ? 'currentItem' : ''">
                     <i class="iconfont icon-remen"></i>
                     推荐
@@ -33,18 +33,51 @@
                 <i class="iconfont icon-sousuo1"></i>
             </div>
         </div>
-        <div class="center">
+        <div class="center" @click="toggleProfile">
             <img src="https://iph.href.lu/40x40" alt="头像" />
         </div>
-        <div class="profile">
-            <div class="profile_top">个人信息</div>
-            <div class="profile_mid">浏览关注信息</div>
+        <div class="profile" v-show="showProfile">
+            <div class="profile_top">
+                <div class="user_avatar">
+                    <img src="https://iph.href.lu/60x60" alt="用户头像" />
+                </div>
+                <div class="user_nickname">
+                    <i class="iconfont icon-wode"></i>
+                    <span>冷躲我三天</span>
+                </div>
+            </div>
+            <div class="profile_mid">
+                <div class="fans">
+                    <div>粉丝</div>
+                    <div>23</div>
+                </div>
+                <div class="follow">
+                    <div>关注</div>
+                    <div>23</div>
+                </div>
+                <div class="like">
+                    <div>获赞</div>
+                    <div>23</div>
+                </div>
+            </div>
             <div class="profile_bottom">
                 <ul class="profile_border_bottom">
-                    <li><i class="iconfont icon-user"></i>个人中心</li>
-                    <li><i class="iconfont icon-xihuan"></i>个人信息</li>
-                    <li>博客管理</li>
-                    <li>注销登录</li>
+                    <li @click="toUserPage">
+                        <i class="iconfont icon-user"></i>
+                        <span>个人主页</span>
+                    </li>
+                    <li>
+                        <i class="iconfont icon-xihuan"></i>
+                        <span>个人信息</span>
+                    </li>
+                    <li>
+                        <i class="iconfont icon-xihuan"></i>
+                        <span>博客管理</span>
+                    </li>
+                    <li>
+                        <i class="iconfont icon-xihuan"></i>
+                        <span>注销登录</span>
+                    </li>
                 </ul>
             </div>
             <div></div>
@@ -53,7 +86,29 @@
 </template>
 
 <script>
-export default {}
+import { reactive, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
+export default {
+    setup() {
+        const router = useRouter()
+        const data = reactive({
+            showProfile: false,
+        })
+        /* 切换显示个人简介 */
+        const toggleProfile = () => {
+            data.showProfile = !data.showProfile
+        }
+        /* 去往个人主页 */
+        const toUserPage = () => {
+            router.push('/center')
+        }
+        return {
+            ...toRefs(data),
+            toUserPage,
+            toggleProfile,
+        }
+    },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -110,7 +165,8 @@ export default {}
             top: 7px;
             right: 60px;
             width: 42px;
-            height: 31px;
+            height: 32px;
+            border-radius: 5px;
             background-color: sandybrown;
             justify-content: center;
             align-items: center;
@@ -125,31 +181,54 @@ export default {}
     .profile {
         position: absolute;
         right: 20px;
-        top: 90px;
+        top: 50px;
         z-index: 1;
-        width: 200px;
+        width: 180px;
+        background-color: #fff;
 
         .profile_top {
-            padding: 20px 0 12px;
-            height: 85px;
+            position: relative;
+            padding: 35px 0 15px;
+            height: 20px;
             text-align: center;
+            .user_avatar {
+                position: absolute;
+                top: -40px;
+                left: 50px;
+                overflow: hidden;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+            }
+            .user_nickname {
+                font-size: 16px;
+            }
         }
 
         .profile_mid {
-            padding: 8px 0;
+            display: flex;
             height: 45px;
+            padding: 8px 8px;
+            border-top: 1px solid #f3f3f3;
+            font-size: 13px;
             text-align: center;
+            justify-content: space-around;
         }
 
         .profile_bottom {
-            height: 200px;
-            text-align: center;
-
+            border-bottom: 1px solid #f3f3f3;
             li {
+                height: 40px;
+                padding: 0 20px;
+                border-top: 1px solid #f3f3f3;
                 font-size: 14px;
-                height: 45px;
                 line-height: 45px;
-                text-align: center;
+                &:hover {
+                    background-color: skyblue;
+                }
+                .iconfont {
+                    margin-right: 8px;
+                }
             }
         }
     }
