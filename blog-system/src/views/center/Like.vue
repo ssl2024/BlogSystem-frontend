@@ -1,5 +1,4 @@
 <template>
-    <div>点赞</div>
     <div>
         <blog></blog>
         <blog></blog>

@@ -1,5 +1,4 @@
 <template>
-    <div>博文</div>
     <div>
         <blog></blog>
         <blog></blog>

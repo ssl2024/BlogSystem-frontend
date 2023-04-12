@@ -1,6 +1,5 @@
 <template>
     <div>
-        <div>关注</div>
         <div class="container">
             <div class="content">
                 <blog></blog>

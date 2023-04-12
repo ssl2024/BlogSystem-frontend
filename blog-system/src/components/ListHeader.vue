@@ -37,7 +37,7 @@ export default {
     setup() {
         const data = reactive({
             currentItem: 'JavaScript',
-            ddsShow: true,
+            ddsShow: false,
         })
         const showDropdownSelect = () => {
             data.ddsShow = !data.ddsShow
@@ -71,10 +71,10 @@ export default {
         display: flex;
         font-size: 16px;
         .nav_item {
-            width: 60px;
-            &:hover {
-                color: red;
-            }
+            width: 70px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
         }
     }
 
@@ -103,7 +103,7 @@ export default {
             overflow-x: hidden;
             overflow-y: auto;
             width: 164px;
-            height: 108px;
+            height: 144px;
             background-color: slategray;
             .item_select {
                 width: 135px;

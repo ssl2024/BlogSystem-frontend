@@ -1,28 +1,26 @@
 <template>
     <div class="container">
         <div class="logo">
-            <img src="https://iph.href.lu/80x44" alt="logo" />
+            <img src="@/assets/user_logo.png" alt="logo" />
         </div>
         <ul class="nav">
             <router-link to="/attention" custom v-slot="{ navigate, isActive }">
-                <li @click="navigate" :class="isActive ? 'currentItem' : ''">
-                    <i class="iconfont icon-wodeguanzhu"></i>
+                <li @click="navigate" :class="isActive ? 'current' : ''">
                     关注
                 </li>
             </router-link>
             <router-link to="/rcommd" custom v-slot="{ navigate, isActive }">
-                <li @click="navigate" :class="isActive ? 'currentItem' : ''">
-                    <i class="iconfont icon-remen"></i>
+                <li @click="navigate" :class="isActive ? 'current' : ''">
                     推荐
                 </li>
             </router-link>
             <router-link to="/foreend" custom v-slot="{ navigate, isActive }">
-                <li @click="navigate" :class="isActive ? 'currentItem' : ''">
+                <li @click="navigate" :class="isActive ? 'current' : ''">
                     前端
                 </li>
             </router-link>
             <router-link to="/backend" custom v-slot="{ navigate, isActive }">
-                <li @click="navigate" :class="isActive ? 'currentItem' : ''">
+                <li @click="navigate" :class="isActive ? 'current' : ''">
                     后端
                 </li>
             </router-link>
@@ -30,7 +28,7 @@
         <div class="search">
             <input type="text" />
             <div class="search_icon">
-                <i class="iconfont icon-sousuo1"></i>
+                <i class="iconfont icon-sousuo"></i>
             </div>
         </div>
         <div class="center" @click="toggleProfile">
@@ -42,12 +40,11 @@
                     <img src="https://iph.href.lu/60x60" alt="用户头像" />
                 </div>
                 <div class="user_nickname">
-                    <i class="iconfont icon-wode"></i>
-                    <span>冷躲我三天</span>
+                    <span>石松林_前端基础</span>
                 </div>
             </div>
             <div class="profile_mid">
-                <div class="fans">
+                <div class="fans" @click="toFansList">
                     <div>粉丝</div>
                     <div>23</div>
                 </div>
@@ -63,19 +60,19 @@
             <div class="profile_bottom">
                 <ul class="profile_border_bottom">
                     <li @click="toUserPage">
-                        <i class="iconfont icon-user"></i>
+                        <i class="iconfont icon-shouye1"></i>
                         <span>个人主页</span>
                     </li>
-                    <li>
-                        <i class="iconfont icon-xihuan"></i>
+                    <li @click="toUserInfo(234)">
+                        <i class="iconfont icon-xingming"></i>
                         <span>个人信息</span>
                     </li>
                     <li>
-                        <i class="iconfont icon-xihuan"></i>
+                        <i class="iconfont icon-xiangmuguanli"></i>
                         <span>博客管理</span>
                     </li>
                     <li>
-                        <i class="iconfont icon-xihuan"></i>
+                        <i class="iconfont icon-tuichu"></i>
                         <span>注销登录</span>
                     </li>
                 </ul>
@@ -94,34 +91,69 @@ export default {
         const data = reactive({
             showProfile: false,
         })
-        /* 切换显示个人简介 */
+        /* 切换显示用户简介 */
         const toggleProfile = () => {
             data.showProfile = !data.showProfile
         }
-        /* 去往个人主页 */
+        /* 去往用户主页 */
         const toUserPage = () => {
             router.push('/center')
+        }
+        /* 去往用户信息 */
+        const toUserInfo = id => {
+            router.push(`/userInfo/${id}`)
+        }
+        /* 去往用户粉丝列表 */
+        const toFansList = () => {
+            router.push('/center/fans')
         }
         return {
             ...toRefs(data),
             toUserPage,
+            toUserInfo,
             toggleProfile,
+            toFansList,
         }
     },
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped="scoped">
+$border_line: #f3f3f3;
+$bg_color: #fff;
+
+/* 导航栏当前选中项 */
+.current {
+    position: relative;
+    &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 20%;
+        bottom: 0;
+        width: 60%;
+        height: 2px;
+        background-color: #b6d7a8;
+    }
+}
+
 .container {
-    padding: 0 20px;
+    // padding: 0 20px;
     display: flex;
     position: relative;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    background-color: $bg_color;
     .logo {
         width: 80px;
         height: 44px;
 
         line-height: 44px;
         text-align: center;
+        img {
+            // width: 100%;
+            height: 100%;
+        }
     }
     .nav {
         display: flex;
@@ -144,15 +176,15 @@ export default {
 
         input {
             width: 300px;
-            height: 15px;
+            height: 16px;
             padding: 8px 15px;
-            border: 1px solid red;
+            border: 1px solid #c2c8d1;
 
             border-radius: 5px;
             outline: none;
 
             &:hover {
-                border-color: gold;
+                border-color: salmon;
             }
 
             &:focus {
@@ -167,7 +199,7 @@ export default {
             width: 42px;
             height: 32px;
             border-radius: 5px;
-            background-color: sandybrown;
+            background-color: #f2f3f5;
             justify-content: center;
             align-items: center;
         }
@@ -184,7 +216,7 @@ export default {
         top: 50px;
         z-index: 1;
         width: 180px;
-        background-color: #fff;
+        background-color: $bg_color;
 
         .profile_top {
             position: relative;
@@ -209,32 +241,29 @@ export default {
             display: flex;
             height: 45px;
             padding: 8px 8px;
-            border-top: 1px solid #f3f3f3;
+            border-top: 1px solid $border_line;
             font-size: 13px;
             text-align: center;
             justify-content: space-around;
         }
 
         .profile_bottom {
-            border-bottom: 1px solid #f3f3f3;
+            border-bottom: 1px solid $border_line;
             li {
                 height: 40px;
                 padding: 0 20px;
-                border-top: 1px solid #f3f3f3;
+                border-top: 1px solid $border_line;
                 font-size: 14px;
-                line-height: 45px;
+                text-align: center;
+                line-height: 40px;
                 &:hover {
                     background-color: skyblue;
                 }
                 .iconfont {
-                    margin-right: 8px;
+                    margin-right: 10px;
                 }
             }
         }
     }
-}
-
-.currentItem {
-    background-color: greenyellow;
 }
 </style>

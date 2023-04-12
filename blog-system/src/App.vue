@@ -1,16 +1,19 @@
 <template>
     <navbar></navbar>
     <router-view></router-view>
+    <footers></footers>
 </template>
 
 <script>
 // import 'normalize.css/normalize.css'
 import '@/assets/css/cssReset.css'
 import navbar from '@/components/Navbar'
+import footers from '@/components/Footer'
 
 export default {
     components: {
         navbar,
+        footers,
     },
 }
 </script>

@@ -1,6 +1,5 @@
 <template>
     <div>
-        <div>后端</div>
         <div class="container">
             <div class="list_container">
                 <list-header></list-header>
@@ -48,7 +47,7 @@
                                         alt="热度榜单用户头像"
                                     />
                                 </span>
-                                <span>这真是一个难做的项目</span>
+                                <span>石松林_前端框架</span>
                             </div>
                             <div class="hot_score">600</div>
                         </li>
@@ -61,7 +60,7 @@
                                         alt="热度榜单用户头像"
                                     />
                                 </span>
-                                <span>这真是一个难做的项目</span>
+                                <span>石松林_后端基础</span>
                             </div>
                             <div class="hot_score">499</div>
                         </li>
@@ -72,7 +71,7 @@
                                     src="https://iph.href.lu/40x40"
                                     alt="热度榜单用户头像"
                                 />
-                                <span>这真是一个难做的项目</span>
+                                <span>石松林_后端框架</span>
                             </div>
                             <div class="hot_score">456</div>
                         </li>
@@ -109,6 +108,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$bg_color: #fff;
 .container {
     display: flex;
     .list_container {
@@ -117,10 +117,9 @@ export default {
     .aside {
         flex: 1;
         padding: 0 20px;
-        background: yellow;
         .hot_list {
-            margin-top: 30px;
-            background-color: pink;
+            padding: 10px 0;
+            background-color: $bg_color;
             .hot_list_header {
                 height: 40px;
                 font-size: 18px;
@@ -132,14 +131,20 @@ export default {
                 display: flex;
                 height: 40px;
                 padding: 0 20px;
+                font-size: 14px;
+                line-height: 40px;
                 justify-content: space-between;
             }
             .hot_item {
                 display: flex;
-                height: 45px;
-                padding: 0 20px;
-                line-height: 45px;
+                height: 60px;
+                padding: 0 25px;
+                line-height: 40px;
                 justify-content: space-between;
+                align-items: center;
+                &:hover {
+                    background-color: #f3f3f3;
+                }
                 .user_info {
                     overflow: hidden;
                     width: 135px;
@@ -147,6 +152,7 @@ export default {
                     text-overflow: ellipsis;
                     img {
                         border-radius: 50%;
+                        margin-right: 2px;
                     }
                 }
             }

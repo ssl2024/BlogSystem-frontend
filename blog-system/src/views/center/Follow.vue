@@ -1,5 +1,4 @@
 <template>
-    <div>收藏</div>
     <div>
         <blog></blog>
         <blog></blog>

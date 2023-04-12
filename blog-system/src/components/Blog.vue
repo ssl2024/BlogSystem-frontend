@@ -1,5 +1,5 @@
 <template>
-    <div class="item" @click="blogDetail(111)">
+    <div class="item" @click="toBlogDetail(123)">
         <div class="content_wrapper">
             <div class="content_title">
                 Springboot+WebUploader优雅实现超大文件的上传(一)
@@ -42,12 +42,12 @@ export default {
     props: [],
     setup() {
         const router = useRouter()
-        const blogDetail = id => {
-            console.log(1111)
-            router.push('/blogDetail', id)
+        /* 去往博客详情页 */
+        const toBlogDetail = id => {
+            router.push(`/blogDetail/${id}`)
         }
         return {
-            blogDetail,
+            toBlogDetail,
         }
     },
 }
@@ -87,6 +87,7 @@ export default {
             .action_item {
                 margin-right: 10px;
                 .iconfont {
+                    margin-right: 5px;
                     font-size: 17px;
                 }
                 span {

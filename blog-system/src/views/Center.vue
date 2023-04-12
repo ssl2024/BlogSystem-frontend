@@ -1,5 +1,5 @@
 <template>
-    <div>个人主页</div>
+    <div @click="toUserInfo(111)">跳转到个人信息修改</div>
     <div class="user_page">
         <div class="aside">
             <div class="user_info">
@@ -25,7 +25,7 @@
                     <span>关注</span>
                     <span>23</span>
                 </div>
-                <div class="follow_item">
+                <div class="follow_item" @click="showFansList">
                     <span>粉丝</span>
                     <span>123</span>
                 </div>
@@ -34,20 +34,25 @@
                 <div class="profile_header">
                     <span>个人成就</span>
                 </div>
+                <div class="entry_count">
+                    <i class="iconfont icon-dangan"></i>
+                    <span>共发表博文</span>
+                    <span>34</span>
+                </div>
                 <div class="browse_count">
-                    <i class="iconfont icon-good"></i>
-                    <span>文章被点赞</span>
+                    <i class="iconfont icon-yudu"></i>
+                    <span>博文被阅读</span>
                     <span>1234</span>
                 </div>
                 <div class="like_count">
-                    <i class="iconfont icon-good"></i>
-                    <span>文章被点赞</span>
-                    <span>1234</span>
+                    <i class="iconfont icon-zanping"></i>
+                    <span>博文被点赞</span>
+                    <span>256</span>
                 </div>
                 <div class="follow_count">
-                    <i class="iconfont icon-good"></i>
-                    <span>文章被点赞</span>
-                    <span>1234</span>
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>博文被收藏</span>
+                    <span>18</span>
                 </div>
             </div>
         </div>
@@ -64,7 +69,6 @@
                             @click="navigate"
                             :class="isActive ? 'current' : ''"
                         >
-                            <i class="iconfont icon-remen"></i>
                             博文
                         </li>
                     </router-link>
@@ -78,7 +82,7 @@
                             @click="navigate"
                             :class="isActive ? 'current' : ''"
                         >
-                            点赞
+                            赞过
                         </li>
                     </router-link>
                     <router-link
@@ -92,6 +96,19 @@
                             :class="isActive ? 'current' : ''"
                         >
                             收藏
+                        </li>
+                    </router-link>
+                    <router-link
+                        to="/center/fans"
+                        custom
+                        v-slot="{ navigate, isActive }"
+                    >
+                        <li
+                            class="nav_item"
+                            @click="navigate"
+                            :class="isActive ? 'current' : ''"
+                        >
+                            粉丝
                         </li>
                     </router-link>
                 </ul>
@@ -111,13 +128,25 @@
 
 <script>
 import { reactive, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 export default {
     setup() {
+        const router = useRouter()
         const data = reactive({
             isConcerned: false,
         })
+        /* 去往用户资料 */
+        const toUserInfo = id => {
+            router.push(`/userInfo/${id}`)
+        }
+        /* 展示粉丝列表 */
+        const showFansList = () => {
+            router.push('/center/fans')
+        }
         return {
             ...toRefs(data),
+            toUserInfo,
+            showFansList,
         }
     },
 }
@@ -126,12 +155,28 @@ export default {
 <style lang="scss" scoped="scoped">
 $border_line: #e8e8ed;
 $bg_color: #fff;
+
+/* 个人主页博文导航栏当前选中项 */
+.current {
+    position: relative;
+    &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 20%;
+        bottom: 0;
+        width: 60%;
+        height: 2px;
+        background-color: #b6d7a8;
+    }
+}
+
 .user_page {
     display: flex;
 
     .aside {
         width: 250px;
-        margin-right: 20px;
+        margin-right: 10px;
 
         /* 给所有字体图标添加 margin-right */
         .iconfont {
@@ -183,8 +228,9 @@ $bg_color: #fff;
         }
         .user_profile {
             display: flex;
-            height: 150px;
+            height: 200px;
             margin-top: 10px;
+            padding: 10px 0;
             background-color: $bg_color;
             flex-direction: column;
             justify-content: space-around;
@@ -193,26 +239,33 @@ $bg_color: #fff;
                 height: 40px;
                 border-bottom: 1px solid $border_line;
                 font-size: 17px;
-                line-height: 35px;
                 font-weight: 600;
                 text-align: center;
             }
 
             [class$='count'] {
                 display: flex;
-                padding-left: 20px;
-                font-size: 15px;
+                padding: 5px 0 5px 30px;
+                font-size: 16px;
+                line-height: 20px;
+                .iconfont {
+                    color: #7bb9ff;
+                }
+                /* 个人成就下面数据中间的字体 */
+                span:nth-child(2) {
+                    width: 80px;
+                    margin: 0 10px 0 5px;
+                }
             }
         }
     }
     .list_wrap {
-        // display: none;
-        // width: 100%;
         flex: 1;
-        background-color: greenyellow;
         .list_header {
             display: flex;
+            position: relative;
             height: 48px;
+            background-color: $bg_color;
             justify-content: space-between;
             .list_nav {
                 display: flex;
@@ -231,35 +284,33 @@ $bg_color: #fff;
                     width: 250px;
                     height: 35px;
                     padding-left: 15px;
-                    border: 1px solid transparent;
+                    border: 1px solid #c2c8d1;
                     border-radius: 5px;
                     outline: none;
                     &:hover {
-                        border-color: skyblue;
+                        border-color: salmon;
                     }
                     &:focus {
-                        border-color: salmon;
+                        border-color: skyblue;
                     }
                 }
                 .search_btn {
                     display: flex;
                     position: absolute;
-                    top: 5px;
-                    right: 10px;
-                    width: 37px;
-                    height: 37px;
-                    background-color: steelblue;
+                    top: 6px;
+                    right: 11px;
+                    width: 35px;
+                    height: 35px;
+                    background-color: #f2f3f5;
                     border-radius: 5px;
                     justify-content: center;
                     align-items: center;
                 }
             }
         }
+        .list_entry {
+            margin-top: 10px;
+        }
     }
-}
-
-.current {
-    background-color: skyblue;
-    color: floralwhite;
 }
 </style>
