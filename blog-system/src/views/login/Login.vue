@@ -1,37 +1,4 @@
 <template>
-    <login v-if="store.state.loginState === 1"></login>
-    <register v-if="store.state.loginState === 2"></register>
-    <forget v-if="store.state.loginState === 3"></forget>
-</template>
-
-<script>
-import { reactive, toRefs } from 'vue'
-import { useStore } from 'vuex'
-
-import login from '@/views/login/Login'
-import register from '@/views/login/Register'
-import forget from '@/views/login/Forget'
-export default {
-    components: {
-        login,
-        register,
-        forget,
-    },
-    setup() {
-        const store = useStore()
-        const data = reactive({
-            loginState: 1,
-        })
-        return {
-            store,
-            ...toRefs(data),
-        }
-    },
-}
-</script>
-
-<style lang="scss" scoped="scoped"></style>
-<!-- <template>
     <div class="login_block">
         <div class="login_title">
             <span>登&nbsp;&nbsp;录</span>
@@ -41,9 +8,19 @@ export default {
                 <input type="text" placeholder="请输入账号" />
             </div>
             <div class="login_pwd">
-                <input type="password" placeholder="请输入密码" />
+                <input type="password" placeholder="请输入密码" ref="pwd" />
+                <i
+                    v-if="!pwdState"
+                    class="iconfont icon-eye-close"
+                    @click="changePwdState"
+                ></i>
+                <i
+                    v-if="pwdState"
+                    class="iconfont icon-browse"
+                    @click="changePwdState"
+                ></i>
             </div>
-            <div class="login_btn" @click.prevent="login">登&nbsp;&nbsp;录</div>
+            <div class="login_btn" @click="login">登&nbsp;&nbsp;录</div>
         </form>
         <div class="login_other">
             <div class="forget_pwd" @click="forgetPwd">忘记密码</div>
@@ -53,21 +30,47 @@ export default {
 </template>
 
 <script>
+import { reactive, toRefs, ref } from 'vue'
+import { useStore } from 'vuex'
 export default {
     setup() {
+        const store = useStore()
+
+        const data = reactive({
+            /**
+             * 密码是否可见
+             * false 不可见
+             * true  可见
+             */
+            pwdState: false,
+        })
+
+        const pwd = ref()
+
+        /* 点击登录 */
         const login = () => {
-            console.log('点击了登录按钮')
+            console.log('点击了登录')
         }
-        const forgetPwd = () => {
-            console.log('忘记密码')
-        }
+        /* 点击注册账号 */
         const register = () => {
-            console.log('注册账号')
+            store.commit('changeLoginState', 2)
+        }
+        /* 点击忘记密码 */
+        const forgetPwd = () => {
+            store.commit('changeLoginState', 3)
+        }
+        /* 点击密码小眼睛 */
+        const changePwdState = () => {
+            data.pwdState = !data.pwdState
+            pwd.value.type = data.pwdState ? 'text' : 'password'
         }
         return {
+            ...toRefs(data),
+            pwd,
             login,
-            forgetPwd,
             register,
+            forgetPwd,
+            changePwdState,
         }
     },
 }
@@ -102,6 +105,16 @@ export default {
             outline: none;
             margin-bottom: 30px;
         }
+        .login_pwd {
+            position: relative;
+            .iconfont {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                font-size: 20px;
+                cursor: pointer;
+            }
+        }
         .login_btn {
             width: 375px;
             height: 50px;
@@ -122,4 +135,4 @@ export default {
         justify-content: space-between;
     }
 }
-</style> -->
+</style>
