@@ -108,52 +108,74 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* 背景颜色 */
 $bg_color: #fff;
+
+/* 后端页面 
+----------------------------------------------------------------*/
 .container {
     display: flex;
-    .list_container {
-        width: 860px;
-    }
-    .aside {
-        flex: 1;
-        padding: 0 20px;
-        .hot_list {
-            padding: 10px 0;
-            background-color: $bg_color;
-            .hot_list_header {
-                height: 40px;
-                font-size: 18px;
-                font-weight: 600;
-                line-height: 40px;
-                text-align: center;
+}
+
+/* 左边博客 
+----------------------------------------------------------------*/
+.list_container {
+    width: 860px;
+}
+
+/* 右边侧边栏
+----------------------------------------------------------------*/
+.aside {
+    flex: 1;
+    padding: 0 20px;
+
+    /* 右边侧边栏 热度榜单 */
+    .hot_list {
+        padding: 10px 0;
+        background-color: $bg_color;
+
+        /* 右边侧边栏 热度榜单--标题 */
+        .hot_list_header {
+            height: 40px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 40px;
+        }
+
+        /* 右边侧边栏 热度榜单--字段列表 */
+        .hot_list_fields {
+            display: flex;
+            height: 40px;
+            padding: 0 20px;
+            font-size: 14px;
+            line-height: 40px;
+            justify-content: space-between;
+        }
+
+        /* 右边侧边栏 热度榜单--榜单项 */
+        .hot_item {
+            display: flex;
+            height: 60px;
+            padding: 0 25px;
+            line-height: 40px;
+            justify-content: space-between;
+            align-items: center;
+            &:hover {
+                background-color: #f3f3f3;
             }
-            .hot_list_fields {
-                display: flex;
-                height: 40px;
-                padding: 0 20px;
-                font-size: 14px;
-                line-height: 40px;
-                justify-content: space-between;
-            }
-            .hot_item {
-                display: flex;
-                height: 60px;
-                padding: 0 25px;
-                line-height: 40px;
-                justify-content: space-between;
-                align-items: center;
-                &:hover {
-                    background-color: #f3f3f3;
-                }
-                .user_info {
-                    overflow: hidden;
-                    width: 135px;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    img {
-                        border-radius: 50%;
-                        margin-right: 2px;
-                    }
+
+            /* 右边侧边栏 热度榜单--榜单项(用户信息) */
+            .user_info {
+                overflow: hidden;
+                width: 135px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+
+                /* 右边侧边栏 热度榜单--榜单想(用户信息-用户头像) */
+                img {
+                    border-radius: 50%;
+                    margin-right: 2px;
                 }
             }
         }

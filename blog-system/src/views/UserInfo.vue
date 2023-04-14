@@ -47,6 +47,8 @@ export default {
     setup() {
         const router = useRouter()
         const route = useRoute()
+
+        /* click 返回个人主页 */
         const goBack = () => {
             router.push('/center')
         }
@@ -61,55 +63,68 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 背景颜色 */
 $bg_color: #fff;
 
-/* 所有字体图标添加 margin-right */
+/* 当前选中背景色 */
+$bg_check_color: #f0f0f5;
+
+/* 所有字体图标 */
 .iconfont {
     margin-right: 10px;
 }
 
 /* 左边当前选中菜单项 */
 .current {
-    background-color: #f0f0f5;
+    background-color: $bg_check_color;
 }
+
+/* 用户信息页面
+----------------------------------------------------------------*/
 .setting_view {
     display: flex;
     height: 300px;
-    .menu_list {
-        position: relative;
-        width: 200px;
-        margin-right: 15px;
-        padding: 10px;
-        background-color: $bg_color;
-        font-size: 15px;
+}
 
-        .menu_item {
-            height: 48px;
-            padding-left: 30px;
-            line-height: 48px;
-
-            &:hover {
-                background-color: #f0f0f5;
-            }
-        }
-        .go_back {
-            position: absolute;
-            left: 0;
-            bottom: 30px;
-            width: 160px;
-            height: 48px;
-            margin: 0 10px;
-            padding: 0 20px;
-            background-color: #e8f3ff;
-            line-height: 48px;
-            text-align: center;
-            color: #1d7dfa;
+/* 左边菜单栏
+----------------------------------------------------------------*/
+.menu_list {
+    position: relative;
+    width: 200px;
+    margin-right: 15px;
+    padding: 10px;
+    background-color: $bg_color;
+    font-size: 15px;
+    /* 左边菜单栏 列表项 */
+    .menu_item {
+        height: 48px;
+        padding-left: 30px;
+        line-height: 48px;
+        &:hover {
+            background-color: $bg_check_color;
         }
     }
-    .setting_profile {
-        flex: 1;
+    /* 左边菜单栏 返回个人主页 */
+    .go_back {
+        position: absolute;
+        left: 0;
+        bottom: 30px;
+        width: 160px;
+        height: 48px;
+        margin: 0 10px;
         padding: 0 20px;
-        background-color: $bg_color;
+        background-color: #e8f3ff;
+        color: #1d7dfa;
+        text-align: center;
+        line-height: 48px;
     }
+}
+
+/* 右边设置信息 
+----------------------------------------------------------------*/
+.setting_profile {
+    flex: 1;
+    padding: 0 20px;
+    background-color: $bg_color;
 }
 </style>

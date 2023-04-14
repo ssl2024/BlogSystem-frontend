@@ -4,7 +4,7 @@ import Attention from '@/views/Attention'
 import Rcommd from '@/views/Rcommd'
 import Foreend from '@/views/Foreend'
 import Backend from '@/views/Backend'
-import BlogDetail from '@/views/BlogDetail'
+import EntryDetail from '@/views/EntryDetail'
 
 import UserInfo from '@/views/UserInfo'
 import Profile from '@/views/userInfo/Profile'
@@ -52,8 +52,8 @@ const routes = [
         ],
     },
     {
-        path: '/blogDetail/:id',
-        component: BlogDetail,
+        path: '/entryDetail/:id',
+        component: EntryDetail,
     },
     /* 个人资料 */
     {

@@ -1,6 +1,6 @@
 <template>
     <div @click="toUserInfo(111)">跳转到个人信息修改</div>
-    <div class="user_page">
+    <div class="user_center">
         <div class="aside">
             <div class="user_info">
                 <div class="user_avatar">
@@ -45,12 +45,12 @@
                     <span>1234</span>
                 </div>
                 <div class="like_count">
-                    <i class="iconfont icon-zanping"></i>
+                    <i class="iconfont icon-dianzan1"></i>
                     <span>博文被点赞</span>
                     <span>256</span>
                 </div>
                 <div class="follow_count">
-                    <i class="iconfont icon-shoucang1"></i>
+                    <i class="iconfont icon-shoucang"></i>
                     <span>博文被收藏</span>
                     <span>18</span>
                 </div>
@@ -132,17 +132,25 @@ import { useRouter } from 'vue-router'
 export default {
     setup() {
         const router = useRouter()
+
         const data = reactive({
+            /**
+             * 是否已经关注
+             * false 没有关注
+             * true  已经关注
+             */
             isConcerned: false,
         })
-        /* 去往用户资料 */
+
+        /* click 个人信息 */
         const toUserInfo = id => {
             router.push(`/userInfo/${id}`)
         }
-        /* 展示粉丝列表 */
+        /* click 粉丝 */
         const showFansList = () => {
             router.push('/center/fans')
         }
+
         return {
             ...toRefs(data),
             toUserInfo,
@@ -153,10 +161,13 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 边框分隔线颜色 */
 $border_line: #e8e8ed;
+
+/* 背景颜色 */
 $bg_color: #fff;
 
-/* 个人主页博文导航栏当前选中项 */
+/* 个人主页-博文导航栏-当前选中项 */
 .current {
     position: relative;
     &::after {
@@ -171,146 +182,181 @@ $bg_color: #fff;
     }
 }
 
-.user_page {
+/* 个人主页页面
+----------------------------------------------------------------*/
+.user_center {
     display: flex;
+}
 
-    .aside {
-        width: 250px;
-        margin-right: 10px;
+/* 左边个人信息
+----------------------------------------------------------------*/
+.aside {
+    width: 250px;
+    margin-right: 10px;
 
-        /* 给所有字体图标添加 margin-right */
-        .iconfont {
-            margin-right: 5px;
-        }
-        .user_info {
-            display: flex;
-            margin-bottom: 10px;
-            padding: 25px 0;
-            background-color: $bg_color;
-            font-size: 18px;
-            flex-direction: column;
-            align-items: center;
-            .user_avatar {
-                display: flex;
-                overflow: hidden;
-                width: 100px;
-                height: 100px;
-                margin-bottom: 15px;
-                border-radius: 50%;
-            }
-            .operate_btn {
-                display: flex;
-                height: 30px;
-                margin-top: 10px;
-                background-color: #1e80ff;
-                color: $bg_color;
-                font-size: 15px;
+    /* 左边个人信息 所有字体图标 */
+    .iconfont {
+        margin-right: 5px;
+    }
 
-                line-height: 28px;
-                justify-content: space-around;
-            }
-        }
-        .follow_block {
+    /* 左边个人信息 用户信息 */
+    .user_info {
+        display: flex;
+        margin-bottom: 10px;
+        padding: 25px 0;
+        background-color: $bg_color;
+        font-size: 18px;
+        flex-direction: column;
+        align-items: center;
+
+        /* 左边个人信息 用户信息--用户头像 */
+        .user_avatar {
             display: flex;
-            padding: 15px 25px;
-            background-color: $bg_color;
-            justify-content: space-around;
-            .follow_item {
-                display: flex;
-                font-size: 15px;
-                text-align: center;
-                flex-direction: column;
-                &:first-child {
-                    padding-right: 45px;
-                    border-right: 1px solid $border_line;
-                }
-            }
+            overflow: hidden;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
+            border-radius: 50%;
         }
-        .user_profile {
+
+        /* 左边个人信息 用户信息--关注按钮 */
+        .operate_btn {
             display: flex;
-            height: 200px;
+            height: 30px;
             margin-top: 10px;
-            padding: 10px 0;
-            background-color: $bg_color;
-            flex-direction: column;
+            background-color: #1e80ff;
+            color: $bg_color;
+            font-size: 15px;
+            line-height: 28px;
             justify-content: space-around;
+        }
+    }
 
-            .profile_header {
-                height: 40px;
-                border-bottom: 1px solid $border_line;
-                font-size: 17px;
-                font-weight: 600;
-                text-align: center;
-            }
+    /* 左边个人信息 关注与粉丝 */
+    .follow_block {
+        display: flex;
+        padding: 15px 25px;
+        background-color: $bg_color;
+        justify-content: space-around;
 
-            [class$='count'] {
-                display: flex;
-                padding: 5px 0 5px 30px;
-                font-size: 16px;
-                line-height: 20px;
-                .iconfont {
-                    color: #7bb9ff;
-                }
-                /* 个人成就下面数据中间的字体 */
-                span:nth-child(2) {
-                    width: 80px;
-                    margin: 0 10px 0 5px;
-                }
+        /* 左边个人信息 关注与粉丝--列表项 */
+        .follow_item {
+            display: flex;
+            font-size: 15px;
+            text-align: center;
+            flex-direction: column;
+            &:first-child {
+                padding-right: 45px;
+                border-right: 1px solid $border_line;
             }
         }
     }
-    .list_wrap {
-        flex: 1;
-        .list_header {
+
+    /* 左边个人信息 个人成就 */
+    .user_profile {
+        display: flex;
+        height: 200px;
+        margin-top: 10px;
+        padding: 10px 0;
+        background-color: $bg_color;
+        flex-direction: column;
+        justify-content: space-around;
+
+        /* 左边个人信息 个人成就--标题 */
+        .profile_header {
+            height: 40px;
+            border-bottom: 1px solid $border_line;
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* 左边个人信息 个人成就--列表项 */
+        [class$='count'] {
             display: flex;
+            padding: 5px 0 5px 30px;
+            font-size: 16px;
+            line-height: 20px;
+
+            .iconfont {
+                color: #7bb9ff;
+            }
+
+            /* 个人成就下面数据中间的字体 */
+            span:nth-child(2) {
+                width: 80px;
+                margin: 0 10px 0 5px;
+            }
+        }
+    }
+}
+
+/* 右边列表项
+----------------------------------------------------------------*/
+.list_wrap {
+    flex: 1;
+
+    /* 右边列表项 页头 */
+    .list_header {
+        display: flex;
+        position: relative;
+        height: 48px;
+        background-color: $bg_color;
+        justify-content: space-between;
+
+        /* 右边列表项 页头--导航栏  */
+        .list_nav {
+            display: flex;
+            width: 300px;
+            .nav_item {
+                flex: 1;
+                font-size: 16px;
+                text-align: center;
+                line-height: 48px;
+            }
+        }
+
+        /* 右边列表项 页头--搜索栏 */
+        .list_search {
             position: relative;
-            height: 48px;
-            background-color: $bg_color;
-            justify-content: space-between;
-            .list_nav {
+            padding: 5px 10px 0 0;
+
+            /* 右边列表项 页头--搜索栏(搜索框) */
+            input {
+                width: 250px;
+                height: 35px;
+                padding-left: 15px;
+                border: 1px solid $border_line;
+                border-radius: 5px;
+                outline: none;
+                &:hover {
+                    border-color: salmon;
+                }
+                &:focus {
+                    border-color: skyblue;
+                }
+            }
+
+            /* 右边列表项 页头--搜索栏(搜索图标) */
+            .search_btn {
                 display: flex;
-                width: 300px;
-                .nav_item {
-                    flex: 1;
-                    font-size: 16px;
-                    text-align: center;
-                    line-height: 48px;
-                }
-            }
-            .list_search {
-                position: relative;
-                padding: 5px 10px 0 0;
-                input {
-                    width: 250px;
-                    height: 35px;
-                    padding-left: 15px;
-                    border: 1px solid #c2c8d1;
-                    border-radius: 5px;
-                    outline: none;
-                    &:hover {
-                        border-color: salmon;
-                    }
-                    &:focus {
-                        border-color: skyblue;
-                    }
-                }
-                .search_btn {
-                    display: flex;
-                    position: absolute;
-                    top: 6px;
-                    right: 11px;
-                    width: 35px;
-                    height: 35px;
-                    background-color: #f2f3f5;
-                    border-radius: 5px;
-                    justify-content: center;
-                    align-items: center;
-                }
+                position: absolute;
+                top: 6px;
+                right: 11px;
+                width: 35px;
+                height: 35px;
+                background-color: #f2f3f5;
+                cursor: pointer;
+                border-radius: 5px;
+                justify-content: center;
+                align-items: center;
             }
         }
-        .list_entry {
-            margin-top: 10px;
-        }
+    }
+
+    /* 右边列表项 展示列表 */
+    .list_entry {
+        margin-top: 10px;
     }
 }
 </style>

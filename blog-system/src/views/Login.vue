@@ -1,7 +1,7 @@
 <template>
-    <login v-if="store.state.loginState === 1"></login>
-    <register v-if="store.state.loginState === 2"></register>
-    <forget v-if="store.state.loginState === 3"></forget>
+    <login v-show="store.state.loginState === 1"></login>
+    <register v-show="store.state.loginState === 2"></register>
+    <forget v-show="store.state.loginState === 3"></forget>
 </template>
 
 <script>
@@ -31,95 +31,3 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped"></style>
-<!-- <template>
-    <div class="login_block">
-        <div class="login_title">
-            <span>登&nbsp;&nbsp;录</span>
-        </div>
-        <form class="login_form">
-            <div class="login_account">
-                <input type="text" placeholder="请输入账号" />
-            </div>
-            <div class="login_pwd">
-                <input type="password" placeholder="请输入密码" />
-            </div>
-            <div class="login_btn" @click.prevent="login">登&nbsp;&nbsp;录</div>
-        </form>
-        <div class="login_other">
-            <div class="forget_pwd" @click="forgetPwd">忘记密码</div>
-            <div class="register" @click="register">注册账号</div>
-        </div>
-    </div>
-</template>
-
-<script>
-export default {
-    setup() {
-        const login = () => {
-            console.log('点击了登录按钮')
-        }
-        const forgetPwd = () => {
-            console.log('忘记密码')
-        }
-        const register = () => {
-            console.log('注册账号')
-        }
-        return {
-            login,
-            forgetPwd,
-            register,
-        }
-    },
-}
-</script>
-
-<style lang="scss" scoped="scoped">
-.login_block {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    padding: 30px 70px;
-    border-radius: 25px;
-    background-color: #fff4ea;
-    transform: translate(-50%, -50%);
-    .login_title {
-        height: 60px;
-        margin-bottom: 20px;
-        font-size: 30px;
-        line-height: 60px;
-        font-weight: 600;
-        text-align: center;
-    }
-    .login_form {
-        /* 登录表单中的所有输入框 */
-        input {
-            width: 350px;
-            height: 45px;
-            padding-left: 20px;
-            border: 1px solid skyblue;
-            font-size: 16px;
-            border-radius: 5px;
-            outline: none;
-            margin-bottom: 30px;
-        }
-        .login_btn {
-            width: 375px;
-            height: 50px;
-            margin-bottom: 30px;
-            border: 1px solid skyblue;
-            background-color: #8f2b26;
-            color: #fff;
-            font-size: 18px;
-            text-align: center;
-            font-weight: 600;
-            line-height: 50px;
-            border-radius: 5px;
-        }
-    }
-    .login_other {
-        display: flex;
-        font-size: 18px;
-        justify-content: space-between;
-    }
-}
-</style> -->

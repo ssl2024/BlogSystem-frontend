@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "2076265",
+      "name": "评论",
+      "font_class": "pinglun2",
+      "unicode": "e891",
+      "unicode_decimal": 59537
+    },
+    {
+      "icon_id": "2076368",
+      "name": " 收藏1小",
+      "font_class": "shoucangxiao",
+      "unicode": "e8bc",
+      "unicode_decimal": 59580
+    },
+    {
+      "icon_id": "594378",
+      "name": "评论",
+      "font_class": "pinglun1",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "6380878",
+      "name": "点赞_块",
+      "font_class": "dianzan_kuai",
+      "unicode": "ec8c",
+      "unicode_decimal": 60556
+    },
+    {
+      "icon_id": "11372777",
+      "name": "收藏",
+      "font_class": "shoucang2",
+      "unicode": "e8c6",
+      "unicode_decimal": 59590
+    },
+    {
       "icon_id": "33987011",
       "name": "转入资金",
       "font_class": "zhuanruzijin",
@@ -20,20 +55,6 @@
       "unicode_decimal": 65712
     },
     {
-      "icon_id": "27804997",
-      "name": "赞评",
-      "font_class": "zanping",
-      "unicode": "100b1",
-      "unicode_decimal": 65713
-    },
-    {
-      "icon_id": "27805007",
-      "name": "收藏",
-      "font_class": "shoucang1",
-      "unicode": "100b2",
-      "unicode_decimal": 65714
-    },
-    {
       "icon_id": "27805020",
       "name": "档案",
       "font_class": "dangan",
@@ -46,13 +67,6 @@
       "font_class": "tuichu",
       "unicode": "e709",
       "unicode_decimal": 59145
-    },
-    {
-      "icon_id": "26154367",
-      "name": "搜索",
-      "font_class": "sousuo2",
-      "unicode": "e70a",
-      "unicode_decimal": 59146
     },
     {
       "icon_id": "26154369",
@@ -235,13 +249,6 @@
       "font_class": "shouye",
       "unicode": "e8ba",
       "unicode_decimal": 59578
-    },
-    {
-      "icon_id": "11372706",
-      "name": "搜索",
-      "font_class": "sousuo1",
-      "unicode": "e8bb",
-      "unicode_decimal": 59579
     },
     {
       "icon_id": "11372718",

@@ -10,12 +10,12 @@
             <div class="register_pwd">
                 <input type="password" placeholder="请输入密码" ref="pwd" />
                 <i
-                    v-if="!pwdState"
+                    v-show="!pwdState"
                     class="iconfont icon-eye-close"
                     @click="changePwdState"
                 ></i>
                 <i
-                    v-if="pwdState"
+                    v-show="pwdState"
                     class="iconfont icon-browse"
                     @click="changePwdState"
                 ></i>
@@ -23,12 +23,12 @@
             <div class="register_rePwd">
                 <input type="password" placeholder="请确认密码" ref="rePwd" />
                 <i
-                    v-if="!rePwdState"
+                    v-show="!rePwdState"
                     class="iconfont icon-eye-close"
                     @click="changeRePwdState"
                 ></i>
                 <i
-                    v-if="rePwdState"
+                    v-show="rePwdState"
                     class="iconfont icon-browse"
                     @click="changeRePwdState"
                 ></i>
@@ -57,23 +57,25 @@ export default {
             rePwdState: false,
         })
 
+        /* DOM 密码框 */
         const pwd = ref()
+        /* DOM 确认密码框 */
         const rePwd = ref()
 
-        /* 点击立即注册 */
+        /* click 立即注册 */
         const register = () => {
             console.log('点击了注册按钮')
         }
-        /* 点击返回登录 */
+        /* click 返回登录 */
         const goBackLogin = () => {
             store.commit('changeLoginState', 1)
         }
-        /* 点击密码小眼睛 */
+        /* click 密码框小眼睛 */
         const changePwdState = () => {
             data.pwdState = !data.pwdState
             pwd.value.type = data.pwdState ? 'text' : 'password'
         }
-        /* 点击再次输入密码小眼睛 */
+        /* click 确认密码框小眼睛 */
         const changeRePwdState = () => {
             data.rePwdState = !data.rePwdState
             rePwd.value.type = data.rePwdState ? 'text' : 'password'
@@ -92,37 +94,50 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 边框分隔线颜色 */
+$border_line: skyblue;
+
+/* 登录页面--注册
+----------------------------------------------------------------*/
 .register_block {
     position: absolute;
     top: 50%;
     left: 50%;
     padding: 30px 70px;
-    border-radius: 25px;
     background-color: #fff4ea;
+    border-radius: 25px;
     transform: translate(-50%, -50%);
+
+    /* 注册 标题 */
     .register_title {
         height: 60px;
         margin-bottom: 20px;
         font-size: 30px;
-        line-height: 60px;
         font-weight: 600;
         text-align: center;
+        line-height: 60px;
     }
+
+    /* 注册 表单 */
     .register_form {
-        /* 登录表单中的所有输入框 */
+        /* 注册 表单--所有的输入框 */
         input {
             width: 350px;
             height: 45px;
+            margin-bottom: 30px;
             padding-left: 20px;
-            border: 1px solid skyblue;
+            border: 1px solid $border_line;
             font-size: 16px;
             border-radius: 5px;
             outline: none;
-            margin-bottom: 30px;
         }
+
+        /* 注册 表单--密码框和确认密码框 */
         .register_pwd,
         .register_rePwd {
             position: relative;
+
+            /* 注册 表单--密码框和确认密码框(小眼睛) */
             .iconfont {
                 position: absolute;
                 top: 10px;
@@ -131,35 +146,45 @@ export default {
                 cursor: pointer;
             }
         }
+
+        /* 注册 表单--验证码 */
         .check_code {
             display: flex;
             width: 375px;
             height: 45px;
             margin-bottom: 30px;
             justify-content: space-between;
+
+            /* 注册 表单--验证码(输入框) */
             input {
                 flex: 1;
                 margin-right: 30px;
             }
+
+            /* 注册 表单--验证码(验证码图片) */
             img {
                 width: 120px;
                 height: 45px;
             }
         }
+
+        /* 注册 表单--立即注册按钮 */
         .register_btn {
             width: 375px;
             height: 50px;
             margin-bottom: 30px;
-            border: 1px solid skyblue;
+            border: 1px solid $border_line;
             background-color: #8f2b26;
             color: #fff;
             font-size: 18px;
-            text-align: center;
             font-weight: 600;
+            text-align: center;
             line-height: 50px;
             border-radius: 5px;
         }
     }
+
+    /* 注册 其他选项(返回登录) */
     .register_other {
         display: flex;
         font-size: 18px;

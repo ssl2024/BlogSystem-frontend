@@ -89,21 +89,26 @@ export default {
     setup() {
         const router = useRouter()
         const data = reactive({
+            /**
+             * 是否显示用户简介
+             * false 不显示
+             * true  显示
+             */
             showProfile: false,
         })
-        /* 切换显示用户简介 */
+        /* click 右上角用户头像 */
         const toggleProfile = () => {
             data.showProfile = !data.showProfile
         }
-        /* 去往用户主页 */
+        /* click 个人主页 */
         const toUserPage = () => {
             router.push('/center')
         }
-        /* 去往用户信息 */
+        /* click 个人信息 */
         const toUserInfo = id => {
             router.push(`/userInfo/${id}`)
         }
-        /* 去往用户粉丝列表 */
+        /* click 粉丝 */
         const toFansList = () => {
             router.push('/center/fans')
         }
@@ -119,7 +124,10 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
-$border_line: #f3f3f3;
+/* 边框分隔线颜色 */
+$border_line: #e8e8ed;
+
+/* 背景颜色 */
 $bg_color: #fff;
 
 /* 导航栏当前选中项 */
@@ -137,26 +145,34 @@ $bg_color: #fff;
     }
 }
 
+/* 导航栏组件
+----------------------------------------------------------------*/
 .container {
-    // padding: 0 20px;
     display: flex;
     position: relative;
     margin-bottom: 20px;
     padding: 0 20px;
     background-color: $bg_color;
+
+    /* 导航栏 网站logo */
     .logo {
         width: 80px;
         height: 44px;
-
-        line-height: 44px;
         text-align: center;
+        line-height: 44px;
+
+        /* 导航栏 网站logo--logo图片 */
         img {
             // width: 100%;
             height: 100%;
         }
     }
+
+    /* 导航栏 导航栏列表 */
     .nav {
         display: flex;
+
+        /* 导航栏 导航栏列表--列表项 */
         li {
             padding: 0 10px;
             width: 80px;
@@ -166,31 +182,31 @@ $bg_color: #fff;
             line-height: 45px;
         }
     }
-    .search {
-        position: relative;
-        flex: 1;
-        padding: 0 30px;
 
+    /* 导航栏 搜索框 */
+    .search {
+        flex: 1;
+        position: relative;
+        padding: 0 30px;
         text-align: center;
         line-height: 45px;
 
+        /* 导航栏 搜索框--搜索输入框 */
         input {
             width: 300px;
             height: 16px;
             padding: 8px 15px;
             border: 1px solid #c2c8d1;
-
             border-radius: 5px;
             outline: none;
-
             &:hover {
                 border-color: salmon;
             }
-
             &:focus {
                 border-color: skyblue;
             }
         }
+        /* 导航栏 搜索框--搜索图标 */
         .search_icon {
             display: flex;
             position: absolute;
@@ -198,31 +214,37 @@ $bg_color: #fff;
             right: 60px;
             width: 42px;
             height: 32px;
-            border-radius: 5px;
             background-color: #f2f3f5;
+            border-radius: 5px;
             justify-content: center;
             align-items: center;
         }
     }
+
+    /* 导航栏 用户头像 */
     .center {
         width: 200px;
         height: 40px;
-
         text-align: center;
     }
+
+    /* 导航栏 用户简介 */
     .profile {
         position: absolute;
-        right: 20px;
         top: 50px;
-        z-index: 1;
+        right: 20px;
         width: 180px;
         background-color: $bg_color;
+        z-index: 1;
 
+        /* 导航栏 用户简介--顶部 */
         .profile_top {
             position: relative;
             padding: 35px 0 15px;
             height: 20px;
             text-align: center;
+
+            /* 导航栏 用户简介--顶部(用户头像) */
             .user_avatar {
                 position: absolute;
                 top: -40px;
@@ -232,11 +254,14 @@ $bg_color: #fff;
                 height: 60px;
                 border-radius: 50%;
             }
+
+            /* 导航栏 用户简介--顶部(用户昵称) */
             .user_nickname {
                 font-size: 16px;
             }
         }
 
+        /* 导航栏 用户简介--中间 */
         .profile_mid {
             display: flex;
             height: 45px;
@@ -247,8 +272,11 @@ $bg_color: #fff;
             justify-content: space-around;
         }
 
+        /* 导航栏 用户简介--底部 */
         .profile_bottom {
             border-bottom: 1px solid $border_line;
+
+            /* 导航栏 用户简介--底部(菜单项) */
             li {
                 height: 40px;
                 padding: 0 20px;
@@ -259,6 +287,8 @@ $bg_color: #fff;
                 &:hover {
                     background-color: skyblue;
                 }
+
+                /* 导航栏 用户简介--底部(菜单项-字体图标) */
                 .iconfont {
                     margin-right: 10px;
                 }

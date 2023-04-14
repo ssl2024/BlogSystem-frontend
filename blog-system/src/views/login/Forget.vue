@@ -43,11 +43,12 @@ export default {
              */
             findState: 1,
         })
-        /* 点击返回登录 */
+
+        /* click 返回登录 */
         const goBackLogin = () => {
             store.commit('changeLoginState', 1)
         }
-        /* 更改验证方式 */
+        /* click 验证方式中的 向下箭头 */
         const changeFindMethod = newState => {
             data.findMethod = newState
         }
@@ -66,87 +67,28 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 登录页面--忘记密码
+----------------------------------------------------------------*/
 .forget_block {
     position: absolute;
     top: 50%;
     left: 50%;
     padding: 30px 70px;
-    border-radius: 25px;
     background-color: #fff4ea;
+    border-radius: 25px;
     transform: translate(-50%, -50%);
+
+    /* 忘记密码 标题 */
     .forget_title {
         height: 60px;
         margin-bottom: 20px;
         font-size: 30px;
-        line-height: 60px;
         font-weight: 600;
         text-align: center;
+        line-height: 60px;
     }
-    // .forget_form {
-    //     /* 登录表单中的所有输入框 */
-    //     input {
-    //         width: 350px;
-    //         height: 45px;
-    //         padding-left: 20px;
-    //         border: 1px solid skyblue;
-    //         font-size: 16px;
-    //         border-radius: 5px;
-    //         outline: none;
-    //         margin-bottom: 30px;
-    //     }
-    //     .find {
-    //         display: flex;
-    //         position: relative;
-    //         height: 50px;
-    //         margin-bottom: 30px;
-    //         padding: 0 40px 0 20px;
-    //         border: 1px solid skyblue;
-    //         background-color: #fff;
-    //         color: #757575;
-    //         font-size: 15px;
-    //         line-height: 50px;
-    //         border-radius: 5px;
-    //         justify-content: space-between;
-    //         .find_method {
-    //             cursor: pointer;
-    //         }
-    //         .iconfont {
-    //             position: absolute;
-    //             top: 0px;
-    //             right: 20px;
-    //             cursor: pointer;
-    //         }
-    //         .method_list {
-    //             position: absolute;
-    //             top: 110%;
-    //             left: -2px;
-    //             width: 375px;
-    //             border: 1px solid #f3f3f3;
-    //             background-color: #fff;
-    //             .method_item {
-    //                 padding-left: 55px;
-    //                 border-top: 1px solid #f3f3f3;
-    //                 &:hover {
-    //                     background-color: skyblue;
-    //                     color: #fff;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     .forget_btn {
-    //         width: 375px;
-    //         height: 50px;
-    //         margin-bottom: 30px;
-    //         // border: 1px solid skyblue;
-    //         background-color: #8f2b26;
-    //         color: #fff;
-    //         font-size: 18px;
-    //         text-align: center;
-    //         font-weight: 600;
-    //         line-height: 50px;
-    //         border-radius: 5px;
-    //     }
-    // }
+
+    /* 忘记密码 其他操作(返回登录) */
     .forget_other {
         display: flex;
         font-size: 18px;

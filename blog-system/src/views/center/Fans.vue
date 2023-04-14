@@ -21,11 +21,19 @@ export default {}
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 边框分隔线颜色 */
 $border_line: #e8e8ed;
+
+/* 背景颜色 */
 $bg_color: #fff;
+
+/* 个人主页页面--粉丝列表
+----------------------------------------------------------------*/
 .fans_list {
     background-color: $bg_color;
     height: 300px;
+
+    /* 粉丝列表 列表项 */
     .fans_item {
         display: flex;
         height: 80px;
@@ -34,10 +42,14 @@ $bg_color: #fff;
         border-bottom: 1px solid $border_line;
         justify-content: space-between;
         align-items: center;
+
+        /* 粉丝列表 列表项--粉丝信息 */
         .fans_info {
             display: flex;
             font-size: 16px;
             align-items: center;
+
+            /* 粉丝列表 列表项--粉丝信息(头像) */
             img {
                 width: 60px;
                 height: 60px;
@@ -45,13 +57,15 @@ $bg_color: #fff;
                 border-radius: 50%;
             }
         }
+
+        /* 粉丝列表 列表项--粉丝状态 */
         .fans_status {
             width: 90px;
             height: 30px;
             background-color: #92c452;
             color: #fff;
-            line-height: 30px;
             text-align: center;
+            line-height: 30px;
             border-radius: 5px;
         }
     }

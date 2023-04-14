@@ -42,9 +42,9 @@ export default {
     props: [],
     setup() {
         const router = useRouter()
-        /* 去往博客详情页 */
+        /* click 任意博客 */
         const toBlogDetail = id => {
-            router.push(`/blogDetail/${id}`)
+            router.push(`/entryDetail/${id}`)
         }
         return {
             toBlogDetail,
@@ -54,42 +54,60 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 边框分隔线颜色 */
+$border_line: #e8e8ed;
+
+/* 博客组件
+----------------------------------------------------------------*/
 .item {
     display: flex;
     padding-bottom: 10px;
-    border-top: 1px solid #f1f2f5;
-    border-bottom: 1px solid #f1f2f5;
+    border-top: 1px solid $border_line;
+    border-bottom: 1px solid $border_line;
     background-color: #fff;
     &:hover {
         background-color: #fafafa;
     }
+
+    /* 博客 包装 */
     .content_wrapper {
         display: flex;
         padding: 10px 0 0 10px;
         flex-direction: column;
         justify-content: space-around;
+
+        /* 博客 内容标题 */
         .content_title {
             color: #222226;
             font-size: 18px;
             line-height: 25px;
         }
+
+        /* 博客 内容主体 */
         .content_main {
             display: -webkit-box;
             overflow: hidden;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
-
             color: #555666;
             font-size: 13px;
         }
+
+        /* 博客 数据列表 */
         .action_list {
             display: flex;
+
+            /* 博客 数据列表--数据项 */
             .action_item {
                 margin-right: 10px;
+
+                /* 博客 数据列表--数据项(字体图标) */
                 .iconfont {
                     margin-right: 5px;
                     font-size: 17px;
                 }
+
+                /* 博客 数据列表--数据项(名称) */
                 span {
                     margin-left: 2px;
                     font-size: 13px;
@@ -97,6 +115,8 @@ export default {
             }
         }
     }
+
+    /* 博客 展示图片 */
     .picture {
         padding: 7px;
         width: 176px;

@@ -26,24 +26,31 @@ export default {}
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 边框分隔线颜色 */
 $border_line: #e8e8ed;
-// $bg_color: #fff;
+
+/* 个人信息页面--账号设置 
+----------------------------------------------------------------*/
 .account_setting {
+    /* 账号设置 标题 */
     .setting_title {
         height: 55px;
+        border-bottom: 1px solid $border_line;
         font-size: 22px;
         font-weight: 600;
         line-height: 55px;
-        border-bottom: 1px solid $border_line;
     }
+
+    /* 账号设置 列表 */
     .setting_list {
         height: 55px;
         line-height: 55px;
+
+        /* 账号设置 列表--列表项 */
         .setting_item {
             display: flex;
             border-bottom: 1px solid $border_line;
             justify-content: space-around;
-
             :nth-child(1) {
                 width: 80px;
             }
