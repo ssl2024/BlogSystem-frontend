@@ -9,6 +9,7 @@ import EntryDetail from '@/views/EntryDetail'
 import UserInfo from '@/views/UserInfo'
 import Profile from '@/views/userInfo/Profile'
 import Account from '@/views/userInfo/Account'
+import BlogManage from '@/views/userInfo/BlogManage'
 
 import Center from '@/views/Center'
 import Entry from '@/views/center/Entry'
@@ -67,6 +68,10 @@ const routes = [
             {
                 path: '/userInfo/account',
                 component: Account,
+            },
+            {
+                path: '/userInfo/blogManage',
+                component: BlogManage,
             },
             {
                 path: '/userInfo/:any',

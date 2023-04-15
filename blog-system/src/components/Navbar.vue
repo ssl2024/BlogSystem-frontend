@@ -67,7 +67,7 @@
                         <i class="iconfont icon-xingming"></i>
                         <span>个人信息</span>
                     </li>
-                    <li>
+                    <li @click="toBlogManage">
                         <i class="iconfont icon-xiangmuguanli"></i>
                         <span>博客管理</span>
                     </li>
@@ -108,6 +108,10 @@ export default {
         const toUserInfo = id => {
             router.push(`/userInfo/${id}`)
         }
+        /* click 博客管理 */
+        const toBlogManage = () => {
+            router.push(`/userInfo/blogManage`)
+        }
         /* click 粉丝 */
         const toFansList = () => {
             router.push('/center/fans')
@@ -117,6 +121,7 @@ export default {
             toUserPage,
             toUserInfo,
             toggleProfile,
+            toBlogManage,
             toFansList,
         }
     },
@@ -284,6 +289,7 @@ $bg_color: #fff;
                 font-size: 14px;
                 text-align: center;
                 line-height: 40px;
+                cursor: pointer;
                 &:hover {
                     background-color: skyblue;
                 }

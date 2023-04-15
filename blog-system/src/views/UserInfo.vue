@@ -29,6 +29,20 @@
                     <span>账号设置</span>
                 </li>
             </router-link>
+            <router-link
+                to="/userInfo/blogManage"
+                custom
+                v-slot="{ navigate, isActive }"
+            >
+                <li
+                    @click="navigate"
+                    :class="isActive ? 'current' : ''"
+                    class="menu_item"
+                >
+                    <i class="iconfont icon-dangan"></i>
+                    <span>博客管理</span>
+                </li>
+            </router-link>
             <li class="go_back" @click="goBack">
                 <i class="iconfont icon-zhuanruzijin"></i>
                 <span>返回个人主页</span>
@@ -83,7 +97,7 @@ $bg_check_color: #f0f0f5;
 ----------------------------------------------------------------*/
 .setting_view {
     display: flex;
-    height: 300px;
+    height: 475px;
 }
 
 /* 左边菜单栏
@@ -100,6 +114,7 @@ $bg_check_color: #f0f0f5;
         height: 48px;
         padding-left: 30px;
         line-height: 48px;
+        cursor: pointer;
         &:hover {
             background-color: $bg_check_color;
         }
@@ -117,6 +132,7 @@ $bg_check_color: #f0f0f5;
         color: #1d7dfa;
         text-align: center;
         line-height: 48px;
+        cursor: pointer;
     }
 }
 

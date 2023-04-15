@@ -27,7 +27,6 @@ export default {}
 
 <style lang="scss" scoped="scoped">
 $border_line: #e8e8ed;
-// $bg_color: #fff;
 .profile_setting {
     .setting_title {
         height: 55px;
