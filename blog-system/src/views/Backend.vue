@@ -2,18 +2,13 @@
     <div>
         <div class="container">
             <div class="list_container">
-                <list-header></list-header>
+                <list-header type="2" @changeType="changeType"></list-header>
                 <div class="list_wrap">
-                    <blog></blog>
-                    <blog></blog>
-                    <blog></blog>
-                    <blog></blog>
-                    <blog></blog>
-                    <blog></blog>
-                    <blog></blog>
-                    <blog></blog>
-                    <blog></blog>
-                    <blog></blog>
+                    <blog
+                        v-for="item in entryList"
+                        :key="item.id"
+                        :entry="item"
+                    ></blog>
                 </div>
             </div>
             <div class="aside">
@@ -96,13 +91,55 @@
 </template>
 
 <script>
+import { onMounted, reactive, toRefs } from 'vue'
+
+import http from '@/utils/http'
+
 import blog from '@/components/Blog'
 import listHeader from '@/components/ListHeader'
-
 export default {
     components: {
         blog,
         listHeader,
+    },
+    setup() {
+        const data = reactive({
+            /* 文章列表 */
+            entryList: [],
+            /* 当前页 */
+            currentPage: 1,
+            /* 当前页博客数量 */
+            pageSize: 10,
+            blogType: '后端',
+        })
+
+        onMounted(() => {
+            init(data.blogType)
+        })
+
+        /* 获取指定类型的博客 */
+        const init = type => {
+            http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
+                type: type,
+            }).then(res => {
+                if (res.data.code === 20041) {
+                    data.entryList = res.data.data.records
+                }
+            })
+        }
+
+        /* change 博客类型 */
+        const changeType = type => {
+            // 如果当前选项为全部则修改 type 为 前端
+            type = type === '全部' ? '后端' : type
+            init(type)
+        }
+
+        return {
+            ...toRefs(data),
+            init,
+            changeType,
+        }
     },
 }
 </script>

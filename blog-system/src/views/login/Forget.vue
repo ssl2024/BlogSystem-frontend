@@ -92,6 +92,9 @@ export default {
     .forget_other {
         display: flex;
         font-size: 18px;
+        div {
+            cursor: pointer;
+        }
     }
 }
 </style>

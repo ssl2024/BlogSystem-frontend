@@ -5,7 +5,6 @@
 </template>
 
 <script>
-// import 'normalize.css/normalize.css'
 import '@/assets/css/cssReset.css'
 import navbar from '@/components/Navbar'
 import footers from '@/components/Footer'

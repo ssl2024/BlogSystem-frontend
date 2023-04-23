@@ -1,32 +1,35 @@
 <template>
-    <div class="item" @click="toBlogDetail(123)">
+    <div class="item" @click="toBlogDetail(entry.id)">
         <div class="content_wrapper">
             <div class="content_title">
-                Springboot+WebUploader优雅实现超大文件的上传(一)
+                {{ entry.title }}
             </div>
             <div class="content_main">
-                在软件工程里，在处理“大”的时候一直是一个难点和难点，如并发大、数据量大、文件大，对硬件进行升级可以解决一些问题，但这并不最聪明的办法，而对于老板来说，这也不是成本最小的办法。作为开发人员来说，在面对类似极端的问题时，只可智取，不可硬刚，最大化利用好现有的资源，以更加优雅的办法来满足用户多样化的需求。今天的主题也是一个“大”的问题，就是大文件如何上传和下载？其实在解决这个问题之前，有一个问题是绕不过去的：什么才是大文件？几兆？几十兆？几百兆？这其实是一个极具争议的问题，在不同的业务场景下，对于大文件的“大”
+                {{ entry.content }}
             </div>
             <ul class="action_list">
                 <li class="action_item">
                     <i class="iconfont icon-browse"></i>
-                    <span>6753</span>
+                    <span>{{ entry.browseCount }}</span>
                 </li>
                 <li class="action_item">
                     <i class="iconfont icon-good"></i>
-                    <span>1278</span>
+                    <span>{{ entry.likeCount }}</span>
                 </li>
                 <li class="action_item">
                     <i class="iconfont icon-pinglun"></i>
-                    <span>123</span>
+                    <span>{{ entry.commentCount }}</span>
                 </li>
                 <li class="action_item">
                     <i class="iconfont icon-shijian"></i>
-                    <span>2023-04-05</span>
+                    <span>{{ updateTime(entry.updateTime) }}</span>
                 </li>
-                <li class="action_item">
+                <li
+                    class="action_item"
+                    @click.stop="toUserCenter(entry.authorId)"
+                >
                     <i class="iconfont icon-user"></i>
-                    <span>这是作者昵称</span>
+                    <span>{{ nickname }}</span>
                 </li>
             </ul>
         </div>
@@ -37,17 +40,53 @@
 </template>
 
 <script>
+import { computed, onMounted, reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
+
+import http from '@/utils/http'
+import dateFormatter from '@/utils/dateFormatter'
 export default {
-    props: [],
-    setup() {
+    props: ['entry'],
+    setup(props) {
         const router = useRouter()
+
+        const data = reactive({
+            /* 文章信息 */
+            entry: props.entry,
+            /* 作者昵称 */
+            nickname: '',
+        })
+
+        onMounted(() => {
+            // 获取当前博客的作者昵称
+            http.get(`/users/${data.entry.authorId}`).then(res => {
+                if (res.data.code === 20041) {
+                    data.nickname = res.data.data.nickname
+                }
+            })
+        })
+
+        /* computed 博客更新时间 */
+        const updateTime = computed(() => {
+            return item => {
+                return dateFormatter(item)
+            }
+        })
+
         /* click 任意博客 */
         const toBlogDetail = id => {
             router.push(`/entryDetail/${id}`)
         }
+        /* click 博客上的用户名 */
+        const toUserCenter = id => {
+            console.log('执行了center')
+            router.push(`/center/${id}`)
+        }
         return {
+            ...toRefs(data),
+            updateTime,
             toBlogDetail,
+            toUserCenter,
         }
     },
 }
@@ -71,6 +110,7 @@ $border_line: #e8e8ed;
 
     /* 博客 包装 */
     .content_wrapper {
+        flex: 1;
         display: flex;
         padding: 10px 0 0 10px;
         flex-direction: column;
@@ -100,6 +140,14 @@ $border_line: #e8e8ed;
             /* 博客 数据列表--数据项 */
             .action_item {
                 margin-right: 10px;
+
+                /* 博客 数据列表--数据项(用户名称) */
+                &:last-child {
+                    cursor: pointer;
+                    &:hover {
+                        color: #1d7cf7;
+                    }
+                }
 
                 /* 博客 数据列表--数据项(字体图标) */
                 .iconfont {

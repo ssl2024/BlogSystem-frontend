@@ -1,10 +1,10 @@
 <template>
-    <div>博客详情页</div>
     <div class="detail_block">
+        <!-- 博客内容 -->
         <div class="content">
             <div class="content_header">
                 <div class="content_title">
-                    <span>文章标题</span>
+                    <span>{{ entry.title }}</span>
                 </div>
                 <div class="content_author">
                     <img
@@ -13,16 +13,20 @@
                         alt="作者头像"
                     />
                     <div class="entry_info">
-                        <div class="author_nickname">石松林_前端基础</div>
-                        <span class="entry_date">2023年04月04日 15:28</span>
-                        <span class="entry_browse">浏览 1236 次</span>
+                        <div class="author_nickname">{{ user.nickname }}</div>
+                        <span class="entry_date">{{
+                            dateTime(entry.updateTime)
+                        }}</span>
+                        <span class="entry_browse"
+                            >浏览 {{ entry.browseCount }} 次</span
+                        >
                     </div>
                 </div>
             </div>
             <div class="content_figure">
                 <img src="https://iph.href.lu/780x450" alt="博文图片" />
             </div>
-            <div class="content_main"></div>
+            <div class="content_main" v-html="renderedMarkdown"></div>
             <div class="comment_form">
                 <div class="comment_title">评论</div>
                 <div class="comment_content">
@@ -77,6 +81,7 @@
                 </div>
             </div>
         </div>
+        <!-- 侧边栏 -->
         <div class="aside">
             <div class="author_info">
                 <img
@@ -84,7 +89,7 @@
                     src="https://iph.href.lu/60x60"
                     alt="作者头像"
                 />
-                <div class="author_nickname">石松林_前端基础</div>
+                <div class="author_nickname">{{ user.nickname }}</div>
             </div>
             <div class="operate_btn">
                 <div class="item">
@@ -125,18 +130,49 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted, ref } from 'vue'
+import { reactive, toRefs, onMounted, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+
+import MarkdownIt from 'markdown-it'
+
+import http from '@/utils/http'
+import dateFormatter from '@/utils/dateFormatter'
 export default {
     setup() {
         const route = useRoute()
-        onMounted(() => {
-            console.log(route.params)
-        })
+
+        const renderedMarkdown = ref('')
+        const md = new MarkdownIt()
 
         const data = reactive({
+            /* 博客信息 */
+            entry: {},
+            /* 发布该博客的用户信息 */
+            user: {},
             /* 评论框的 placeholder */
             comment_placeholder: '善语结善缘，恶言伤人心',
+        })
+
+        onMounted(() => {
+            http.get(`/blogs/${route.params.id}`).then(res => {
+                if (res.data.code === 20041) {
+                    data.entry = res.data.data
+                    renderedMarkdown.value = md.render(data.entry.content)
+                    http.get(`/users/${res.data.data.authorId}`).then(res => {
+                        if (res.data.code === 20041) {
+                            data.user = res.data.data
+                        }
+                    })
+                } else {
+                    alert('博客内容获取失败，请重试')
+                }
+            })
+        })
+
+        const dateTime = computed(() => {
+            return item => {
+                return dateFormatter(item)
+            }
         })
 
         /* DOM 评论输入框 */
@@ -154,6 +190,8 @@ export default {
         }
         return {
             ...toRefs(data),
+            renderedMarkdown,
+            dateTime,
             comment,
             input,
             submitComment,
@@ -185,6 +223,7 @@ $border_line: #e8e8ed;
     margin-right: 10px;
     padding: 30px 30px 0;
     background-color: $bg_color;
+    font-size: 16px;
 
     /* 左边博客内容 页头 */
     .content_header {
@@ -227,7 +266,6 @@ $border_line: #e8e8ed;
 
     /* 左边博客内容 内容主体 */
     .content_main {
-        height: 1200px;
         margin-bottom: 30px;
     }
 

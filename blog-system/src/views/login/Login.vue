@@ -5,10 +5,19 @@
         </div>
         <form class="login_form">
             <div class="login_account">
-                <input type="text" placeholder="请输入账号" />
+                <input
+                    type="text"
+                    placeholder="请输入账号"
+                    v-model.trim="account"
+                />
             </div>
             <div class="login_pwd">
-                <input type="password" placeholder="请输入密码" ref="pwd" />
+                <input
+                    type="password"
+                    placeholder="请输入密码"
+                    ref="pwd"
+                    v-model.lazy="pwdText"
+                />
                 <i
                     v-show="!pwdState"
                     class="iconfont icon-eye-close"
@@ -32,15 +41,26 @@
 <script>
 import { reactive, toRefs, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
+
+import md5 from 'md5'
+
+import http from '@/utils/http'
 export default {
     setup() {
         const store = useStore()
+        const router = useRouter()
+        const route = useRoute()
 
         const data = reactive({
+            /* 账号框 */
+            account: '',
+            /* 密码框 */
+            pwdText: '',
             /**
-             * 密码是否可见
-             * false 不可见
-             * true  可见
+             * 是否显示密码框
+             * false 不显示
+             * true  显示
              */
             pwdState: false,
         })
@@ -50,7 +70,37 @@ export default {
 
         /* click 登录 */
         const login = () => {
-            console.log('点击了登录')
+            // 判断账号框和密码框是否为空
+            if (data.account.length === 0 || data.pwdText.length === 0) {
+                // 账号框 或 密码为空
+                alert('账号或密码不能为空')
+                return
+            }
+            http.post('/users/login', {
+                account: data.account,
+                pwd: md5(data.pwdText),
+            }).then(res => {
+                if (res.data.code === 20041) {
+                    // 登录成功
+                    alert('登录成功')
+                    // 将 token 存入 vuex
+                    store.commit('updateToken', res.data.data.token)
+                    // 将 当前用户信息 存入 vuex
+                    store.commit('updateUser', res.data.data.user)
+                    // 跳转页面
+                    if (route.query.redirect) {
+                        router.push(route.query.redirect)
+                    } else {
+                        router.push('/rcommd')
+                    }
+                } else if (res.data.code === 20040) {
+                    // 账号或密码错误
+                    alert(res.data.msg)
+                } else {
+                    // 其他错误
+                    alert('未知错误')
+                }
+            })
         }
         /* click 注册账号 */
         const register = () => {
@@ -142,6 +192,7 @@ $border_line: skyblue;
             font-weight: 600;
             text-align: center;
             line-height: 50px;
+            cursor: pointer;
             border-radius: 5px;
         }
     }
@@ -151,6 +202,9 @@ $border_line: skyblue;
         display: flex;
         font-size: 18px;
         justify-content: space-between;
+        div {
+            cursor: pointer;
+        }
     }
 }
 </style>

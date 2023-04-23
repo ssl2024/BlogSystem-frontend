@@ -1,5 +1,4 @@
 <template>
-    <div @click="toUserInfo(111)">跳转到个人信息修改</div>
     <div class="user_center">
         <div class="aside">
             <div class="user_info">
@@ -7,7 +6,7 @@
                     <img src="https://iph.href.lu/100x100" alt="用户头像" />
                 </div>
                 <div class="nickname">
-                    <span>石松林_前端基础</span>
+                    <span>{{ user.nickname }}</span>
                     <div class="operate_btn">
                         <div v-show="!isConcerned">
                             <i class="iconfont icon-add"></i>
@@ -127,11 +126,14 @@
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
+import { onMounted, reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
+
+// import http from '@/utils/http'
 export default {
     setup() {
         const router = useRouter()
+        // const route = useRoute()
 
         const data = reactive({
             /**
@@ -140,7 +142,14 @@ export default {
              * true  已经关注
              */
             isConcerned: false,
+            /* 用户信息 */
+            user: {
+                nickname: '',
+                avatar: '',
+            },
         })
+
+        onMounted(() => {})
 
         /* click 个人信息 */
         const toUserInfo = id => {

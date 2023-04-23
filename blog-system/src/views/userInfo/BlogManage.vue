@@ -26,54 +26,23 @@
                 <div class="title_item">操作</div>
             </div>
             <div class="blog_list">
-                <div class="blog_item">
-                    <div class="blog_item_title">这是一个标题</div>
-                    <div class="blog_item_type">这是博客类型</div>
-                    <div class="blog_item_date">2023-04-15 21:08</div>
-                    <div class="operate_btn">
-                        <div class="operate_update" @click="blogUpdate">
-                            修改
-                        </div>
-                        <div class="operate_delete" @click="blogDelete">
-                            删除
-                        </div>
+                <div class="blog_item" v-for="item in entryList" :key="item.id">
+                    <div class="blog_item_title">{{ item.title }}</div>
+                    <div class="blog_item_type">{{ item.type }}</div>
+                    <div class="blog_item_date">
+                        {{ dateTime(item.createTime) }}
                     </div>
-                </div>
-                <div class="blog_item">
-                    <div class="blog_item_title">这是一个标题</div>
-                    <div class="blog_item_type">这是博客类型</div>
-                    <div class="blog_item_date">2023-04-15 21:08</div>
                     <div class="operate_btn">
-                        <div class="operate_update" @click="blogUpdate">
+                        <div
+                            class="operate_update"
+                            @click="blogUpdate(item.id)"
+                        >
                             修改
                         </div>
-                        <div class="operate_delete" @click="blogDelete">
-                            删除
-                        </div>
-                    </div>
-                </div>
-                <div class="blog_item">
-                    <div class="blog_item_title">这是一个标题</div>
-                    <div class="blog_item_type">这是博客类型</div>
-                    <div class="blog_item_date">2023-04-15 21:08</div>
-                    <div class="operate_btn">
-                        <div class="operate_update" @click="blogUpdate">
-                            修改
-                        </div>
-                        <div class="operate_delete" @click="blogDelete">
-                            删除
-                        </div>
-                    </div>
-                </div>
-                <div class="blog_item">
-                    <div class="blog_item_title">这是一个标题</div>
-                    <div class="blog_item_type">这是博客类型</div>
-                    <div class="blog_item_date">2023-04-15 21:08</div>
-                    <div class="operate_btn">
-                        <div class="operate_update" @click="blogUpdate">
-                            修改
-                        </div>
-                        <div class="operate_delete" @click="blogDelete">
+                        <div
+                            class="operate_delete"
+                            @click="blogDelete(item.id)"
+                        >
                             删除
                         </div>
                     </div>
@@ -91,42 +60,103 @@
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
+import { onMounted, reactive, toRefs, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
+import http from '@/utils/http'
+import dateFormatter from '@/utils/dateFormatter'
 export default {
     setup() {
+        const router = useRouter()
+        const store = useStore()
+
         const data = reactive({
             /* 搜索标题 */
             searchTitle: '',
             /* 搜索类型 */
             searchType: '',
+            /* 当前页码 */
+            currentPage: 1,
+            /* 每页条数 */
+            pageSize: 4,
+            /* 一共多少页 */
+            pages: 1,
+            /* 文章列表 */
+            entryList: [],
+        })
+
+        onMounted(() => {
+            getEntryList()
+        })
+
+        const getEntryList = () => {
+            http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
+                authorId: store.state.user.id,
+            }).then(res => {
+                data.entryList = res.data.data.records
+                data.pages = res.data.data.pages
+            })
+        }
+
+        /* computed 文章时间 */
+        const dateTime = computed(() => {
+            return item => {
+                return dateFormatter(item)
+            }
         })
 
         /* click 搜索按钮 */
         const searchBlog = () => {
-            console.log('点击了搜索按钮')
+            console.log(data.searchTitle, data.searchType)
         }
         /* click 修改 */
-        const blogUpdate = () => {
-            console.log('点击了修改')
+        const blogUpdate = id => {
+            router.push(`/edit/${id}`)
         }
         /* click 删除 */
-        const blogDelete = () => {
-            console.log('点击了删除')
+        const blogDelete = id => {
+            http.delete('/blogs/' + id).then(res => {
+                if (res.data.code === 20021) {
+                    alert('删除成功')
+                    // 如果当前页只剩下最后一条数据
+                    if (data.entryList.length === 1) {
+                        // click 上一页
+                        prevPage()
+                    }
+                    // 重新请求数据
+                    getEntryList()
+                } else {
+                    alert('删除失败，请重试')
+                }
+            })
         }
         /* click 上一页 */
         const prevPage = () => {
-            console.log('点击了上一页')
+            if (data.currentPage > 1) {
+                data.currentPage--
+                getEntryList()
+            } else {
+                alert('没有上一页')
+            }
         }
         /* click 下一页 */
         const nextPage = () => {
-            console.log('点击了下一页')
+            if (data.currentPage < data.pages) {
+                data.currentPage++
+                getEntryList()
+            } else {
+                alert('没有下一页')
+            }
         }
         /* click 新增 */
         const addBlog = () => {
-            console.log('点击了新增')
+            router.push('/edit')
         }
         return {
             ...toRefs(data),
+            dateTime,
+            getEntryList,
             searchBlog,
             blogUpdate,
             blogDelete,

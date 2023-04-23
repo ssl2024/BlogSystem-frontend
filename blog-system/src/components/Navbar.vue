@@ -71,7 +71,7 @@
                         <i class="iconfont icon-xiangmuguanli"></i>
                         <span>博客管理</span>
                     </li>
-                    <li>
+                    <li @click="logout">
                         <i class="iconfont icon-tuichu"></i>
                         <span>注销登录</span>
                     </li>
@@ -83,11 +83,14 @@
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
+import { onMounted, reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 export default {
     setup() {
         const router = useRouter()
+        const store = useStore()
+
         const data = reactive({
             /**
              * 是否显示用户简介
@@ -95,7 +98,13 @@ export default {
              * true  显示
              */
             showProfile: false,
+            user: store.state.user,
         })
+
+        onMounted(() => {
+            console.log(data.user)
+        })
+
         /* click 右上角用户头像 */
         const toggleProfile = () => {
             data.showProfile = !data.showProfile
@@ -116,6 +125,14 @@ export default {
         const toFansList = () => {
             router.push('/center/fans')
         }
+        /* click 注销登录 */
+        const logout = () => {
+            // 删除本地 token
+            localStorage.removeItem('token')
+            // 跳转到 login 页面
+            store.commit('changeLoginState', 1)
+            router.push('/login')
+        }
         return {
             ...toRefs(data),
             toUserPage,
@@ -123,6 +140,7 @@ export default {
             toggleProfile,
             toBlogManage,
             toFansList,
+            logout,
         }
     },
 }

@@ -17,6 +17,8 @@ import Like from '@/views/center/Like'
 import Follow from '@/views/center/Follow'
 import Fans from '@/views/center/Fans'
 
+import Edit from '@/views/Edit'
+
 const routes = [
     {
         path: '/login',
@@ -25,18 +27,30 @@ const routes = [
     {
         path: '/attention',
         component: Attention,
+        meta: {
+            required: true,
+        },
     },
     {
         path: '/rcommd',
         component: Rcommd,
+        meta: {
+            required: true,
+        },
     },
     {
         path: '/foreend',
         component: Foreend,
+        meta: {
+            required: true,
+        },
     },
     {
         path: '/backend',
         component: Backend,
+        meta: {
+            required: true,
+        },
         children: [
             {
                 path: '/backend/hot',
@@ -55,11 +69,17 @@ const routes = [
     {
         path: '/entryDetail/:id',
         component: EntryDetail,
+        meta: {
+            required: true,
+        },
     },
     /* 个人资料 */
     {
         path: '/userInfo/:id',
         component: UserInfo,
+        meta: {
+            required: true,
+        },
         children: [
             {
                 path: '/userInfo/profile',
@@ -83,6 +103,9 @@ const routes = [
     {
         path: '/center',
         component: Center,
+        meta: {
+            required: true,
+        },
         children: [
             {
                 path: '/center/entry',
@@ -105,8 +128,18 @@ const routes = [
                 redirect: '/center/entry',
             },
             {
-                path: '/center/:any',
+                path: '/center/:id',
                 redirect: '/center/entry',
+            },
+        ],
+    },
+    {
+        path: '/edit',
+        component: Edit,
+        children: [
+            {
+                path: '/edit/:id',
+                component: Edit,
             },
         ],
     },
@@ -123,6 +156,27 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes,
+})
+
+// 设置全局路由拦截
+router.beforeEach((to, from, next) => {
+    // 判断要访问的路径是否需要进行验证
+    if (to.meta.required) {
+        // 查看本地是否有 token
+        if (localStorage.getItem('token')) {
+            next()
+        } else {
+            next({
+                path: '/login',
+                query: {
+                    // 携带当前用户想要去的路径参数(可通过 this.$route.query.redirect 获取)
+                    redirect: to.fullPath,
+                },
+            })
+        }
+    } else {
+        next()
+    }
 })
 
 export default router
