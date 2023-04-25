@@ -1,10 +1,3 @@
-<!--
- * @Author: ssl slshi2024@163.com
- * @Date: 2023-04-11 19:51:45
- * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-23 22:11:56
- * @Description: 
--->
 <template>
     <div>
         <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
@@ -13,7 +6,7 @@
 
 <script>
 import { reactive, onMounted, toRefs } from 'vue'
-import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 
 import http from '@/utils/http'
 
@@ -23,22 +16,23 @@ export default {
         blog,
     },
     setup() {
-        const store = useStore()
+        const route = useRoute()
 
         const data = reactive({
             /* 文章列表 */
             entryList: [],
+            /* 当前页码 */
             currentPage: 1,
+            /* 每页条数 */
             pageSize: 5,
         })
         onMounted(() => {
+            // 分页获取用户发表的博客
             http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
-                authorId: store.state.user.id,
+                authorId: route.params.id,
             }).then(res => {
                 if (res.data.code === 20041) {
                     data.entryList = res.data.data.records
-                } else {
-                    alert('当前用户发表的博客查询失败')
                 }
             })
         })

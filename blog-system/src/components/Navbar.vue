@@ -101,9 +101,7 @@ export default {
             user: store.state.user,
         })
 
-        onMounted(() => {
-            console.log(data.user)
-        })
+        onMounted(() => {})
 
         /* click 右上角用户头像 */
         const toggleProfile = () => {
@@ -111,7 +109,7 @@ export default {
         }
         /* click 个人主页 */
         const toUserPage = () => {
-            router.push('/center')
+            router.push(`/center/${store.state.user.id}`)
         }
         /* click 个人信息 */
         const toUserInfo = id => {

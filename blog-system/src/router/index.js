@@ -14,8 +14,9 @@ import BlogManage from '@/views/userInfo/BlogManage'
 import Center from '@/views/Center'
 import Entry from '@/views/center/Entry'
 import Like from '@/views/center/Like'
-import Follow from '@/views/center/Follow'
+import Collect from '@/views/center/Collect'
 import Fans from '@/views/center/Fans'
+import Follow from '@/views/center/Follow'
 
 import Edit from '@/views/Edit'
 
@@ -60,10 +61,6 @@ const routes = [
                 path: '/backend/new',
                 component: Backend,
             },
-            // {
-            //     path: '/backend/',
-            //     redirect: '/backend/hot',
-            // },
         ],
     },
     {
@@ -101,38 +98,40 @@ const routes = [
     },
     /* 个人主页 */
     {
-        path: '/center',
+        path: '/center:id',
         component: Center,
         meta: {
             required: true,
         },
         children: [
-            {
-                path: '/center/entry',
-                component: Entry,
-            },
-            {
-                path: '/center/like',
-                component: Like,
-            },
-            {
-                path: '/center/follow',
-                component: Follow,
-            },
-            {
-                path: '/center/fans',
-                component: Fans,
-            },
-            {
-                path: '/center/',
-                redirect: '/center/entry',
-            },
+            // 个人主页 博文
             {
                 path: '/center/:id',
-                redirect: '/center/entry',
+                component: Entry,
+            },
+            // 个人主页 赞过
+            {
+                path: '/center/:id/like',
+                component: Like,
+            },
+            // 个人主页 收藏
+            {
+                path: '/center/:id/collect',
+                component: Collect,
+            },
+            // 个人主页 粉丝
+            {
+                path: '/center/:id/fans',
+                component: Fans,
+            },
+            // 个人主页 关注
+            {
+                path: '/center/:id/follow',
+                component: Follow,
             },
         ],
     },
+    /* 博客编辑 */
     {
         path: '/edit',
         component: Edit,
@@ -147,10 +146,6 @@ const routes = [
         path: '/',
         redirect: '/rcommd',
     },
-    // {
-    //     path: '/:any',
-    //     redirect: '/rcommd',
-    // },
 ]
 
 const router = createRouter({

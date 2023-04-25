@@ -112,15 +112,15 @@
                 </div>
             </div>
             <div class="operate_list">
-                <div class="operate_item">
+                <div class="operate_item" @click="likeEntry">
                     <i class="iconfont icon-dianzan_kuai"></i>
                     <span class="like_count">123</span>
                 </div>
-                <div class="operate_item">
+                <div class="operate_item" @click="commentEntry">
                     <i class="iconfont icon-pinglun1"></i>
                     <span class="comment_count">23</span>
                 </div>
-                <div class="operate_item">
+                <div class="operate_item" @click="collectEntry">
                     <i class="iconfont icon-shoucangxiao"></i>
                     <span class="collect_count">7</span>
                 </div>
@@ -131,6 +131,7 @@
 
 <script>
 import { reactive, toRefs, onMounted, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
 import MarkdownIt from 'markdown-it'
@@ -140,6 +141,7 @@ import dateFormatter from '@/utils/dateFormatter'
 export default {
     setup() {
         const route = useRoute()
+        const store = useStore()
 
         const renderedMarkdown = ref('')
         const md = new MarkdownIt()
@@ -151,10 +153,25 @@ export default {
             user: {},
             /* 评论框的 placeholder */
             comment_placeholder: '善语结善缘，恶言伤人心',
+            /* 当前文章 id */
+            id: route.params.id,
+            /**
+             * 当前文章点赞状态
+             * false 没有点赞
+             * true  已经点赞
+             */
+            likeState: false,
+            /**
+             * 当前文章收藏状态
+             * false 没有点赞
+             * true  已经点赞
+             */
+            collectState: false,
         })
 
         onMounted(() => {
-            http.get(`/blogs/${route.params.id}`).then(res => {
+            // 获取当前文章详情
+            http.get(`/blogs/${data.id}`).then(res => {
                 if (res.data.code === 20041) {
                     data.entry = res.data.data
                     renderedMarkdown.value = md.render(data.entry.content)
@@ -167,8 +184,31 @@ export default {
                     alert('博客内容获取失败，请重试')
                 }
             })
+            // 查询当前用户是否点赞该文章
+            http.get(`/likes/${data.id}/${store.state.user.id}`).then(res => {
+                if (res.data.code === 20041) {
+                    data.likeState = true
+                } else if (res.data.code === 20040) {
+                    data.likeState = false
+                } else {
+                    alert('查询文章点赞状态失败')
+                }
+            })
+            // 查询当前用户是否收藏该文章
+            http.get(`/collects/${data.id}/${store.state.user.id}`).then(
+                res => {
+                    if (res.data.code === 20041) {
+                        data.collectState = true
+                    } else if (res.data.code === 20040) {
+                        data.collectState = false
+                    } else {
+                        alert('查询文章收藏状态失败')
+                    }
+                }
+            )
         })
 
+        /* computed 博客更新时间 */
         const dateTime = computed(() => {
             return item => {
                 return dateFormatter(item)
@@ -183,6 +223,73 @@ export default {
             data.comment_placeholder =
                 e.target.innerText.length > 0 ? '' : '善语结善缘，恶言伤人心'
         }
+        /* click 侧边栏点赞 */
+        const likeEntry = () => {
+            // 判断文章点赞状态
+            if (data.likeState) {
+                // 已经点赞 取消点赞
+                http.delete(`/likes/${data.id}/${store.state.user.id}`).then(
+                    res => {
+                        if (res.data.code === 20021) {
+                            // 修改文章的点赞状态
+                            data.likeState = false
+                            alert('取消点赞成功')
+                        } else {
+                            alert('取消点赞失败')
+                        }
+                    }
+                )
+            } else {
+                // 没有点赞 点赞文章
+                http.post('/likes', {
+                    blogId: data.id,
+                    userId: store.state.user.id,
+                }).then(res => {
+                    if (res.data.code === 20011) {
+                        // 修改文章的点赞状态
+                        data.likeState = true
+                        alert('点赞文章成功')
+                    } else {
+                        alert('点赞文章失败')
+                    }
+                })
+            }
+        }
+        /* click 侧边栏评论 */
+        const commentEntry = () => {
+            console.log('点击了评论，跳转到文章的评论区')
+        }
+        /* click 侧边栏收藏 */
+        const collectEntry = () => {
+            if (data.collectState) {
+                // 已经点赞 取消点赞
+                http.delete(`/collects/${data.id}/${store.state.user.id}`).then(
+                    res => {
+                        if (res.data.code === 20021) {
+                            // 修改文章的点赞状态
+                            data.collectState = false
+                            alert('取消收藏成功')
+                        } else {
+                            alert('取消收藏失败')
+                        }
+                    }
+                )
+            } else {
+                // 没有点赞 点赞文章
+                http.post('/collects', {
+                    blogId: data.id,
+                    userId: store.state.user.id,
+                }).then(res => {
+                    if (res.data.code === 20011) {
+                        // 修改文章的点赞状态
+                        data.collectState = true
+                        alert('收藏文章成功')
+                    } else {
+                        alert('收藏文章失败')
+                    }
+                })
+            }
+        }
         /* click 发表评论 */
         const submitComment = () => {
             console.log('点击了发表评论按钮')
@@ -194,6 +301,9 @@ export default {
             dateTime,
             comment,
             input,
+            likeEntry,
+            commentEntry,
+            collectEntry,
             submitComment,
         }
     },
@@ -470,6 +580,7 @@ $border_line: #e8e8ed;
             height: 50px;
             background-color: #f3f3f3;
             text-align: center;
+            cursor: pointer;
             border-radius: 50%;
 
             /* 右边作者相关 文章相关--操作项(点赞/评论/收藏-数量) */

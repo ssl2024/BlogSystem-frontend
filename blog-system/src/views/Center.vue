@@ -6,13 +6,21 @@
                     <img src="https://iph.href.lu/100x100" alt="用户头像" />
                 </div>
                 <div class="nickname">
-                    <span>{{ user.nickname }}</span>
-                    <div class="operate_btn">
-                        <div v-show="!isConcerned">
+                    <span>{{ userInfo.nickname }}</span>
+                    <div v-if="!isCurrentUser" class="operate_btn">
+                        <div
+                            v-show="!isFollowed"
+                            class="follow"
+                            @click="addFollow"
+                        >
                             <i class="iconfont icon-add"></i>
                             <span>关注</span>
                         </div>
-                        <div v-show="isConcerned">
+                        <div
+                            v-show="isFollowed"
+                            class="followed"
+                            @click="unFollow"
+                        >
                             <i class="iconfont icon-select"></i>
                             <span>已关注</span>
                         </div>
@@ -20,13 +28,13 @@
                 </div>
             </div>
             <div class="follow_block">
-                <div class="follow_item">
+                <div class="follow_item" @click="showFollowList">
                     <span>关注</span>
-                    <span>23</span>
+                    <span>{{ userInfo.followList.length }}</span>
                 </div>
                 <div class="follow_item" @click="showFansList">
                     <span>粉丝</span>
-                    <span>123</span>
+                    <span>{{ userInfo.fansList.length }}</span>
                 </div>
             </div>
             <div class="user_profile">
@@ -35,23 +43,19 @@
                 </div>
                 <div class="entry_count">
                     <i class="iconfont icon-dangan"></i>
-                    <span>共发表博文</span>
-                    <span>34</span>
+                    <span>共发表博文 {{ userInfo.entryCount }} 篇</span>
                 </div>
                 <div class="browse_count">
                     <i class="iconfont icon-yudu"></i>
-                    <span>博文被阅读</span>
-                    <span>1234</span>
+                    <span>博文被阅读 {{ userInfo.browsedCount }} 次</span>
                 </div>
                 <div class="like_count">
                     <i class="iconfont icon-dianzan1"></i>
-                    <span>博文被点赞</span>
-                    <span>256</span>
+                    <span>博文被点赞 {{ userInfo.likedCount }} 次</span>
                 </div>
                 <div class="follow_count">
                     <i class="iconfont icon-shoucang"></i>
-                    <span>博文被收藏</span>
-                    <span>18</span>
+                    <span>博文被收藏 {{ userInfo.likedCount }} 次</span>
                 </div>
             </div>
         </div>
@@ -59,7 +63,7 @@
             <div class="list_header">
                 <ul class="list_nav">
                     <router-link
-                        to="/center/entry"
+                        :to="`/center/${currentUserId}`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -72,7 +76,7 @@
                         </li>
                     </router-link>
                     <router-link
-                        to="/center/like"
+                        :to="`/center/${currentUserId}/like`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -85,7 +89,7 @@
                         </li>
                     </router-link>
                     <router-link
-                        to="/center/follow"
+                        :to="`/center/${currentUserId}/collect`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -98,7 +102,7 @@
                         </li>
                     </router-link>
                     <router-link
-                        to="/center/fans"
+                        :to="`/center/${currentUserId}/fans`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -108,6 +112,19 @@
                             :class="isActive ? 'current' : ''"
                         >
                             粉丝
+                        </li>
+                    </router-link>
+                    <router-link
+                        :to="`/center/${currentUserId}/follow`"
+                        custom
+                        v-slot="{ navigate, isActive }"
+                    >
+                        <li
+                            class="nav_item"
+                            @click="navigate"
+                            :class="isActive ? 'current' : ''"
+                        >
+                            关注
                         </li>
                     </router-link>
                 </ul>
@@ -127,43 +144,140 @@
 
 <script>
 import { onMounted, reactive, toRefs } from 'vue'
-import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
 
-// import http from '@/utils/http'
+import http from '@/utils/http'
 export default {
     setup() {
+        const store = useStore()
+        const route = useRoute()
         const router = useRouter()
-        // const route = useRoute()
 
         const data = reactive({
             /**
-             * 是否已经关注
-             * false 没有关注
-             * true  已经关注
+             * 是否是当前用户
+             * true  是当前用户(不展示关注/关注)
+             * false 不是当前用户(展示关注/已关注)
              */
-            isConcerned: false,
-            /* 用户信息 */
-            user: {
+            isCurrentUser: false,
+            /**
+             * 当前用户对于访问用户的关注状态
+             * true  已经关注
+             * false 没有关注
+             */
+            isFollowed: false,
+            /* 当前页面展示的用户id */
+            currentUserId: route.params.id,
+            /* 当前页面展示的用户信息 */
+            userInfo: {
+                // 用户昵称
                 nickname: '',
+                // 用户头像
                 avatar: '',
+                // 用户的粉丝数量
+                fansCount: 0,
+                // 用户的关注数量
+                followCount: 0,
+                // 用户发表的博文数量
+                entryCount: 0,
+                // 博文被阅读的次数
+                browsedCount: 0,
+                // 博文被点赞的次数
+                likedCount: 0,
+                // 博文被收藏的次数
+                collectedCount: 0,
+                // 粉丝列表
+                fansList: [],
+                // 关注列表
+                followList: [],
             },
         })
+        onMounted(() => {
+            // 判断是不是查看当前用户的主页
+            if (store.state.user.id == data.currentUserId) {
+                // 是当前用户的主页
+                data.isCurrentUser = true
+            }
+            // 不是当前用户的主页
+            // 获取当前用户是否关注访问用户
+            http.get(
+                `/follows/state/${data.currentUserId}/${store.state.user.id}`
+            ).then(res => {
+                if (res.data.code === 20041) {
+                    data.isFollowed = res.data.data
+                }
+            })
+            // 获取用户的昵称和头像
+            http.get(`/users/${data.currentUserId}`).then(res => {
+                if (res.data.code === 20041) {
+                    data.userInfo.nickname = res.data.data.nickname
+                    data.userInfo.avatar = res.data.data.avatar
+                }
+            })
+            // 获取用户的粉丝列表
+            http.get(`/follows/fans/${data.currentUserId}`).then(res => {
+                if (res.data.code === 20041) {
+                    data.userInfo.fansList = res.data.data
+                }
+            })
+            // 获取用户的关注列表
+            http.get(`/follows/follow/${data.currentUserId}`).then(res => {
+                if (res.data.code === 20041) {
+                    data.userInfo.followList = res.data.data
+                }
+            })
+            // 获取用户的个人成就
+            http.get(`/blogs/count/${data.currentUserId}`).then(res => {
+                if (res.data.code === 20041) {
+                    data.userInfo.entryCount = res.data.data.entryCount
+                    data.userInfo.browsedCount = res.data.data.browsedCount
+                    data.userInfo.likedCount = res.data.data.likedCount
+                    data.userInfo.collectedCount = res.data.data.collectedCount
+                }
+            })
+        })
 
-        onMounted(() => {})
-
-        /* click 个人信息 */
-        const toUserInfo = id => {
-            router.push(`/userInfo/${id}`)
+        /* click 关注 */
+        const addFollow = () => {
+            // 添加关注
+            http.post(`/follows`, {
+                followedUserId: data.currentUserId,
+                followUserId: store.state.user.id,
+            }).then(res => {
+                if (res.data.code === 20011) {
+                    data.isFollowed = true
+                } else {
+                    alert('关注用户失败')
+                }
+            })
+        }
+        /* click 已关注 */
+        const unFollow = () => {
+            http.delete(
+                `/follows/${data.currentUserId}/${store.state.user.id}`
+            ).then(res => {
+                if (res.data.code === 20021) {
+                    data.isFollowed = false
+                } else {
+                    alert('取消关注失败')
+                }
+            })
         }
         /* click 粉丝 */
         const showFansList = () => {
-            router.push('/center/fans')
+            router.push(`/center/${data.currentUserId}/fans`)
         }
-
+        /* click 关注 */
+        const showFollowList = () => {
+            router.push(`/center/${data.currentUserId}/follow`)
+        }
         return {
             ...toRefs(data),
-            toUserInfo,
+            addFollow,
+            unFollow,
             showFansList,
+            showFollowList,
         }
     },
 }
@@ -230,14 +344,22 @@ $bg_color: #fff;
 
         /* 左边个人信息 用户信息--关注按钮 */
         .operate_btn {
-            display: flex;
             height: 30px;
             margin-top: 10px;
-            background-color: #1e80ff;
-            color: $bg_color;
             font-size: 15px;
+            text-align: center;
             line-height: 28px;
-            justify-content: space-around;
+            cursor: pointer;
+            /* 左边个人信息 用户信息--关注按钮(关注) */
+            .follow {
+                background-color: #1e80ff;
+                color: $bg_color;
+            }
+            /* 左边个人信息 用户信息--关注按钮(已关注) */
+            .followed {
+                background-color: #f2f3f5;
+                color: #8a919f;
+            }
         }
     }
 
@@ -253,10 +375,15 @@ $bg_color: #fff;
             display: flex;
             font-size: 15px;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
             flex-direction: column;
             &:first-child {
                 padding-right: 45px;
                 border-right: 1px solid $border_line;
+            }
+            &:hover {
+                color: #1e80ff;
             }
         }
     }
@@ -292,8 +419,7 @@ $bg_color: #fff;
             }
 
             /* 个人成就下面数据中间的字体 */
-            span:nth-child(2) {
-                width: 80px;
+            span:last-child {
                 margin: 0 10px 0 5px;
             }
         }
