@@ -136,7 +136,7 @@
                 </div>
             </div>
             <ul class="list_entry">
-                <router-view></router-view>
+                <router-view :pageSize="sidePageSize"></router-view>
             </ul>
         </div>
     </div>
@@ -169,6 +169,8 @@ export default {
             isFollowed: false,
             /* 当前页面展示的用户id */
             currentUserId: route.params.id,
+            /* 侧边栏每页条数 */
+            sidePageSize: 5,
             /* 当前页面展示的用户信息 */
             userInfo: {
                 // 用户昵称

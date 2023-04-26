@@ -79,7 +79,6 @@ export default {
         }
         /* click 博客上的用户名 */
         const toUserCenter = id => {
-            console.log('执行了center')
             router.push(`/center/${id}`)
         }
         return {

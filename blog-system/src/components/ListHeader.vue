@@ -11,12 +11,14 @@
             </li>
         </ul>
         <div class="list_header_select">
+            <!-- 列表当前选项 -->
             <div class="item_current" @click="showDropdownSelect">
                 <span>
                     {{ currentItem }}
                 </span>
                 <i class="iconfont icon-xiangxiajiantou"></i>
             </div>
+            <!-- 列表下拉选项 -->
             <ul
                 class="dropdown_select"
                 v-show="ddsShow"
@@ -36,11 +38,17 @@ import { onMounted, reactive, toRefs } from 'vue'
 
 import http from '@/utils/http'
 export default {
-    props: ['type'],
+    props: {
+        classify: {
+            type: Number,
+            default: -1,
+        },
+    },
     setup(props, { emit }) {
         const data = reactive({
             /* 当前选中项 */
             currentItem: '全部',
+            /* 类型列表 */
             typeList: [],
             /**
              * 是否显示下拉菜单
@@ -51,13 +59,30 @@ export default {
         })
 
         onMounted(() => {
-            // 获取类型列表
-            http.get(`/types/group/${props.type}`).then(res => {
+            getTypeList(props.classify).then(res => {
                 if (res.data.code === 20041) {
                     data.typeList = res.data.data
+                    // 对返回的数据进行处理，将查询到的所有类型添加到选择的类型列表中
+                    let typeList = []
+                    data.typeList.forEach(item => {
+                        typeList.push(item.type)
+                    })
+                    // 调用父组件中的方法并传递类型列表
+                    emit('changeType', typeList)
                 }
             })
         })
+
+        /* http 获取类型列表 */
+        const getTypeList = classify => {
+            // 判断是否传递 classify
+            if (classify === -1) {
+                // 没有传递 classify 获取所有类型列表
+                return http.get(`/types`)
+            }
+            // 传递了 classify 传递指定的类型列表
+            return http.get(`/types/list/${classify}`)
+        }
 
         /* click 右边选项 */
         const showDropdownSelect = () => {
@@ -65,7 +90,21 @@ export default {
         }
         /* click 博客列表中下拉菜单项 */
         const changeCurrentItem = e => {
-            emit('changeType', e.target.innerText)
+            // 获取当前选择的文本
+            const selectType = e.target.innerText
+            // 定义选择的类型列表
+            let typeList = []
+            if (selectType === '全部') {
+                // 选项项为 全部，将查询到的所有类型添加到选择的类型列表中
+                data.typeList.forEach(item => {
+                    typeList.push(item.type)
+                })
+            } else {
+                // 选择项为 某一选项
+                typeList.push(selectType)
+            }
+            // 调用父组件中的方法并传递选择的类型列表
+            emit('changeType', typeList)
             data.currentItem = e.target.innerText
             data.ddsShow = false
         }

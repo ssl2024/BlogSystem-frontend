@@ -1,97 +1,98 @@
 <template>
-    <div>
-        <div class="container">
-            <div class="list_container">
-                <list-header type="2" @changeType="changeType"></list-header>
-                <div class="list_wrap">
-                    <blog
-                        v-for="item in entryList"
-                        :key="item.id"
-                        :entry="item"
-                    ></blog>
-                </div>
+    <div class="container">
+        <div class="list_container">
+            <list-header
+                :classify="classify"
+                @changeType="changeType"
+            ></list-header>
+            <div class="list_wrap">
+                <blog
+                    v-for="item in entryList"
+                    :key="item.id"
+                    :entry="item"
+                ></blog>
             </div>
-            <div class="aside">
-                <div class="hot_list">
-                    <div class="hot_list_header">热度榜单</div>
-                    <div class="hot_list_fields">
-                        <span>排名</span>
-                        <span>用户</span>
-                        <span>热度</span>
-                    </div>
-                    <ul class="hot_list_data">
-                        <li class="hot_item">
-                            <div class="hot_sort">1</div>
-                            <div class="user_info">
-                                <span class="avatar">
-                                    <img
-                                        src="https://iph.href.lu/40x40"
-                                        alt="热度榜单用户头像"
-                                    />
-                                </span>
-                                <span>石松林_前端基础</span>
-                            </div>
-                            <div class="hot_score">789</div>
-                        </li>
-                        <li class="hot_item">
-                            <div class="hot_sort">2</div>
-                            <div class="user_info">
-                                <span class="avatar">
-                                    <img
-                                        src="https://iph.href.lu/40x40"
-                                        alt="热度榜单用户头像"
-                                    />
-                                </span>
-                                <span>石松林_前端框架</span>
-                            </div>
-                            <div class="hot_score">600</div>
-                        </li>
-                        <li class="hot_item">
-                            <div class="hot_sort">3</div>
-                            <div class="user_info">
-                                <span class="avatar">
-                                    <img
-                                        src="https://iph.href.lu/40x40"
-                                        alt="热度榜单用户头像"
-                                    />
-                                </span>
-                                <span>石松林_后端基础</span>
-                            </div>
-                            <div class="hot_score">499</div>
-                        </li>
-                        <li class="hot_item">
-                            <div class="hot_sort">4</div>
-                            <div class="user_info">
+        </div>
+        <div class="aside">
+            <div class="hot_list">
+                <div class="hot_list_header">热度榜单</div>
+                <div class="hot_list_fields">
+                    <span>排名</span>
+                    <span>用户</span>
+                    <span>热度</span>
+                </div>
+                <ul class="hot_list_data">
+                    <li class="hot_item">
+                        <div class="hot_sort">1</div>
+                        <div class="user_info">
+                            <span class="avatar">
                                 <img
                                     src="https://iph.href.lu/40x40"
                                     alt="热度榜单用户头像"
                                 />
-                                <span>石松林_后端框架</span>
-                            </div>
-                            <div class="hot_score">456</div>
-                        </li>
-                        <li class="hot_item">
-                            <div class="hot_sort">5</div>
-                            <div class="user_info">
-                                <span class="avatar">
-                                    <img
-                                        src="https://iph.href.lu/40x40"
-                                        alt="热度榜单用户头像"
-                                    />
-                                </span>
-                                <span>这真是一个难做的项目</span>
-                            </div>
-                            <div class="hot_score">388</div>
-                        </li>
-                    </ul>
-                </div>
+                            </span>
+                            <span>石松林_前端基础</span>
+                        </div>
+                        <div class="hot_score">789</div>
+                    </li>
+                    <li class="hot_item">
+                        <div class="hot_sort">2</div>
+                        <div class="user_info">
+                            <span class="avatar">
+                                <img
+                                    src="https://iph.href.lu/40x40"
+                                    alt="热度榜单用户头像"
+                                />
+                            </span>
+                            <span>石松林_前端框架</span>
+                        </div>
+                        <div class="hot_score">600</div>
+                    </li>
+                    <li class="hot_item">
+                        <div class="hot_sort">3</div>
+                        <div class="user_info">
+                            <span class="avatar">
+                                <img
+                                    src="https://iph.href.lu/40x40"
+                                    alt="热度榜单用户头像"
+                                />
+                            </span>
+                            <span>石松林_后端基础</span>
+                        </div>
+                        <div class="hot_score">499</div>
+                    </li>
+                    <li class="hot_item">
+                        <div class="hot_sort">4</div>
+                        <div class="user_info">
+                            <img
+                                src="https://iph.href.lu/40x40"
+                                alt="热度榜单用户头像"
+                            />
+                            <span>石松林_后端框架</span>
+                        </div>
+                        <div class="hot_score">456</div>
+                    </li>
+                    <li class="hot_item">
+                        <div class="hot_sort">5</div>
+                        <div class="user_info">
+                            <span class="avatar">
+                                <img
+                                    src="https://iph.href.lu/40x40"
+                                    alt="热度榜单用户头像"
+                                />
+                            </span>
+                            <span>这真是一个难做的项目</span>
+                        </div>
+                        <div class="hot_score">388</div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from 'vue'
+import { reactive, toRefs } from 'vue'
 
 import http from '@/utils/http'
 
@@ -110,34 +111,28 @@ export default {
             currentPage: 1,
             /* 当前页博客数量 */
             pageSize: 10,
-            blogType: '后端',
+            /* 后端在数据库中的分组号 */
+            classify: 2,
         })
 
-        onMounted(() => {
-            init(data.blogType)
-        })
-
-        /* 获取指定类型的博客 */
-        const init = type => {
-            http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
-                type: type,
-            }).then(res => {
-                if (res.data.code === 20041) {
-                    data.entryList = res.data.data.records
-                }
+        /* http 根据博客类型获取博客列表 */
+        const getBlogListByType = type => {
+            return http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
+                type,
             })
         }
 
         /* change 博客类型 */
         const changeType = type => {
-            // 如果当前选项为全部则修改 type 为 前端
-            type = type === '全部' ? '后端' : type
-            init(type)
+            getBlogListByType(type).then(res => {
+                if (res.data.code === 20041) {
+                    data.entryList = res.data.data.records
+                }
+            })
         }
-
         return {
             ...toRefs(data),
-            init,
+            getBlogListByType,
             changeType,
         }
     },

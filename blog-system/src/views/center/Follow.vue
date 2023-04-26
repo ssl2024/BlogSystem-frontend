@@ -1,73 +1,86 @@
 <template>
-    <div class="fans_list">
-        <div class="fans_item">
-            <div class="fans_info">
-                <div class="fans_avatar">
-                    <img src="https://iph.href.lu/60x60" alt="头像" />
-                </div>
-                <div class="fans_name">
-                    <span>石松林_后端基础</span>
-                </div>
-            </div>
-            <div class="fans_status">
-                <span>已关注</span>
-            </div>
-        </div>
+    <div class="follow_list">
+        <user-item
+            v-for="item in fansList"
+            :key="item.id"
+            :user="item"
+        ></user-item>
     </div>
 </template>
 
 <script>
-export default {}
+import { onMounted, reactive, toRefs } from 'vue'
+import { useRoute } from 'vue-router'
+
+import http from '@/utils/http'
+
+import userItem from '@/components/center/UserItem'
+export default {
+    components: {
+        userItem,
+    },
+    props: {
+        pageSize: {
+            type: Number,
+            default: 5,
+        },
+    },
+    setup(props) {
+        const route = useRoute()
+
+        const data = reactive({
+            /* 关注列表 */
+            fansList: [],
+            /* 当前页 */
+            currentPage: 1,
+            /* 每页显示条数 */
+            pageSize: props.pageSize,
+        })
+        onMounted(() => {
+            // 根据用户id获取关注列表
+            getFansIdList().then(res => {
+                // 对返回数据进行处理
+                if (res.data.code === 20041) {
+                    // 获取用户关注的id列表
+                    let followIdList = []
+                    res.data.data.forEach(item => {
+                        followIdList.push(item.followedUserId)
+                    })
+                    // 根据返回的关注id列表获取关注用户信息
+                    return getUserList(followIdList).then(res => {
+                        if (res.data.code === 20041) {
+                            data.fansList = res.data.data.records
+                        }
+                    })
+                }
+            })
+        })
+
+        /* http 根据用户id获取关注id列表 */
+        const getFansIdList = () => {
+            return http.get(`/follows/follow/${route.params.id}`)
+        }
+
+        /* http 根据用户id列表获取用户 */
+        const getUserList = ids => {
+            return http.post(`/users/${data.currentPage}/${data.pageSize}`, {
+                id: ids,
+            })
+        }
+
+        return {
+            ...toRefs(data),
+            getFansIdList,
+            getUserList,
+        }
+    },
+}
 </script>
 
 <style lang="scss" scoped="scoped">
-/* 边框分隔线颜色 */
-$border_line: #e8e8ed;
-
-/* 背景颜色 */
-$bg_color: #fff;
-
-/* 个人主页页面--粉丝列表
+/* 个人主页页面--关注列表
 ----------------------------------------------------------------*/
-.fans_list {
-    background-color: $bg_color;
-    height: 300px;
-
-    /* 粉丝列表 列表项 */
-    .fans_item {
-        display: flex;
-        height: 80px;
-        padding: 5px 25px;
-        border-top: 1px solid $border_line;
-        border-bottom: 1px solid $border_line;
-        justify-content: space-between;
-        align-items: center;
-
-        /* 粉丝列表 列表项--粉丝信息 */
-        .fans_info {
-            display: flex;
-            font-size: 16px;
-            align-items: center;
-
-            /* 粉丝列表 列表项--粉丝信息(头像) */
-            img {
-                width: 60px;
-                height: 60px;
-                margin-right: 10px;
-                border-radius: 50%;
-            }
-        }
-
-        /* 粉丝列表 列表项--粉丝状态 */
-        .fans_status {
-            width: 90px;
-            height: 30px;
-            background-color: #92c452;
-            color: #fff;
-            text-align: center;
-            line-height: 30px;
-            border-radius: 5px;
-        }
-    }
+.follow_list {
+    background-color: #fff;
 }
 </style>
