@@ -103,14 +103,20 @@ export default {
         blog,
         listHeader,
     },
-    setup() {
+    props: {
+        pageSize: {
+            type: Number,
+            required: true,
+        },
+    },
+    setup(props) {
         const data = reactive({
             /* 文章列表 */
             entryList: [],
             /* 当前页 */
             currentPage: 1,
             /* 当前页博客数量 */
-            pageSize: 10,
+            pageSize: props.pageSize,
             /* 前端类型博客在数据库中的分组号 */
             classify: 1,
         })

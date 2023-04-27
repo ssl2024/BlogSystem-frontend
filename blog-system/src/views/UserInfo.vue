@@ -1,3 +1,10 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-12 11:01:27
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-04-27 22:04:54
+ * @Description: 
+-->
 <template>
     <div class="setting_view">
         <ul class="menu_list">

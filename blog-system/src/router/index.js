@@ -98,7 +98,7 @@ const routes = [
     },
     /* 个人主页 */
     {
-        path: '/center:id',
+        path: '/center',
         component: Center,
         meta: {
             required: true,
@@ -158,7 +158,7 @@ router.beforeEach((to, from, next) => {
     // 判断要访问的路径是否需要进行验证
     if (to.meta.required) {
         // 查看本地是否有 token
-        if (localStorage.getItem('token')) {
+        if (sessionStorage.getItem('vuex')) {
             next()
         } else {
             next({

@@ -47,7 +47,7 @@ import md5 from 'md5'
 
 import http from '@/utils/http'
 export default {
-    setup() {
+    setup(_, { emit }) {
         const store = useStore()
         const router = useRouter()
         const route = useRoute()
@@ -85,6 +85,8 @@ export default {
                     alert('登录成功')
                     // 将 token 存入 vuex
                     store.commit('updateToken', res.data.data.token)
+                    // 更新登录状态
+                    store.commit('updateLoginState', true)
                     // 将 当前用户信息 存入 vuex
                     store.commit('updateUser', res.data.data.user)
                     // 跳转页面
@@ -104,11 +106,11 @@ export default {
         }
         /* click 注册账号 */
         const register = () => {
-            store.commit('changeLoginState', 2)
+            emit('changeLoginState', 2)
         }
         /* click 忘记密码 */
         const forgetPwd = () => {
-            store.commit('changeLoginState', 3)
+            emit('changeLoginState', 3)
         }
         /* click 密码小眼睛 */
         const changePwdState = () => {

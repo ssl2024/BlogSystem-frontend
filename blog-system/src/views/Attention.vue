@@ -1,3 +1,10 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-09 23:53:57
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-04-27 22:57:28
+ * @Description: 关注页面
+-->
 <template>
     <div>
         <div class="container">
@@ -24,7 +31,13 @@ export default {
     components: {
         blog,
     },
-    setup() {
+    props: {
+        pageSize: {
+            type: Number,
+            required: true,
+        },
+    },
+    setup(props) {
         const store = useStore()
 
         const data = reactive({
@@ -33,7 +46,7 @@ export default {
             /* 当前页 */
             currentPage: 1,
             /* 当前页博客数量 */
-            pageSize: 10,
+            pageSize: props.pageSize,
         })
 
         onMounted(() => {

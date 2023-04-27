@@ -2,19 +2,27 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-13 00:46:55
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-22 17:02:32
- * @Description: 
+ * @LastEditTime: 2023-04-27 22:56:35
+ * @Description: 登录页面
 -->
 <template>
-    <login v-show="store.state.loginState === 1"></login>
-    <register v-show="store.state.loginState === 2"></register>
-    <forget v-show="store.state.loginState === 3"></forget>
+    <login
+        v-show="loginState === 1"
+        @changeLoginState="changeLoginState"
+    ></login>
+    <register
+        v-show="loginState === 2"
+        @changeLoginState="changeLoginState"
+    ></register>
+    <forget
+        v-show="loginState === 3"
+        @changeLoginState="changeLoginState"
+    ></forget>
     <message-tips></message-tips>
 </template>
 
 <script>
 import { reactive, toRefs } from 'vue'
-import { useStore } from 'vuex'
 
 import messageTips from '@/components/login/MessageTips'
 
@@ -29,13 +37,23 @@ export default {
         messageTips,
     },
     setup() {
-        const store = useStore()
         const data = reactive({
+            /**
+             * 登录状态
+             * 1 登录
+             * 2 注册
+             * 3 忘记密码
+             */
             loginState: 1,
         })
+
+        /* customEvent 修改登录状态 */
+        const changeLoginState = state => {
+            data.loginState = state
+        }
         return {
-            store,
             ...toRefs(data),
+            changeLoginState,
         }
     },
 }

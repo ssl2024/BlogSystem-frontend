@@ -98,7 +98,6 @@
 
 <script>
 import { reactive, toRefs, ref } from 'vue'
-import { useStore } from 'vuex'
 
 import http from '@/utils/http'
 import md5 from 'md5'
@@ -108,9 +107,7 @@ export default {
     components: {
         captcha,
     },
-    setup() {
-        const store = useStore()
-
+    setup(_, { emit }) {
         const data = reactive({
             /* 账号框 */
             account: '',
@@ -250,7 +247,7 @@ export default {
         }
         /* click 返回登录 */
         const goBackLogin = () => {
-            store.commit('changeLoginState', 1)
+            emit('changeLoginState', 1)
         }
         /* click 密码框小眼睛 */
         const changePwdState = () => {

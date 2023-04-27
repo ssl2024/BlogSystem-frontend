@@ -18,7 +18,6 @@
 
 <script>
 import { reactive, toRefs } from 'vue'
-import { useStore } from 'vuex'
 import selectMethod from '@/views/login/forget/SelectMethod'
 import resetPassword from '@/views/login/forget/ResetPassword'
 
@@ -27,8 +26,7 @@ export default {
         selectMethod,
         resetPassword,
     },
-    setup() {
-        const store = useStore()
+    setup(_, { emit }) {
         const data = reactive({
             /**
              * 验证方式
@@ -46,7 +44,7 @@ export default {
 
         /* click 返回登录 */
         const goBackLogin = () => {
-            store.commit('changeLoginState', 1)
+            emit('changeLoginState', 1)
         }
         /* click 验证方式中的 向下箭头 */
         const changeFindMethod = newState => {

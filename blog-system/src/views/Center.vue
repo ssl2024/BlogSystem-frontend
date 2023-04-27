@@ -63,7 +63,7 @@
             <div class="list_header">
                 <ul class="list_nav">
                     <router-link
-                        :to="`/center/${currentUserId}`"
+                        :to="`/center/${currentShowUserId}`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -76,7 +76,7 @@
                         </li>
                     </router-link>
                     <router-link
-                        :to="`/center/${currentUserId}/like`"
+                        :to="`/center/${currentShowUserId}/like`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -89,7 +89,7 @@
                         </li>
                     </router-link>
                     <router-link
-                        :to="`/center/${currentUserId}/collect`"
+                        :to="`/center/${currentShowUserId}/collect`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -102,7 +102,7 @@
                         </li>
                     </router-link>
                     <router-link
-                        :to="`/center/${currentUserId}/fans`"
+                        :to="`/center/${currentShowUserId}/fans`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -115,7 +115,7 @@
                         </li>
                     </router-link>
                     <router-link
-                        :to="`/center/${currentUserId}/follow`"
+                        :to="`/center/${currentShowUserId}/follow`"
                         custom
                         v-slot="{ navigate, isActive }"
                     >
@@ -143,7 +143,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from 'vue'
+import { onMounted, reactive, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -167,10 +167,10 @@ export default {
              * false 没有关注
              */
             isFollowed: false,
-            /* 当前页面展示的用户id */
-            currentUserId: route.params.id,
             /* 侧边栏每页条数 */
             sidePageSize: 5,
+            /* 当前页面展示的用户id */
+            currentShowUserId: route.params.id,
             /* 当前页面展示的用户信息 */
             userInfo: {
                 // 用户昵称
@@ -195,56 +195,72 @@ export default {
                 followList: [],
             },
         })
+
         onMounted(() => {
+            init(route.params.id)
+        })
+
+        watch(
+            () => route.params.id,
+            () => {
+                // 在路径参数发生改变的时候重新获取页面数据
+                data.currentShowUserId = route.params.id
+                init(route.params.id)
+            }
+        )
+
+        /* init 页面数据初始化 */
+        const init = userId => {
             // 判断是不是查看当前用户的主页
-            if (store.state.user.id == data.currentUserId) {
+            if (store.state.user.id == userId) {
                 // 是当前用户的主页
                 data.isCurrentUser = true
+            } else {
+                // 不是当前用户的主页
+                data.isCurrentUser = false
             }
-            // 不是当前用户的主页
-            // 获取当前用户是否关注访问用户
-            http.get(
-                `/follows/state/${data.currentUserId}/${store.state.user.id}`
-            ).then(res => {
-                if (res.data.code === 20041) {
-                    data.isFollowed = res.data.data
-                }
-            })
-            // 获取用户的昵称和头像
-            http.get(`/users/${data.currentUserId}`).then(res => {
-                if (res.data.code === 20041) {
-                    data.userInfo.nickname = res.data.data.nickname
-                    data.userInfo.avatar = res.data.data.avatar
-                }
-            })
-            // 获取用户的粉丝列表
-            http.get(`/follows/fans/${data.currentUserId}`).then(res => {
-                if (res.data.code === 20041) {
-                    data.userInfo.fansList = res.data.data
-                }
-            })
-            // 获取用户的关注列表
-            http.get(`/follows/follow/${data.currentUserId}`).then(res => {
-                if (res.data.code === 20041) {
-                    data.userInfo.followList = res.data.data
-                }
-            })
-            // 获取用户的个人成就
-            http.get(`/blogs/count/${data.currentUserId}`).then(res => {
-                if (res.data.code === 20041) {
-                    data.userInfo.entryCount = res.data.data.entryCount
-                    data.userInfo.browsedCount = res.data.data.browsedCount
-                    data.userInfo.likedCount = res.data.data.likedCount
-                    data.userInfo.collectedCount = res.data.data.collectedCount
-                }
-            })
-        })
+            // 获取当前展示用户的相关信息
+            http.all([
+                getFollowState(userId),
+                getUserInfo(userId),
+                getFansList(userId),
+                getFollowList(userId),
+                getUserAchievement(userId),
+            ])
+                .then(res => {
+                    // 赋值操作
+                    if (res[0].data.code === 20041) {
+                        data.isFollowed = res[0].data.data
+                    }
+                    if (res[1].data.code === 20041) {
+                        data.userInfo.nickname = res[1].data.data.nickname
+                        data.userInfo.avatar = res[1].data.data.avatar
+                    }
+                    if (res[2].data.code === 20041) {
+                        data.userInfo.fansList = res[2].data.data
+                    }
+                    if (res[3].data.code === 20041) {
+                        data.userInfo.followList = res[3].data.data
+                    }
+                    if (res[4].data.code === 20041) {
+                        data.userInfo.entryCount = res[4].data.data.entryCount
+                        data.userInfo.browsedCount =
+                            res[4].data.data.browsedCount
+                        data.userInfo.likedCount = res[4].data.data.likedCount
+                        data.userInfo.collectedCount =
+                            res[4].data.data.collectedCount
+                    }
+                })
+                .catch(err => {
+                    alert(err)
+                })
+        }
 
         /* click 关注 */
         const addFollow = () => {
             // 添加关注
             http.post(`/follows`, {
-                followedUserId: data.currentUserId,
+                followedUserId: data.currentShowUserId,
                 followUserId: store.state.user.id,
             }).then(res => {
                 if (res.data.code === 20011) {
@@ -257,7 +273,7 @@ export default {
         /* click 已关注 */
         const unFollow = () => {
             http.delete(
-                `/follows/${data.currentUserId}/${store.state.user.id}`
+                `/follows/${data.currentShowUserId}/${store.state.user.id}`
             ).then(res => {
                 if (res.data.code === 20021) {
                     data.isFollowed = false
@@ -266,13 +282,34 @@ export default {
                 }
             })
         }
-        /* click 粉丝 */
+        /* click 粉丝数 */
         const showFansList = () => {
-            router.push(`/center/${data.currentUserId}/fans`)
+            router.push(`/center/${data.currentShowUserId}/fans`)
         }
-        /* click 关注 */
+        /* click 关注数 */
         const showFollowList = () => {
-            router.push(`/center/${data.currentUserId}/follow`)
+            router.push(`/center/${data.currentShowUserId}/follow`)
+        }
+
+        /* http 获取当前登录用户是否关注展示用户 */
+        const getFollowState = userId => {
+            return http.get(`/follows/state/${userId}/${store.state.user.id}`)
+        }
+        /* http 获取当前展示用户的昵称和头像 */
+        const getUserInfo = userId => {
+            return http.get(`/users/${userId}`)
+        }
+        /* http 获取当前展示用户的粉丝列表 */
+        const getFansList = userId => {
+            return http.get(`/follows/fans/${userId}`)
+        }
+        /* http 获取当前展示用户的关注列表 */
+        const getFollowList = userId => {
+            return http.get(`/follows/follow/${userId}`)
+        }
+        /* http 获取当前展示用户的个人成就 */
+        const getUserAchievement = userId => {
+            return http.get(`/blogs/count/${userId}`)
         }
         return {
             ...toRefs(data),
@@ -280,6 +317,11 @@ export default {
             unFollow,
             showFansList,
             showFollowList,
+            getFollowState,
+            getUserInfo,
+            getFansList,
+            getFollowList,
+            getUserAchievement,
         }
     },
 }

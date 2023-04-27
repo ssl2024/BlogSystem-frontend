@@ -40,34 +40,34 @@
                     <img src="https://iph.href.lu/60x60" alt="用户头像" />
                 </div>
                 <div class="user_nickname">
-                    <span>石松林_前端基础</span>
+                    <span>{{ user.nickname }}</span>
                 </div>
             </div>
             <div class="profile_mid">
-                <div class="fans" @click="toFansList">
+                <div class="fans_btn" @click="toFansList">
                     <div>粉丝</div>
                     <div>23</div>
                 </div>
-                <div class="follow">
+                <div class="follow_btn">
                     <div>关注</div>
                     <div>23</div>
                 </div>
-                <div class="like">
+                <!-- <div class="like">
                     <div>获赞</div>
                     <div>23</div>
-                </div>
+                </div> -->
             </div>
             <div class="profile_bottom">
                 <ul class="profile_border_bottom">
-                    <li @click="toUserPage">
+                    <li @click="toUserPage(user.id)">
                         <i class="iconfont icon-shouye1"></i>
                         <span>个人主页</span>
                     </li>
-                    <li @click="toUserInfo(234)">
+                    <li @click="toUserInfo(user.id)">
                         <i class="iconfont icon-xingming"></i>
                         <span>个人信息</span>
                     </li>
-                    <li @click="toBlogManage">
+                    <li @click="toBlogManage(user.id)">
                         <i class="iconfont icon-xiangmuguanli"></i>
                         <span>博客管理</span>
                     </li>
@@ -84,12 +84,14 @@
 
 <script>
 import { onMounted, reactive, toRefs } from 'vue'
-import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
+// import http from '@/utils/http'
 export default {
     setup() {
-        const router = useRouter()
         const store = useStore()
+        const router = useRouter()
 
         const data = reactive({
             /**
@@ -101,19 +103,22 @@ export default {
             user: store.state.user,
         })
 
-        onMounted(() => {})
+        onMounted(() => {
+            // http.get()
+        })
 
         /* click 右上角用户头像 */
         const toggleProfile = () => {
+            console.log(data.user.id)
             data.showProfile = !data.showProfile
         }
         /* click 个人主页 */
-        const toUserPage = () => {
-            router.push(`/center/${store.state.user.id}`)
+        const toUserPage = userId => {
+            router.push(`/center/${userId}`)
         }
         /* click 个人信息 */
-        const toUserInfo = id => {
-            router.push(`/userInfo/${id}`)
+        const toUserInfo = userId => {
+            router.push(`/userInfo/${userId}`)
         }
         /* click 博客管理 */
         const toBlogManage = () => {
@@ -125,10 +130,9 @@ export default {
         }
         /* click 注销登录 */
         const logout = () => {
-            // 删除本地 token
-            localStorage.removeItem('token')
+            // 删除本地 vuex 持久化数据
+            sessionStorage.removeItem('vuex')
             // 跳转到 login 页面
-            store.commit('changeLoginState', 1)
             router.push('/login')
         }
         return {
@@ -286,11 +290,23 @@ $bg_color: #fff;
         .profile_mid {
             display: flex;
             height: 45px;
-            padding: 8px 8px;
+            padding: 8px 0;
             border-top: 1px solid $border_line;
-            font-size: 13px;
+            font-size: 15px;
             text-align: center;
             justify-content: space-around;
+
+            /* 导航栏 用户简介--中间(列表项) */
+            [class$='btn'] {
+                flex: 1;
+                cursor: pointer;
+                &:hover {
+                    color: skyblue;
+                }
+                &:first-child {
+                    border-right: 1px solid $border_line;
+                }
+            }
         }
 
         /* 导航栏 用户简介--底部 */

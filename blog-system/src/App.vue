@@ -1,18 +1,37 @@
 <template>
-    <navbar></navbar>
-    <router-view></router-view>
-    <footers></footers>
+    <navbar v-if="isLogin"></navbar>
+    <router-view :pageSize="pageSize"></router-view>
+    <footers v-if="isLogin"></footers>
 </template>
 
 <script>
+import { reactive, toRefs, computed } from 'vue'
+import { useStore } from 'vuex'
+
 import '@/assets/css/cssReset.css'
 import navbar from '@/components/Navbar'
 import footers from '@/components/Footer'
-
 export default {
     components: {
         navbar,
         footers,
+    },
+    setup() {
+        const store = useStore()
+
+        const data = reactive({
+            /* 首页中每页博客条数 */
+            pageSize: 10,
+        })
+
+        /* computed 登录状态 */
+        const isLogin = computed(() => {
+            return store.state.isLogin
+        })
+        return {
+            ...toRefs(data),
+            isLogin,
+        }
     },
 }
 </script>

@@ -1,3 +1,10 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-11 19:52:00
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-04-27 23:54:38
+ * @Description: 
+-->
 <template>
     <div>
         <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
@@ -5,7 +12,7 @@
 </template>
 
 <script>
-import { reactive, onMounted, toRefs, onUpdated } from 'vue'
+import { reactive, onMounted, toRefs } from 'vue'
 import { useRoute } from 'vue-router'
 
 import http from '@/utils/http'
@@ -52,10 +59,6 @@ export default {
                         data.entryList = res.data.data.records
                     }
                 })
-        })
-
-        onUpdated(() => {
-            console.log(route.params.id)
         })
 
         /* http 获取点赞博客id列表 */
