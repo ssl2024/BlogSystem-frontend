@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:53:57
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-27 22:57:28
+ * @LastEditTime: 2023-04-28 16:35:20
  * @Description: 关注页面
 -->
 <template>
@@ -47,11 +47,13 @@ export default {
             currentPage: 1,
             /* 当前页博客数量 */
             pageSize: props.pageSize,
+            /* 当前登录的用户id */
+            loginUserId: store.state.userId,
         })
 
         onMounted(() => {
             // 获取当前登录用户关注的用户id列表
-            getFollowIdList(store.state.user.id).then(res => {
+            getFollowIdList(data.loginUserId).then(res => {
                 if (res.data.code === 20041) {
                     // 处理数据，获取其中的用户id列表
                     let userIdList = []
@@ -69,8 +71,8 @@ export default {
         })
 
         /* http 根据id获取关注的用户id列表 */
-        const getFollowIdList = id => {
-            return http.get(`/follows/follow/${id}`)
+        const getFollowIdList = userId => {
+            return http.get(`/follows/follow/${userId}`)
         }
         /* http 根据用户id列表获取博客列表*/
         const getBlogList = authorIds => {
@@ -80,8 +82,6 @@ export default {
         }
         return {
             ...toRefs(data),
-            getFollowIdList,
-            getBlogList,
         }
     },
 }

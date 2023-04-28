@@ -114,15 +114,21 @@
             <div class="operate_list">
                 <div class="operate_item" @click="likeEntry">
                     <i class="iconfont icon-dianzan_kuai"></i>
-                    <span class="like_count">123</span>
+                    <span class="like_count">{{
+                        likeCount(entry.likeCount)
+                    }}</span>
                 </div>
                 <div class="operate_item" @click="commentEntry">
                     <i class="iconfont icon-pinglun1"></i>
-                    <span class="comment_count">23</span>
+                    <span class="comment_count">{{
+                        commentCount(entry.commentCount)
+                    }}</span>
                 </div>
                 <div class="operate_item" @click="collectEntry">
                     <i class="iconfont icon-shoucangxiao"></i>
-                    <span class="collect_count">7</span>
+                    <span class="collect_count">{{
+                        collectCount(entry.collectCount)
+                    }}</span>
                 </div>
             </div>
         </div>
@@ -155,6 +161,8 @@ export default {
             comment_placeholder: '善语结善缘，恶言伤人心',
             /* 当前文章 id */
             id: route.params.id,
+            /* 当前登录的用户id */
+            userId: store.state.userId,
             /**
              * 当前文章点赞状态
              * false 没有点赞
@@ -170,48 +178,52 @@ export default {
         })
 
         onMounted(() => {
-            // 获取当前文章详情
-            http.get(`/blogs/${data.id}`).then(res => {
-                if (res.data.code === 20041) {
-                    data.entry = res.data.data
+            http.all([
+                getEntryDetail(data.id),
+                getLikeState(data.id, data.userId),
+                getCollectState(data.id, data.userId),
+            ]).then(res => {
+                if (res[0].data.code === 20041) {
+                    data.entry = res[0].data.data
                     renderedMarkdown.value = md.render(data.entry.content)
-                    http.get(`/users/${res.data.data.authorId}`).then(res => {
+                    // 获取到的博文信息，通过作者id 获取其相关信息
+                    getUserInfo(data.entry.authorId).then(res => {
                         if (res.data.code === 20041) {
                             data.user = res.data.data
                         }
                     })
-                } else {
-                    alert('博客内容获取失败，请重试')
+                }
+                if (res[1].data.code === 20041) {
+                    data.likeState = res[1].data.data
+                }
+                if (res[2].data.code === 20041) {
+                    data.collectState = res[2].data.data
                 }
             })
-            // 查询当前用户是否点赞该文章
-            http.get(`/likes/${data.id}/${store.state.user.id}`).then(res => {
-                if (res.data.code === 20041) {
-                    data.likeState = true
-                } else if (res.data.code === 20040) {
-                    data.likeState = false
-                } else {
-                    alert('查询文章点赞状态失败')
-                }
-            })
-            // 查询当前用户是否收藏该文章
-            http.get(`/collects/${data.id}/${store.state.user.id}`).then(
-                res => {
-                    if (res.data.code === 20041) {
-                        data.collectState = true
-                    } else if (res.data.code === 20040) {
-                        data.collectState = false
-                    } else {
-                        alert('查询文章收藏状态失败')
-                    }
-                }
-            )
         })
 
         /* computed 博客更新时间 */
         const dateTime = computed(() => {
             return item => {
                 return dateFormatter(item)
+            }
+        })
+        /* computed 博客点赞次数 */
+        const likeCount = computed(() => {
+            return likeCount => {
+                return likeCount
+            }
+        })
+        /* computed 博客评论次数 */
+        const commentCount = computed(() => {
+            return commentCount => {
+                return commentCount
+            }
+        })
+        /* computed 博客收藏次数 */
+        const collectCount = computed(() => {
+            return collectCount => {
+                return collectCount
             }
         })
 
@@ -228,26 +240,31 @@ export default {
             // 判断文章点赞状态
             if (data.likeState) {
                 // 已经点赞 取消点赞
-                http.delete(`/likes/${data.id}/${store.state.user.id}`).then(
-                    res => {
-                        if (res.data.code === 20021) {
-                            // 修改文章的点赞状态
-                            data.likeState = false
-                            alert('取消点赞成功')
-                        } else {
-                            alert('取消点赞失败')
-                        }
+                unLike(data.id, data.userId).then(res => {
+                    if (res.data.code === 20021) {
+                        // 修改文章的点赞状态
+                        data.likeState = false
+                        data.entry.likeCount--
+                        // 更新文章
+                        updateEntry().then(res => {
+                            console.log(res)
+                        })
+                        alert('取消点赞成功')
+                    } else {
+                        alert('取消点赞失败')
                     }
-                )
+                })
             } else {
                 // 没有点赞 点赞文章
-                http.post('/likes', {
-                    blogId: data.id,
-                    userId: store.state.user.id,
-                }).then(res => {
+                addLike(data.id, data.userId).then(res => {
                     if (res.data.code === 20011) {
                         // 修改文章的点赞状态
                         data.likeState = true
+                        data.entry.likeCount++
+                        // 更新文章
+                        updateEntry().then(res => {
+                            console.log(res)
+                        })
                         alert('点赞文章成功')
                     } else {
                         alert('点赞文章失败')
@@ -263,26 +280,31 @@ export default {
         const collectEntry = () => {
             if (data.collectState) {
                 // 已经点赞 取消点赞
-                http.delete(`/collects/${data.id}/${store.state.user.id}`).then(
-                    res => {
-                        if (res.data.code === 20021) {
-                            // 修改文章的点赞状态
-                            data.collectState = false
-                            alert('取消收藏成功')
-                        } else {
-                            alert('取消收藏失败')
-                        }
+                unCollect(data.id, data.userId).then(res => {
+                    if (res.data.code === 20021) {
+                        // 修改文章的点赞状态
+                        data.collectState = false
+                        data.entry.collectCount--
+                        // 更新文章
+                        updateEntry().then(res => {
+                            console.log(res)
+                        })
+                        alert('取消收藏成功')
+                    } else {
+                        alert('取消收藏失败')
                     }
-                )
+                })
             } else {
                 // 没有点赞 点赞文章
-                http.post('/collects', {
-                    blogId: data.id,
-                    userId: store.state.user.id,
-                }).then(res => {
+                addCollect(data.id, data.userId).then(res => {
                     if (res.data.code === 20011) {
                         // 修改文章的点赞状态
                         data.collectState = true
+                        data.entry.collectCount++
+                        // 更新文章
+                        updateEntry().then(res => {
+                            console.log(res)
+                        })
                         alert('收藏文章成功')
                     } else {
                         alert('收藏文章失败')
@@ -295,10 +317,56 @@ export default {
             console.log('点击了发表评论按钮')
             // comment.value.innerText  -->  获取 评论框中的内容
         }
+
+        /* http 获取博文信息 */
+        const getEntryDetail = entryId => {
+            return http.get(`/blogs/${entryId}`)
+        }
+        /* http 获取点赞状态 */
+        const getLikeState = (entryId, loginUserId) => {
+            return http.get(`/likes/${entryId}/${loginUserId}`)
+        }
+        /* http 获取收藏状态 */
+        const getCollectState = (entryId, loginUserId) => {
+            return http.get(`/collects/${entryId}/${loginUserId}`)
+        }
+        /* http 获取用户信息 */
+        const getUserInfo = userId => {
+            return http.get(`/users/${userId}`)
+        }
+        /* http 点赞文章 */
+        const addLike = (blogId, userId) => {
+            return http.post('/likes', {
+                blogId,
+                userId,
+            })
+        }
+        /* http 取消点赞 */
+        const unLike = (entryId, loginUserId) => {
+            return http.delete(`/likes/${entryId}/${loginUserId}`)
+        }
+        /* http 收藏文章 */
+        const addCollect = (blogId, userId) => {
+            return http.post('/collects', {
+                blogId,
+                userId,
+            })
+        }
+        /* http 取消收藏 */
+        const unCollect = (entryId, loginUserId) => {
+            return http.delete(`/collects/${entryId}/${loginUserId}`)
+        }
+        /* http 更新文章 */
+        const updateEntry = () => {
+            return http.put(`/blogs`, data.entry)
+        }
         return {
             ...toRefs(data),
             renderedMarkdown,
             dateTime,
+            likeCount,
+            commentCount,
+            collectCount,
             comment,
             input,
             likeEntry,

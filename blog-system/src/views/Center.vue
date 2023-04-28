@@ -34,7 +34,7 @@
                 </div>
                 <div class="follow_item" @click="showFansList">
                     <span>粉丝</span>
-                    <span>{{ userInfo.fansList.length }}</span>
+                    <span>{{ fansCount(userInfo.fansList.length) }}</span>
                 </div>
             </div>
             <div class="user_profile">
@@ -102,19 +102,6 @@
                         </li>
                     </router-link>
                     <router-link
-                        :to="`/center/${currentShowUserId}/fans`"
-                        custom
-                        v-slot="{ navigate, isActive }"
-                    >
-                        <li
-                            class="nav_item"
-                            @click="navigate"
-                            :class="isActive ? 'current' : ''"
-                        >
-                            粉丝
-                        </li>
-                    </router-link>
-                    <router-link
                         :to="`/center/${currentShowUserId}/follow`"
                         custom
                         v-slot="{ navigate, isActive }"
@@ -125,6 +112,19 @@
                             :class="isActive ? 'current' : ''"
                         >
                             关注
+                        </li>
+                    </router-link>
+                    <router-link
+                        :to="`/center/${currentShowUserId}/fans`"
+                        custom
+                        v-slot="{ navigate, isActive }"
+                    >
+                        <li
+                            class="nav_item"
+                            @click="navigate"
+                            :class="isActive ? 'current' : ''"
+                        >
+                            粉丝
                         </li>
                     </router-link>
                 </ul>
@@ -143,7 +143,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, toRefs, watch } from 'vue'
+import { computed, onMounted, reactive, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -171,16 +171,14 @@ export default {
             sidePageSize: 5,
             /* 当前页面展示的用户id */
             currentShowUserId: route.params.id,
+            /* 当前登录的用户id */
+            currentLoginUserId: store.state.userId,
             /* 当前页面展示的用户信息 */
             userInfo: {
                 // 用户昵称
                 nickname: '',
                 // 用户头像
                 avatar: '',
-                // 用户的粉丝数量
-                fansCount: 0,
-                // 用户的关注数量
-                followCount: 0,
                 // 用户发表的博文数量
                 entryCount: 0,
                 // 博文被阅读的次数
@@ -212,7 +210,7 @@ export default {
         /* init 页面数据初始化 */
         const init = userId => {
             // 判断是不是查看当前用户的主页
-            if (store.state.user.id == userId) {
+            if (store.state.userId == userId) {
                 // 是当前用户的主页
                 data.isCurrentUser = true
             } else {
@@ -256,27 +254,35 @@ export default {
                 })
         }
 
+        /* computed 粉丝数量 */
+        const fansCount = computed(() => {
+            return fansCount => {
+                return fansCount
+            }
+        })
+
         /* click 关注 */
         const addFollow = () => {
-            // 添加关注
-            http.post(`/follows`, {
-                followedUserId: data.currentShowUserId,
-                followUserId: store.state.user.id,
-            }).then(res => {
-                if (res.data.code === 20011) {
-                    data.isFollowed = true
-                } else {
-                    alert('关注用户失败')
+            addFollowInfo(data.currentShowUserId, data.currentLoginUserId).then(
+                res => {
+                    if (res.data.code === 20011) {
+                        data.isFollowed = true
+                        data.userInfo.fansList.length++
+                    } else {
+                        alert('关注用户失败')
+                    }
                 }
-            })
+            )
         }
         /* click 已关注 */
         const unFollow = () => {
-            http.delete(
-                `/follows/${data.currentShowUserId}/${store.state.user.id}`
+            deleteFollowInfo(
+                data.currentShowUserId,
+                data.currentLoginUserId
             ).then(res => {
                 if (res.data.code === 20021) {
                     data.isFollowed = false
+                    data.userInfo.fansList.length--
                 } else {
                     alert('取消关注失败')
                 }
@@ -291,9 +297,22 @@ export default {
             router.push(`/center/${data.currentShowUserId}/follow`)
         }
 
+        /* http 添加关注 */
+        const addFollowInfo = (followedUserId, followUserId) => {
+            return http.post(`/follows`, {
+                followedUserId,
+                followUserId,
+            })
+        }
+        /* http 取消关注 */
+        const deleteFollowInfo = (followedUserId, followUserId) => {
+            return http.delete(`/follows/${followedUserId}/${followUserId}`)
+        }
         /* http 获取当前登录用户是否关注展示用户 */
         const getFollowState = userId => {
-            return http.get(`/follows/state/${userId}/${store.state.user.id}`)
+            return http.get(
+                `/follows/state/${userId}/${data.currentLoginUserId}`
+            )
         }
         /* http 获取当前展示用户的昵称和头像 */
         const getUserInfo = userId => {
@@ -313,15 +332,11 @@ export default {
         }
         return {
             ...toRefs(data),
+            fansCount,
             addFollow,
             unFollow,
             showFansList,
             showFollowList,
-            getFollowState,
-            getUserInfo,
-            getFansList,
-            getFollowList,
-            getUserAchievement,
         }
     },
 }

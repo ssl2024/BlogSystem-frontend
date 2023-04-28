@@ -82,8 +82,8 @@
                 />
                 <captcha
                     :change="changeImgCode"
-                    contentWidth="120"
-                    contentHeight="47"
+                    :contentWidth="120"
+                    :contentHeight="47"
                     @click="changeImageCode"
                     @getCode="backImageCode"
                 ></captcha>

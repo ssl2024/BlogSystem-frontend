@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="center" @click="toggleProfile">
-            <img src="https://iph.href.lu/40x40" alt="头像" />
+            <img src="https://iph.href.lu/45x45" alt="头像" />
         </div>
         <div class="profile" v-show="showProfile">
             <div class="profile_top">
@@ -44,30 +44,26 @@
                 </div>
             </div>
             <div class="profile_mid">
-                <div class="fans_btn" @click="toFansList">
-                    <div>粉丝</div>
-                    <div>23</div>
-                </div>
-                <div class="follow_btn">
+                <div class="follow_btn" @click="toUserFollow(userId)">
                     <div>关注</div>
-                    <div>23</div>
+                    <div>{{ followCount }}</div>
                 </div>
-                <!-- <div class="like">
-                    <div>获赞</div>
-                    <div>23</div>
-                </div> -->
+                <div class="fans_btn" @click="toUserFans(userId)">
+                    <div>粉丝</div>
+                    <div>{{ fansCount }}</div>
+                </div>
             </div>
             <div class="profile_bottom">
                 <ul class="profile_border_bottom">
-                    <li @click="toUserPage(user.id)">
+                    <li @click="toUserPage(userId)">
                         <i class="iconfont icon-shouye1"></i>
                         <span>个人主页</span>
                     </li>
-                    <li @click="toUserInfo(user.id)">
+                    <li @click="toUserInfo">
                         <i class="iconfont icon-xingming"></i>
                         <span>个人信息</span>
                     </li>
-                    <li @click="toBlogManage(user.id)">
+                    <li @click="toBlogManage">
                         <i class="iconfont icon-xiangmuguanli"></i>
                         <span>博客管理</span>
                     </li>
@@ -87,7 +83,7 @@ import { onMounted, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
-// import http from '@/utils/http'
+import http from '@/utils/http'
 export default {
     setup() {
         const store = useStore()
@@ -100,16 +96,37 @@ export default {
              * true  显示
              */
             showProfile: false,
-            user: store.state.user,
+            /* 当前登录的用户id */
+            userId: store.state.userId,
+            /* 当前登录用户信息 */
+            user: {},
+            /* 当前登录用户粉丝数量 */
+            fansCount: 0,
+            /* 当前登录用户关注数量 */
+            followCount: 0,
         })
 
         onMounted(() => {
-            // http.get()
+            // 获取当前用户的粉丝数量和关注数量
+            http.all([
+                getUserInfo(data.userId),
+                getFansList(data.userId),
+                getFollowList(data.userId),
+            ]).then(res => {
+                if (res[0].data.code === 20041) {
+                    data.user = res[0].data.data
+                }
+                if (res[1].data.code === 20041) {
+                    data.fansCount = res[1].data.data.length
+                }
+                if (res[2].data.code === 20041) {
+                    data.followCount = res[2].data.data.length
+                }
+            })
         })
 
         /* click 右上角用户头像 */
         const toggleProfile = () => {
-            console.log(data.user.id)
             data.showProfile = !data.showProfile
         }
         /* click 个人主页 */
@@ -117,23 +134,41 @@ export default {
             router.push(`/center/${userId}`)
         }
         /* click 个人信息 */
-        const toUserInfo = userId => {
-            router.push(`/userInfo/${userId}`)
+        const toUserInfo = () => {
+            router.push(`/userInfo/profile`)
         }
         /* click 博客管理 */
         const toBlogManage = () => {
             router.push(`/userInfo/blogManage`)
         }
         /* click 粉丝 */
-        const toFansList = () => {
-            router.push('/center/fans')
+        const toUserFans = userId => {
+            router.push(`/center/${userId}/fans`)
+        }
+        /* click 关注 */
+        const toUserFollow = userId => {
+            router.push(`/center/${userId}/follow`)
         }
         /* click 注销登录 */
         const logout = () => {
+            // 发送 http 请求，删除在 redis 中的 token
             // 删除本地 vuex 持久化数据
             sessionStorage.removeItem('vuex')
             // 跳转到 login 页面
             router.push('/login')
+        }
+
+        /* http 获取当前登录用户信息 */
+        const getUserInfo = userId => {
+            return http.get(`/users/${userId}`)
+        }
+        /* http 获取粉丝列表 */
+        const getFansList = userId => {
+            return http.get(`/follows/fans/${userId}`)
+        }
+        /* http 获取关注列表 */
+        const getFollowList = userId => {
+            return http.get(`/follows/follow/${userId}`)
         }
         return {
             ...toRefs(data),
@@ -141,7 +176,8 @@ export default {
             toUserInfo,
             toggleProfile,
             toBlogManage,
-            toFansList,
+            toUserFans,
+            toUserFollow,
             logout,
         }
     },
@@ -188,7 +224,6 @@ $bg_color: #fff;
 
         /* 导航栏 网站logo--logo图片 */
         img {
-            // width: 100%;
             height: 100%;
         }
     }
@@ -249,8 +284,13 @@ $bg_color: #fff;
     /* 导航栏 用户头像 */
     .center {
         width: 200px;
-        height: 40px;
+        height: 45px;
         text-align: center;
+        img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+        }
     }
 
     /* 导航栏 用户简介 */

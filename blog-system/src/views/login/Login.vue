@@ -76,10 +76,7 @@ export default {
                 alert('账号或密码不能为空')
                 return
             }
-            http.post('/users/login', {
-                account: data.account,
-                pwd: md5(data.pwdText),
-            }).then(res => {
+            userLogin(data.account, md5(data.pwdText)).then(res => {
                 if (res.data.code === 20041) {
                     // 登录成功
                     alert('登录成功')
@@ -87,8 +84,8 @@ export default {
                     store.commit('updateToken', res.data.data.token)
                     // 更新登录状态
                     store.commit('updateLoginState', true)
-                    // 将 当前用户信息 存入 vuex
-                    store.commit('updateUser', res.data.data.user)
+                    // 将 当前用户id 存入 vuex
+                    store.commit('updateUserId', res.data.data.user.id)
                     // 跳转页面
                     if (route.query.redirect) {
                         router.push(route.query.redirect)
@@ -116,6 +113,14 @@ export default {
         const changePwdState = () => {
             data.pwdState = !data.pwdState
             pwd.value.type = data.pwdState ? 'text' : 'password'
+        }
+
+        /* http 用户登录 */
+        const userLogin = (account, pwd) => {
+            return http.post(`/users/login`, {
+                account,
+                pwd,
+            })
         }
         return {
             ...toRefs(data),

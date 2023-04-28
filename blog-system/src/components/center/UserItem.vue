@@ -1,5 +1,5 @@
 <template>
-    <div class="user_item">
+    <div class="user_item" @click="toUserPage(user.id)">
         <div class="user_info">
             <div class="user_avatar">
                 <img src="https://iph.href.lu/60x60" alt="头像" />
@@ -9,8 +9,12 @@
             </div>
         </div>
         <div v-if="!isCurrentUser" class="user_status">
-            <span v-show="isFollowed" @click="unFollow(user.id)">已关注</span>
-            <span v-show="!isFollowed" @click="addFollow(user.id)">关注</span>
+            <span v-show="isFollowed" @click.stop="unFollow(user.id)"
+                >已关注</span
+            >
+            <span v-show="!isFollowed" @click.stop="addFollow(user.id)"
+                >关注</span
+            >
         </div>
     </div>
 </template>
@@ -18,15 +22,19 @@
 <script>
 import { onMounted, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 import http from '@/utils/http'
 export default {
     props: ['user'],
     setup(props) {
         const store = useStore()
+        const router = useRouter()
 
         const data = reactive({
-            /* 用户信息 */
+            /* 当前登录用户的id */
+            loginUserId: store.state.userId,
+            /* 当前展示的用户信息 */
             user: props.user,
             /**
              * 当前用户对于当前用户项的关注状态
@@ -44,26 +52,26 @@ export default {
 
         onMounted(() => {
             // 判断是不是查看当前用户的主页
-            if (store.state.user.id == data.user.id) {
+            if (data.loginUserId == data.user.id) {
                 // 是当前用户的主页
                 data.isCurrentUser = true
             }
             // 不是当前用户的主页
             // 获取当前用户是否关注访问用户
-            http.get(
-                `/follows/state/${data.user.id}/${store.state.user.id}`
-            ).then(res => {
-                if (res.data.code === 20041) {
-                    data.isFollowed = res.data.data
+            http.get(`/follows/state/${data.user.id}/${data.loginUserId}`).then(
+                res => {
+                    if (res.data.code === 20041) {
+                        data.isFollowed = res.data.data
+                    }
                 }
-            })
+            )
         })
 
         /* click 关注 */
-        const addFollow = id => {
+        const addFollow = userId => {
             http.post(`/follows`, {
-                followedUserId: id,
-                followUserId: store.state.user.id,
+                followedUserId: userId,
+                followUserId: data.loginUserId,
             }).then(res => {
                 if (res.data.code === 20011) {
                     data.isFollowed = true
@@ -74,8 +82,8 @@ export default {
             })
         }
         /* click 已关注 */
-        const unFollow = id => {
-            http.delete(`/follows/${id}/${store.state.user.id}`).then(res => {
+        const unFollow = userId => {
+            http.delete(`/follows/${userId}/${data.loginUserId}`).then(res => {
                 if (res.data.code === 20021) {
                     data.isFollowed = false
                     alert('取消关注成功')
@@ -84,10 +92,15 @@ export default {
                 }
             })
         }
+        /* click 用户 */
+        const toUserPage = userId => {
+            router.push(`/center/${userId}`)
+        }
         return {
             ...toRefs(data),
             addFollow,
             unFollow,
+            toUserPage,
         }
     },
 }
@@ -107,6 +120,7 @@ $bg_color: #fff;
     padding: 5px 25px;
     border-top: 1px solid $border_line;
     border-bottom: 1px solid $border_line;
+    cursor: pointer;
     justify-content: space-between;
     align-items: center;
 

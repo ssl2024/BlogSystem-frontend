@@ -163,7 +163,6 @@ export default {
         /* click 确定并更新 */
         const updateEntry = () => {
             http.put('/blogs', data.entry).then(res => {
-                console.log(res.data)
                 if (res.data.code === 20031) {
                     alert('更新成功')
                     router.push('/userInfo/blogManage')

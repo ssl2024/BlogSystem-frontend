@@ -121,13 +121,6 @@ export default {
             classify: 2,
         })
 
-        /* http 根据博客类型获取博客列表 */
-        const getBlogListByType = type => {
-            return http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
-                type,
-            })
-        }
-
         /* change 博客类型 */
         const changeType = type => {
             getBlogListByType(type).then(res => {
@@ -136,9 +129,15 @@ export default {
                 }
             })
         }
+
+        /* http 根据博客类型获取博客列表 */
+        const getBlogListByType = type => {
+            return http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
+                type,
+            })
+        }
         return {
             ...toRefs(data),
-            getBlogListByType,
             changeType,
         }
     },

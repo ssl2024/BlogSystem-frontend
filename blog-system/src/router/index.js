@@ -72,7 +72,7 @@ const routes = [
     },
     /* 个人资料 */
     {
-        path: '/userInfo/:id',
+        path: '/userInfo',
         component: UserInfo,
         meta: {
             required: true,
@@ -89,10 +89,6 @@ const routes = [
             {
                 path: '/userInfo/blogManage',
                 component: BlogManage,
-            },
-            {
-                path: '/userInfo/:any',
-                redirect: '/userInfo/profile',
             },
         ],
     },

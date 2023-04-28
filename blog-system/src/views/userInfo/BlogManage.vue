@@ -92,7 +92,7 @@ export default {
 
         const getEntryList = () => {
             http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
-                authorId: store.state.user.id,
+                authorId: [store.state.userId],
             }).then(res => {
                 data.entryList = res.data.data.records
                 data.pages = res.data.data.pages

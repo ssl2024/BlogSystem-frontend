@@ -1,3 +1,10 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-09 22:48:58
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-04-28 16:08:06
+ * @Description: 
+-->
 <template>
     <navbar v-if="isLogin"></navbar>
     <router-view :pageSize="pageSize"></router-view>
