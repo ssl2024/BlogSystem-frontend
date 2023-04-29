@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-25 16:01:56
+ * @LastEditTime: 2023-04-29 21:05:30
  * @Description:
  */
 const { defineConfig } = require('@vue/cli-service')
@@ -33,11 +33,18 @@ module.exports = defineConfig({
                 target: 'http://localhost:8081',
                 changeOrigin: true,
             },
+            /* 点赞文章 */
             '/likes': {
                 target: 'http://localhost:8081',
                 changeOrigin: true,
             },
+            /* 收藏文章 */
             '/collects': {
+                target: 'http://localhost:8081',
+                changeOrigin: true,
+            },
+            /* 评论文章 */
+            '/comments': {
                 target: 'http://localhost:8081',
                 changeOrigin: true,
             },

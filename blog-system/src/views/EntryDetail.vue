@@ -47,8 +47,14 @@
                     发表评论(Enter)
                 </div>
             </div>
-            <div class="comment_title">全部评论 23</div>
-            <div class="comment_list">
+            <div class="comment_title" v-show="commentCount">
+                全部评论 {{ commentCount }}
+            </div>
+            <div
+                class="comment_list"
+                v-for="comment in commentList"
+                :key="comment.id"
+            >
                 <img
                     class="comment_avatar"
                     src="https://iph.href.lu/40x40"
@@ -56,22 +62,30 @@
                 />
                 <div class="comment_item">
                     <div class="comment_main">
-                        <div class="user_nickname">石松林_前端基础</div>
-                        <div class="comment">这是我发表的一条评论</div>
+                        <div class="user_nickname">
+                            {{ nickname(comment.userId) }}
+                        </div>
+                        <div class="comment">{{ comment.content }}</div>
                         <span class="action_btn">
                             <i class="iconfont icon-pinglun2"></i>
                             <span>回复</span>
                         </span>
                     </div>
-                    <div class="sub_comment_list">
+                    <div
+                        class="sub_comment_list"
+                        v-for="item in comment.children"
+                        :key="item.id"
+                    >
                         <img
                             class="sub_comment_avatar"
                             src="https://iph.href.lu/24x24"
                             alt="评论头像"
                         />
                         <div class="sub_comment_main">
-                            <div class="user_nickname">石松林_前端基础</div>
-                            <div class="comment">这是我发表的一条评论</div>
+                            <div class="user_nickname">
+                                {{ nickname(item.userId) }}
+                            </div>
+                            <div class="comment">{{ item.content }}</div>
                             <span class="sub_action_btn">
                                 <i class="iconfont icon-pinglun2"></i>
                                 <span>回复</span>
@@ -83,7 +97,7 @@
         </div>
         <!-- 侧边栏 -->
         <div class="aside">
-            <div class="author_info">
+            <div class="author_info" @click="toUserPage(user.id)">
                 <img
                     class="author_avatar"
                     src="https://iph.href.lu/60x60"
@@ -91,14 +105,24 @@
                 />
                 <div class="author_nickname">{{ user.nickname }}</div>
             </div>
-            <div class="operate_btn">
-                <div class="item">
+            <div class="operate_btn" v-if="!isCurrentUser">
+                <div class="follow" v-show="!isFollowed" @click="addFollow">
                     <i class="iconfont"></i>
                     <span>关注</span>
                 </div>
-                <div class="item" v-show="false">
+                <div class="followed" v-show="isFollowed" @click="unFollow">
                     <i class="iconfont"></i>
                     <span>已关注</span>
+                </div>
+            </div>
+            <div class="follow_block">
+                <div class="follow_item" @click="toUserFollowList(user.id)">
+                    <span>关注</span>
+                    <span>{{ followList.length }}</span>
+                </div>
+                <div class="follow_item" @click="toUserFansList(user.id)">
+                    <span>粉丝</span>
+                    <span>{{ fansCount(fansList.length) }}</span>
                 </div>
             </div>
             <div class="author_achievement">
@@ -120,9 +144,7 @@
                 </div>
                 <div class="operate_item" @click="commentEntry">
                     <i class="iconfont icon-pinglun1"></i>
-                    <span class="comment_count">{{
-                        commentCount(entry.commentCount)
-                    }}</span>
+                    <span class="comment_count">{{ commentCount }}</span>
                 </div>
                 <div class="operate_item" @click="collectEntry">
                     <i class="iconfont icon-shoucangxiao"></i>
@@ -136,9 +158,9 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted, ref, computed } from 'vue'
+import { reactive, toRefs, onMounted, ref, computed, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import MarkdownIt from 'markdown-it'
 
@@ -146,11 +168,13 @@ import http from '@/utils/http'
 import dateFormatter from '@/utils/dateFormatter'
 export default {
     setup() {
-        const route = useRoute()
         const store = useStore()
+        const route = useRoute()
+        const router = useRouter()
 
         const renderedMarkdown = ref('')
         const md = new MarkdownIt()
+        let timeId
 
         const data = reactive({
             /* 博客信息 */
@@ -175,21 +199,62 @@ export default {
              * true  已经点赞
              */
             collectState: false,
+            /**
+             * 是否是当前用户
+             * true  是当前用户(不展示关注/关注)
+             * false 不是当前用户(展示关注/已关注)
+             */
+            isCurrentUser: false,
+            /**
+             * 当前用户对于访问用户的关注状态
+             * true  已经关注
+             * false 没有关注
+             */
+            isFollowed: false,
+            /* 粉丝列表 */
+            fansList: {},
+            /* 关注列表 */
+            followList: {},
+            /* 文章评论列表 */
+            commentList: {},
+            /* 评论用户信息 */
+            userCache: {},
+            commentCount: 0,
         })
 
         onMounted(() => {
+            // 获取文章的相关信息
             http.all([
                 getEntryDetail(data.id),
                 getLikeState(data.id, data.userId),
                 getCollectState(data.id, data.userId),
+                getCommentList(data.id),
             ]).then(res => {
                 if (res[0].data.code === 20041) {
                     data.entry = res[0].data.data
                     renderedMarkdown.value = md.render(data.entry.content)
-                    // 获取到的博文信息，通过作者id 获取其相关信息
-                    getUserInfo(data.entry.authorId).then(res => {
-                        if (res.data.code === 20041) {
-                            data.user = res.data.data
+                    // 判断文章作者是否为当前登录用户
+                    if (data.entry.authorId === data.userId) {
+                        data.isCurrentUser = true
+                    }
+                    // 获取到文章相关信息，再通过作者id 获取其相关信息
+                    http.all([
+                        getUserInfo(data.entry.authorId),
+                        getFollowState(data.entry.authorId),
+                        getFansList(data.entry.authorId),
+                        getFollowList(data.entry.authorId),
+                    ]).then(res => {
+                        if (res[0].data.code === 20041) {
+                            data.user = res[0].data.data
+                        }
+                        if (res[1].data.code === 20041) {
+                            data.isFollowed = res[1].data.data
+                        }
+                        if (res[2].data.code === 20041) {
+                            data.fansList = res[2].data.data
+                        }
+                        if (res[3].data.code === 20041) {
+                            data.followList = res[3].data.data
                         }
                     })
                 }
@@ -199,8 +264,58 @@ export default {
                 if (res[2].data.code === 20041) {
                     data.collectState = res[2].data.data
                 }
+                if (res[3].data.code === 20041) {
+                    commentFilter(res[3].data.data)
+                }
             })
+            // 10秒后文章浏览次数加1
+            timeId = setTimeout(() => {
+                data.entry.browseCount++
+                updateEntry()
+            }, 10000)
         })
+
+        onUnmounted(() => {
+            // 如果10秒之内退出则清除定时器
+            clearTimeout(timeId)
+        })
+
+        /* filter 评论过滤器 */
+        const commentFilter = comments => {
+            const commentList = []
+            // 遍历所有评论数据，分出 一级评论 和 二级评论
+            comments.forEach(item => {
+                item.children = []
+                if (item.parentId !== null) {
+                    // 二级评论
+                    commentList.forEach(comment => {
+                        if (comment.id === item.parentId) {
+                            comment.children.push(item)
+                        }
+                    })
+                } else {
+                    // 一级评论
+                    commentList.push(item)
+                }
+                // 判断用户信息缓存中是否存在评论者id对应的信息
+                if (data.userCache[item.userId]) {
+                    // 存在
+                    return
+                } else {
+                    // 不存在 获取当前评论者的头像和昵称并添加到用户信息缓存中
+                    getUserInfo(item.userId).then(res => {
+                        if (res.data.code === 20041) {
+                            data.userCache[item.userId] = {
+                                nickname: res.data.data.nickname,
+                                avatar: res.data.data.avatar,
+                            }
+                        }
+                    })
+                }
+            })
+            data.commentCount = comments.length
+            data.commentList = commentList
+        }
 
         /* computed 博客更新时间 */
         const dateTime = computed(() => {
@@ -214,18 +329,29 @@ export default {
                 return likeCount
             }
         })
-        /* computed 博客评论次数 */
-        const commentCount = computed(() => {
-            return commentCount => {
-                return commentCount
-            }
-        })
         /* computed 博客收藏次数 */
         const collectCount = computed(() => {
             return collectCount => {
                 return collectCount
             }
         })
+        /* computed 作者粉丝数 */
+        const fansCount = computed(() => {
+            return fansCount => {
+                return fansCount
+            }
+        })
+        /* computed 评论者昵称 */
+        const nickname = computed(() => {
+            return userId => {
+                if (data.userCache[userId]) {
+                    return data.userCache[userId].nickname
+                }
+                return ''
+            }
+        })
+        /* computed 评论者头像 */
+        /* computed 评论数 */
 
         /* DOM 评论输入框 */
         const comment = ref()
@@ -316,11 +442,73 @@ export default {
         const submitComment = () => {
             console.log('点击了发表评论按钮')
             // comment.value.innerText  -->  获取 评论框中的内容
+            const content = comment.value.innerText
+            // 判断评论长度
+            if (content.length === 0) {
+                alert('评论不能为空')
+                return
+            }
+            if (content.length >= 255) {
+                alert('评论不能超过255字符')
+                return
+            }
+            // 获取当前时间戳
+            const createTime = Number.parseInt(new Date().getTime() / 1000)
+            addComment(content, createTime).then(res => {
+                if (res.data.code === 20011) {
+                    // 重新获取评论数据
+                    getCommentList(data.id).then(res => {
+                        if (res.data.code === 20041) {
+                            commentFilter(res.data.data)
+                        }
+                    })
+                    // 清空评论框中的数据
+                    comment.value.innerText = ''
+                }
+            })
+        }
+        /* click 关注 */
+        const addFollow = () => {
+            addFollowInfo(data.user.id, data.userId).then(res => {
+                if (res.data.code === 20011) {
+                    data.isFollowed = true
+                    data.fansList.length++
+                } else {
+                    alert('关注用户失败')
+                }
+            })
+        }
+        /* click 已关注 */
+        const unFollow = () => {
+            deleteFollowInfo(data.user.id, data.userId).then(res => {
+                if (res.data.code === 20021) {
+                    data.isFollowed = false
+                    data.fansList.length--
+                } else {
+                    alert('取消关注失败')
+                }
+            })
+        }
+        /* click 侧边栏头像昵称 */
+        const toUserPage = userId => {
+            router.push(`/center/${userId}`)
+        }
+        /* click 作者粉丝数 */
+        const toUserFansList = userId => {
+            router.push(`/center/${userId}/fans`)
+        }
+        /* click 作者关注数 */
+        const toUserFollowList = userId => {
+            router.push(`/center/${userId}/follow`)
         }
 
         /* http 获取博文信息 */
         const getEntryDetail = entryId => {
             return http.get(`/blogs/${entryId}`)
+        }
+        /* http 获取评论列表 */
+        const getCommentList = entryId => {
+            return http.get(`/comments/${entryId}`)
         }
         /* http 获取点赞状态 */
         const getLikeState = (entryId, loginUserId) => {
@@ -330,9 +518,21 @@ export default {
         const getCollectState = (entryId, loginUserId) => {
             return http.get(`/collects/${entryId}/${loginUserId}`)
         }
-        /* http 获取用户信息 */
+        /* http 获取当前登录用户是否关注展示用户 */
+        const getFollowState = userId => {
+            return http.get(`/follows/state/${userId}/${data.userId}`)
+        }
+        /* http 获取用户的昵称和头像 */
         const getUserInfo = userId => {
             return http.get(`/users/${userId}`)
+        }
+        /* http 获取当前展示用户的粉丝列表 */
+        const getFansList = userId => {
+            return http.get(`/follows/fans/${userId}`)
+        }
+        /* http 获取当前展示用户的关注列表 */
+        const getFollowList = userId => {
+            return http.get(`/follows/follow/${userId}`)
         }
         /* http 点赞文章 */
         const addLike = (blogId, userId) => {
@@ -360,19 +560,46 @@ export default {
         const updateEntry = () => {
             return http.put(`/blogs`, data.entry)
         }
+        /* http 添加关注 */
+        const addFollowInfo = (followedUserId, followUserId) => {
+            return http.post(`/follows`, {
+                followedUserId,
+                followUserId,
+            })
+        }
+        /* http 取消关注 */
+        const deleteFollowInfo = (followedUserId, followUserId) => {
+            return http.delete(`/follows/${followedUserId}/${followUserId}`)
+        }
+        /* http 发表评论 */
+        const addComment = (content, createTime, parentId = null) => {
+            return http.post(`/comments`, {
+                content,
+                createTime,
+                parentId,
+                userId: data.userId,
+                blogId: data.id,
+            })
+        }
         return {
             ...toRefs(data),
             renderedMarkdown,
             dateTime,
             likeCount,
-            commentCount,
             collectCount,
+            fansCount,
+            nickname,
             comment,
             input,
             likeEntry,
             commentEntry,
             collectEntry,
             submitComment,
+            addFollow,
+            unFollow,
+            toUserPage,
+            toUserFansList,
+            toUserFollowList,
         }
     },
 }
@@ -498,12 +725,12 @@ $border_line: #e8e8ed;
             right: 6px;
             bottom: -20px;
             width: 120px;
-            height: 45px;
+            height: 40px;
             background-color: #1e80ff;
             color: $color;
-            font-size: 14px;
+            font-size: 13px;
             text-align: center;
-            line-height: 45px;
+            line-height: 40px;
             cursor: pointer;
             border-radius: 5px;
         }
@@ -585,6 +812,7 @@ $border_line: #e8e8ed;
         margin-bottom: 10px;
         font-size: 17px;
         line-height: 60px;
+        cursor: pointer;
 
         /* 右边作者相关 作者信息--作者头像 */
         img {
@@ -602,15 +830,50 @@ $border_line: #e8e8ed;
         justify-content: center;
 
         /* 右边作者相关 关注/已关注按钮--按钮项 */
-        .item {
-            width: 135px;
-            height: 40px;
-            background-color: skyblue;
-            color: $color;
+        [class^='follow'] {
+            width: 110px;
+            height: 35px;
+            font-size: 14px;
+            text-align: center;
+            line-height: 35px;
+            cursor: pointer;
+            border-radius: 5px;
+
+            /* 右边作者相关 关注按钮 */
+            &:nth-child(1) {
+                background-color: skyblue;
+                color: $color;
+            }
+
+            /* 右边作者相关 已关注按钮 */
+            &:nth-child(2) {
+                background-color: #f2f3f5;
+                color: #8a919f;
+            }
+        }
+    }
+
+    /* 右边作者相关 关注/粉丝数 */
+    .follow_block {
+        display: flex;
+        height: 50px;
+        padding: 10px 0;
+        border-top: 1px solid $border_line;
+        border-bottom: 1px solid $border_line;
+        [class='follow_item'] {
+            flex: 1;
+            display: flex;
             font-size: 16px;
             text-align: center;
-            line-height: 40px;
-            border-radius: 5px;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            &:hover {
+                color: skyblue;
+            }
+            &:first-child {
+                border-right: 1px solid $border_line;
+            }
         }
     }
 
@@ -618,7 +881,6 @@ $border_line: #e8e8ed;
     .author_achievement {
         margin-bottom: 10px;
         padding-top: 10px;
-        border-top: 1px solid $border_line;
         font-size: 14px;
 
         /* 右边作者相关 作者成就--成就项 */
