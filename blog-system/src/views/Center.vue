@@ -3,7 +3,7 @@
         <div class="aside">
             <div class="user_info">
                 <div class="user_avatar">
-                    <img src="https://iph.href.lu/100x100" alt="用户头像" />
+                    <img :src="userInfo.avatar" alt="用户头像" />
                 </div>
                 <div class="nickname">
                     <span>{{ userInfo.nickname }}</span>
@@ -403,6 +403,7 @@ $bg_color: #fff;
 
         /* 左边个人信息 用户信息--关注按钮 */
         .operate_btn {
+            width: 108px;
             height: 30px;
             margin-top: 10px;
             font-size: 15px;

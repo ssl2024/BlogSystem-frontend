@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 15:20:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-28 16:14:14
+ * @LastEditTime: 2023-04-30 17:07:40
  * @Description: 
 -->
 <template>
@@ -67,14 +67,12 @@ export default {
         const getFansIdList = () => {
             return http.get(`/follows/fans/${route.params.id}`)
         }
-
         /* http 根据用户id列表获取用户 */
         const getUserList = ids => {
             return http.post(`/users/${data.currentPage}/${data.pageSize}`, {
                 id: ids,
             })
         }
-
         return {
             ...toRefs(data),
             getFansIdList,

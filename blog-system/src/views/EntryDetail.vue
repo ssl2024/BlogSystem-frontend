@@ -9,7 +9,7 @@
                 <div class="content_author">
                     <img
                         class="author_avatar"
-                        src="https://iph.href.lu/45x45"
+                        :src="user.avatar"
                         alt="作者头像"
                     />
                     <div class="entry_info">
@@ -32,14 +32,14 @@
                 <div class="comment_content">
                     <img
                         class="comment_avatar"
-                        src="https://iph.href.lu/45x45"
+                        :src="avatar(userId)"
                         alt="当前用户头像"
                     />
                     <div
                         class="comment_main"
                         contenteditable="true"
                         :placeholder="comment_placeholder"
-                        @input="input"
+                        @input="inputComment"
                         ref="comment"
                     ></div>
                 </div>
@@ -52,44 +52,114 @@
             </div>
             <div
                 class="comment_list"
-                v-for="comment in commentList"
+                v-for="(comment, index) in commentList"
                 :key="comment.id"
             >
                 <img
                     class="comment_avatar"
-                    src="https://iph.href.lu/40x40"
+                    :src="avatar(comment.userId)"
                     alt="评论头像"
                 />
                 <div class="comment_item">
+                    <!-- 一级评论 -->
                     <div class="comment_main">
                         <div class="user_nickname">
                             {{ nickname(comment.userId) }}
                         </div>
                         <div class="comment">{{ comment.content }}</div>
-                        <span class="action_btn">
+                        <span
+                            class="action_btn"
+                            @click="toggleShowReplyComment(index)"
+                        >
                             <i class="iconfont icon-pinglun2"></i>
                             <span>回复</span>
                         </span>
+                        <div
+                            class="reply_comment_content"
+                            v-show="isShowReplyComment[index]"
+                        >
+                            <div
+                                class="reply_comment_main"
+                                contenteditable="true"
+                                :placeholder="nickname(comment.userId, true)"
+                                @input="
+                                    inputReplyComment(comment.userId, index)
+                                "
+                                ref="replyComment"
+                            ></div>
+                        </div>
+                        <div
+                            class="reply_submit_btn"
+                            v-show="isShowReplyComment[index]"
+                            @click="
+                                submitReplyComment(
+                                    index,
+                                    comment.id,
+                                    comment.userId
+                                )
+                            "
+                        >
+                            发布
+                        </div>
                     </div>
+                    <!-- 二级评论 -->
                     <div
                         class="sub_comment_list"
-                        v-for="item in comment.children"
+                        v-for="(item, subIndex) in comment.children"
                         :key="item.id"
                     >
                         <img
                             class="sub_comment_avatar"
-                            src="https://iph.href.lu/24x24"
+                            :src="avatar(item.userId)"
                             alt="评论头像"
                         />
                         <div class="sub_comment_main">
                             <div class="user_nickname">
-                                {{ nickname(item.userId) }}
+                                {{ nickname(item.userId) }} 回复
+                                {{ nickname(item.replyUserId) }}
                             </div>
                             <div class="comment">{{ item.content }}</div>
-                            <span class="sub_action_btn">
+                            <span
+                                class="sub_action_btn"
+                                @click="
+                                    toggleSubShowReplyComment(index, subIndex)
+                                "
+                            >
                                 <i class="iconfont icon-pinglun2"></i>
                                 <span>回复</span>
                             </span>
+                            <div
+                                class="reply_sub_comment_content"
+                                v-show="isShowSubReplyComment[index][subIndex]"
+                            >
+                                <div
+                                    class="reply_sub_comment_main"
+                                    contenteditable="true"
+                                    :placeholder="nickname(item.userId, true)"
+                                    @input="
+                                        inputSubReplyComment(
+                                            item.userId,
+                                            index,
+                                            subIndex
+                                        )
+                                    "
+                                    ref="subReplyComment"
+                                ></div>
+                            </div>
+                            <div
+                                class="reply_sub_submit_btn"
+                                v-show="isShowSubReplyComment[index][subIndex]"
+                                @click="
+                                    submitSubReplyComment(
+                                        index,
+                                        subIndex,
+                                        comment.id,
+                                        item.userId
+                                    )
+                                "
+                            >
+                                发布
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -98,11 +168,7 @@
         <!-- 侧边栏 -->
         <div class="aside">
             <div class="author_info" @click="toUserPage(user.id)">
-                <img
-                    class="author_avatar"
-                    src="https://iph.href.lu/60x60"
-                    alt="作者头像"
-                />
+                <img class="author_avatar" :src="user.avatar" alt="作者头像" />
                 <div class="author_nickname">{{ user.nickname }}</div>
             </div>
             <div class="operate_btn" v-if="!isCurrentUser">
@@ -173,6 +239,12 @@ export default {
         const router = useRouter()
 
         const renderedMarkdown = ref('')
+        /* DOM 评论输入框 */
+        const comment = ref('')
+        /* DOM 一级评论回复框 */
+        const replyComment = ref('')
+        /* DOM 二级评论回复框 */
+        const subReplyComment = ref('')
         const md = new MarkdownIt()
         let timeId
 
@@ -211,6 +283,16 @@ export default {
              * false 没有关注
              */
             isFollowed: false,
+            /**
+             * 是否显示一级回复评论框
+             * true  显示
+             * false 不显示
+             */
+            isShowReplyComment: [],
+            /**
+             * 是否显示二级回复评论框
+             */
+            isShowSubReplyComment: [],
             /* 粉丝列表 */
             fansList: {},
             /* 关注列表 */
@@ -219,6 +301,7 @@ export default {
             commentList: {},
             /* 评论用户信息 */
             userCache: {},
+            /* 评论数 */
             commentCount: 0,
         })
 
@@ -276,7 +359,7 @@ export default {
         })
 
         onUnmounted(() => {
-            // 如果10秒之内退出则清除定时器
+            // 清除增加浏览次数的定时器(在当前页面没有停留10s则不会增加浏览次数)
             clearTimeout(timeId)
         })
 
@@ -285,10 +368,12 @@ export default {
             const commentList = []
             // 遍历所有评论数据，分出 一级评论 和 二级评论
             comments.forEach(item => {
+                // 给每条数据添加 children
                 item.children = []
                 if (item.parentId !== null) {
                     // 二级评论
                     commentList.forEach(comment => {
+                        // 证明是二级评论
                         if (comment.id === item.parentId) {
                             comment.children.push(item)
                         }
@@ -297,23 +382,18 @@ export default {
                     // 一级评论
                     commentList.push(item)
                 }
-                // 判断用户信息缓存中是否存在评论者id对应的信息
-                if (data.userCache[item.userId]) {
-                    // 存在
-                    return
-                } else {
-                    // 不存在 获取当前评论者的头像和昵称并添加到用户信息缓存中
-                    getUserInfo(item.userId).then(res => {
-                        if (res.data.code === 20041) {
-                            data.userCache[item.userId] = {
-                                nickname: res.data.data.nickname,
-                                avatar: res.data.data.avatar,
-                            }
-                        }
-                    })
-                }
             })
             data.commentCount = comments.length
+            for (let i = 0; i < commentList.length; i++) {
+                // 根据一级评论的条数 生成 控制一级评论回复框是否显示的数组
+                data.isShowReplyComment.push(false)
+                // 根据一级评论中二级评论的条数生成一个控制二级评论回复框是否显示的二维数组
+                let arr = []
+                for (let j = 0; j < commentList[i].children.length; j++) {
+                    arr.push(false)
+                }
+                data.isShowSubReplyComment.push(arr)
+            }
             data.commentList = commentList
         }
 
@@ -343,24 +423,81 @@ export default {
         })
         /* computed 评论者昵称 */
         const nickname = computed(() => {
-            return userId => {
+            return (userId, flag) => {
+                // 如果评论者昵称存在，直接返回数据
                 if (data.userCache[userId]) {
+                    if (flag) {
+                        return '回复' + data.userCache[userId].nickname
+                    }
                     return data.userCache[userId].nickname
                 }
+                // 如果评论者昵称不存在，向后端发送请求，暂时返回 ''
+                getUserInfo(userId).then(res => {
+                    if (res.data.code === 20041) {
+                        data.userCache[userId] = {
+                            nickname: res.data.data.nickname,
+                            avatar: res.data.data.avatar,
+                        }
+                    }
+                })
                 return ''
             }
         })
         /* computed 评论者头像 */
-        /* computed 评论数 */
-
-        /* DOM 评论输入框 */
-        const comment = ref()
+        const avatar = computed(() => {
+            return userId => {
+                // 如果评论者头像存在，直接返回数据
+                if (data.userCache[userId]) {
+                    return data.userCache[userId].avatar
+                }
+                // 如果评论者头像不存在，向后端发送请求，暂时返回 ''
+                getUserInfo(userId).then(res => {
+                    if (res.data.code === 20041) {
+                        data.userCache[userId] = {
+                            nickname: res.data.data.nickname,
+                            avatar: res.data.data.avatar,
+                        }
+                    }
+                })
+                return ''
+            }
+        })
 
         /* input 评论输入框 */
-        const input = e => {
+        const inputComment = e => {
+            // 是否显示评论框 placeholder
             data.comment_placeholder =
                 e.target.innerText.length > 0 ? '' : '善语结善缘，恶言伤人心'
         }
+        /* input 一级评论回复框 */
+        const inputReplyComment = (userId, index) => {
+            // 是否显示评论回复框 placeholder
+            const placeholder =
+                replyComment.value[index].innerText.length > 0
+                    ? ''
+                    : '回复' + data.userCache[userId].nickname
+            replyComment.value[index].setAttribute('placeholder', placeholder)
+        }
+        /* input 二级评论回复框 */
+        const inputSubReplyComment = (userId, index, subIndex) => {
+            // 计算 id 偏移量
+            let offsetId = 0
+            for (let i = 0; i < index; i++) {
+                for (let j = 0; j < data.isShowSubReplyComment[i].length; j++) {
+                    offsetId++
+                }
+            }
+            // 是否显示评论回复框 placeholder
+            const placeholder =
+                subReplyComment.value[offsetId + subIndex].innerText.length > 0
+                    ? ''
+                    : '回复' + data.userCache[userId].nickname
+            subReplyComment.value[offsetId + subIndex].setAttribute(
+                'placeholder',
+                placeholder
+            )
+        }
+
         /* click 侧边栏点赞 */
         const likeEntry = () => {
             // 判断文章点赞状态
@@ -371,10 +508,6 @@ export default {
                         // 修改文章的点赞状态
                         data.likeState = false
                         data.entry.likeCount--
-                        // 更新文章
-                        updateEntry().then(res => {
-                            console.log(res)
-                        })
                         alert('取消点赞成功')
                     } else {
                         alert('取消点赞失败')
@@ -387,10 +520,6 @@ export default {
                         // 修改文章的点赞状态
                         data.likeState = true
                         data.entry.likeCount++
-                        // 更新文章
-                        updateEntry().then(res => {
-                            console.log(res)
-                        })
                         alert('点赞文章成功')
                     } else {
                         alert('点赞文章失败')
@@ -411,10 +540,6 @@ export default {
                         // 修改文章的点赞状态
                         data.collectState = false
                         data.entry.collectCount--
-                        // 更新文章
-                        updateEntry().then(res => {
-                            console.log(res)
-                        })
                         alert('取消收藏成功')
                     } else {
                         alert('取消收藏失败')
@@ -427,10 +552,6 @@ export default {
                         // 修改文章的点赞状态
                         data.collectState = true
                         data.entry.collectCount++
-                        // 更新文章
-                        updateEntry().then(res => {
-                            console.log(res)
-                        })
                         alert('收藏文章成功')
                     } else {
                         alert('收藏文章失败')
@@ -440,7 +561,6 @@ export default {
         }
         /* click 发表评论 */
         const submitComment = () => {
-            console.log('点击了发表评论按钮')
             // comment.value.innerText  -->  获取 评论框中的内容
             const content = comment.value.innerText
             // 判断评论长度
@@ -464,6 +584,77 @@ export default {
                     })
                     // 清空评论框中的数据
                     comment.value.innerText = ''
+                }
+            })
+        }
+        /* click 一级评论回复的发布按钮 */
+        const submitReplyComment = (index, parentId, replyUserId) => {
+            // comment.value[index].innerText  -->  获取 评论框中的内容
+            const content = replyComment.value[index].innerText
+            // 判断评论长度
+            if (content.length === 0) {
+                alert('评论不能为空')
+                return
+            }
+            if (content.length >= 255) {
+                alert('评论不能超过255字符')
+                return
+            }
+            // 获取当前时间戳
+            const createTime = Number.parseInt(new Date().getTime() / 1000)
+            addComment(content, createTime, parentId, replyUserId).then(res => {
+                if (res.data.code === 20011) {
+                    // 重新获取评论数据
+                    getCommentList(data.id).then(res => {
+                        if (res.data.code === 20041) {
+                            commentFilter(res.data.data)
+                        }
+                    })
+                    // 清空评论框中的数据
+                    replyComment.value[index].innerText = ''
+                    // 关闭当前评论框
+                    data.isShowReplyComment[index] = false
+                }
+            })
+        }
+        /* click 二级评论回复的发布按钮 */
+        const submitSubReplyComment = (
+            index,
+            subIndex,
+            parentId,
+            replyUserId
+        ) => {
+            // 计算 id 偏移量
+            let offsetId = 0
+            for (let i = 0; i < index; i++) {
+                for (let j = 0; j < data.isShowSubReplyComment[i].length; j++) {
+                    offsetId++
+                }
+            }
+            const content = subReplyComment.value[offsetId + subIndex].innerText
+            // 判断评论长度
+            if (content.length === 0) {
+                alert('评论不能为空')
+                return
+            }
+            if (content.length >= 255) {
+                alert('评论不能超过255字符')
+                return
+            }
+            // 获取当前时间戳
+            const createTime = Number.parseInt(new Date().getTime() / 1000)
+            addComment(content, createTime, parentId, replyUserId).then(res => {
+                if (res.data.code === 20011) {
+                    // 重新获取评论数据
+                    getCommentList(data.id).then(res => {
+                        if (res.data.code === 20041) {
+                            commentFilter(res.data.data)
+                        }
+                    })
+                    // 清空评论框中的数据
+                    subReplyComment.value[offsetId + subIndex].innerText = ''
+                    // 关闭当前评论框
+                    data.isShowSubReplyComment[index][subIndex] = false
                 }
             })
         }
@@ -500,6 +691,21 @@ export default {
         /* click 作者关注数 */
         const toUserFollowList = userId => {
             router.push(`/center/${userId}/follow`)
+        }
+        /* click 一级评论下的回复按钮 */
+        const toggleShowReplyComment = index => {
+            // 切换该条评论回复框是否显示
+            data.isShowReplyComment[index] = data.isShowReplyComment[index]
+                ? false
+                : true
+        }
+        /* click 二级评论下的回复按钮 */
+        const toggleSubShowReplyComment = (index, subIndex) => {
+            // 切换该条评论回复框是否显示
+            data.isShowSubReplyComment[index][subIndex] = data
+                .isShowSubReplyComment[index][subIndex]
+                ? false
+                : true
         }
 
         /* http 获取博文信息 */
@@ -572,11 +778,17 @@ export default {
             return http.delete(`/follows/${followedUserId}/${followUserId}`)
         }
         /* http 发表评论 */
-        const addComment = (content, createTime, parentId = null) => {
+        const addComment = (
+            content,
+            createTime,
+            parentId = null,
+            replyUserId = null
+        ) => {
             return http.post(`/comments`, {
                 content,
                 createTime,
                 parentId,
+                replyUserId,
                 userId: data.userId,
                 blogId: data.id,
             })
@@ -584,22 +796,31 @@ export default {
         return {
             ...toRefs(data),
             renderedMarkdown,
+            comment,
+            replyComment,
+            subReplyComment,
             dateTime,
             likeCount,
             collectCount,
             fansCount,
             nickname,
-            comment,
-            input,
+            avatar,
+            inputComment,
+            inputReplyComment,
+            inputSubReplyComment,
             likeEntry,
             commentEntry,
             collectEntry,
             submitComment,
+            submitReplyComment,
+            submitSubReplyComment,
             addFollow,
             unFollow,
             toUserPage,
             toUserFansList,
             toUserFollowList,
+            toggleShowReplyComment,
+            toggleSubShowReplyComment,
         }
     },
 }
@@ -755,14 +976,28 @@ $border_line: #e8e8ed;
 
         /* 左边博客内容 评论列表--评论中所有用户昵称 */
         .user_nickname {
-            margin-bottom: 10px;
             font-size: 15px;
         }
 
         /* 左边博客内容 评论列表--评论中所有评论内容 */
         .comment {
-            margin-bottom: 5px;
+            margin-top: 2px;
+            margin-bottom: 2px;
             font-size: 14px;
+        }
+
+        /* 左边博客内容 评论列表--所有评论按钮 */
+        [class$='action_btn'] {
+            cursor: pointer;
+            &:hover {
+                color: skyblue;
+            }
+            .iconfont {
+                font-size: 15px;
+            }
+            span {
+                font-size: 14px;
+            }
         }
 
         /* 左边博客内容 评论列表--楼主头像 */
@@ -777,14 +1012,87 @@ $border_line: #e8e8ed;
         .comment_main {
             position: relative;
             margin-bottom: 15px;
+
+            /* 左边博客内容 评论列表--楼主评论主体(回复评论框) */
+            .reply_comment_main {
+                width: 656px;
+                height: 50px;
+                margin-top: 5px;
+                margin-bottom: 50px;
+                padding: 10px 12px;
+                background-color: #f7f8f9;
+                font-size: 15px;
+                border-radius: 5px;
+                outline: none;
+                &:focus {
+                    outline: 1px solid skyblue;
+                }
+                &::before {
+                    content: attr(placeholder);
+                    color: #8a919f;
+                }
+            }
+
+            /* 左边博客内容 评论列表--楼主评论主体(评论回复发布按钮) */
+            .reply_submit_btn {
+                position: absolute;
+                right: 0;
+                bottom: -40px;
+                width: 80px;
+                height: 35px;
+                background: #1e80ff;
+                font-size: 14px;
+                color: #fff;
+                text-align: center;
+                line-height: 35px;
+                cursor: pointer;
+                border-radius: 5px;
+            }
         }
 
         /* 左边博客内容 评论列表--回复者列表 */
         .sub_comment_list {
             display: flex;
+            position: relative;
             width: 650px;
             padding: 15px;
             background-color: #f1f2f5;
+
+            /* 左边博客内容 评论列表--回复者列表(回复评论框) */
+            .reply_sub_comment_main {
+                width: 596px;
+                height: 50px;
+                margin-top: 5px;
+                margin-bottom: 40px;
+                padding: 10px 12px;
+                background-color: #f7f8f9;
+                font-size: 15px;
+                border-radius: 5px;
+                outline: none;
+                &:focus {
+                    outline: 1px solid skyblue;
+                }
+                &::before {
+                    content: attr(placeholder);
+                    color: #8a919f;
+                }
+            }
+
+            /* 左边博客内容 评论列表--回复者列表(评论回复发布按钮) */
+            .reply_sub_submit_btn {
+                position: absolute;
+                right: 10px;
+                bottom: 10px;
+                width: 80px;
+                height: 35px;
+                background: #1e80ff;
+                font-size: 14px;
+                color: #fff;
+                text-align: center;
+                line-height: 35px;
+                cursor: pointer;
+                border-radius: 5px;
+            }
 
             /* 左边博客内容 评论列表--回复者列表(回复者头像) */
             img {

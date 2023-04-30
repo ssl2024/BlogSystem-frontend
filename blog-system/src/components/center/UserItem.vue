@@ -2,19 +2,19 @@
     <div class="user_item" @click="toUserPage(user.id)">
         <div class="user_info">
             <div class="user_avatar">
-                <img src="https://iph.href.lu/60x60" alt="头像" />
+                <img :src="user.avatar" alt="头像" />
             </div>
             <div class="user_name">
                 <span>{{ user.nickname }}</span>
             </div>
         </div>
         <div v-if="!isCurrentUser" class="user_status">
-            <span v-show="isFollowed" @click.stop="unFollow(user.id)"
-                >已关注</span
-            >
-            <span v-show="!isFollowed" @click.stop="addFollow(user.id)"
-                >关注</span
-            >
+            <div v-show="isFollowed" @click.stop="unFollow(user.id)">
+                已关注
+            </div>
+            <div v-show="!isFollowed" @click.stop="addFollow(user.id)">
+                关注
+            </div>
         </div>
     </div>
 </template>
@@ -58,13 +58,11 @@ export default {
             }
             // 不是当前用户的主页
             // 获取当前用户是否关注访问用户
-            http.get(`/follows/state/${data.user.id}/${data.loginUserId}`).then(
-                res => {
-                    if (res.data.code === 20041) {
-                        data.isFollowed = res.data.data
-                    }
+            getFollowState(data.user.id).then(res => {
+                if (res.data.code === 20041) {
+                    data.isFollowed = res.data.data
                 }
-            )
+            })
         })
 
         /* click 关注 */
@@ -95,6 +93,11 @@ export default {
         /* click 用户 */
         const toUserPage = userId => {
             router.push(`/center/${userId}`)
+        }
+
+        /* http 获取当前登录用户是否关注展示用户 */
+        const getFollowState = userId => {
+            return http(`/follows/state/${userId}/${data.loginUserId}`)
         }
         return {
             ...toRefs(data),
@@ -149,6 +152,12 @@ $bg_color: #fff;
         line-height: 30px;
         cursor: pointer;
         border-radius: 5px;
+        span {
+            display: block;
+        }
+        &:hover {
+            background-color: #9cd74e;
+        }
     }
 }
 </style>

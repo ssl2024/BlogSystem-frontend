@@ -31,13 +31,13 @@
                 <i class="iconfont icon-sousuo"></i>
             </div>
         </div>
-        <div class="center" @click="toggleProfile">
-            <img src="https://iph.href.lu/45x45" alt="头像" />
+        <div class="center" @mouseenter="showProfile">
+            <img :src="user.avatar" v-show="!isShowProfile" alt="头像" />
         </div>
-        <div class="profile" v-show="showProfile">
+        <div class="profile" v-show="isShowProfile" @mouseleave="closeProfile">
             <div class="profile_top">
                 <div class="user_avatar">
-                    <img src="https://iph.href.lu/60x60" alt="用户头像" />
+                    <img :src="user.avatar" alt="用户头像" />
                 </div>
                 <div class="user_nickname">
                     <span>{{ user.nickname }}</span>
@@ -95,7 +95,7 @@ export default {
              * false 不显示
              * true  显示
              */
-            showProfile: false,
+            isShowProfile: false,
             /* 当前登录的用户id */
             userId: store.state.userId,
             /* 当前登录用户信息 */
@@ -126,27 +126,35 @@ export default {
         })
 
         /* click 右上角用户头像 */
-        const toggleProfile = () => {
-            data.showProfile = !data.showProfile
+        const showProfile = () => {
+            data.isShowProfile = true
+        }
+        const closeProfile = () => {
+            data.isShowProfile = false
         }
         /* click 个人主页 */
         const toUserPage = userId => {
+            data.isShowProfile = false
             router.push(`/center/${userId}`)
         }
         /* click 个人信息 */
         const toUserInfo = () => {
+            data.isShowProfile = false
             router.push(`/userInfo/profile`)
         }
         /* click 博客管理 */
         const toBlogManage = () => {
+            data.isShowProfile = false
             router.push(`/userInfo/blogManage`)
         }
         /* click 粉丝 */
         const toUserFans = userId => {
+            data.isShowProfile = false
             router.push(`/center/${userId}/fans`)
         }
         /* click 关注 */
         const toUserFollow = userId => {
+            data.isShowProfile = false
             router.push(`/center/${userId}/follow`)
         }
         /* click 注销登录 */
@@ -174,7 +182,8 @@ export default {
             ...toRefs(data),
             toUserPage,
             toUserInfo,
-            toggleProfile,
+            showProfile,
+            closeProfile,
             toBlogManage,
             toUserFans,
             toUserFollow,
@@ -318,6 +327,10 @@ $bg_color: #fff;
                 width: 60px;
                 height: 60px;
                 border-radius: 50%;
+                img {
+                    width: 60px;
+                    height: 60px;
+                }
             }
 
             /* 导航栏 用户简介--顶部(用户昵称) */
