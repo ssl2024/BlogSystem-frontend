@@ -43,7 +43,11 @@
                         ref="comment"
                     ></div>
                 </div>
-                <div class="submit_btn" @click="submitComment">
+                <div
+                    class="submit_btn"
+                    @click="submitComment"
+                    @keydown="submitComment"
+                >
                     发表评论(Enter)
                 </div>
             </div>
@@ -62,18 +66,32 @@
                 />
                 <div class="comment_item">
                     <!-- 一级评论 -->
-                    <div class="comment_main">
+                    <div
+                        class="comment_main"
+                        @mouseenter="showDeleteBtn(index, comment.userId)"
+                        @mouseleave="hideDeleteBtn(index)"
+                    >
                         <div class="user_nickname">
                             {{ nickname(comment.userId) }}
                         </div>
                         <div class="comment">{{ comment.content }}</div>
-                        <span
-                            class="action_btn"
-                            @click="toggleShowReplyComment(index)"
-                        >
-                            <i class="iconfont icon-pinglun2"></i>
-                            <span>回复</span>
-                        </span>
+                        <div class="operate_btn">
+                            <span
+                                class="action_btn"
+                                @click="toggleShowReplyComment(index)"
+                            >
+                                <i class="iconfont icon-pinglun2"></i>
+                                <span>回复</span>
+                            </span>
+                            <span
+                                class="delete_comment_btn"
+                                v-show="isShowDeleteBtn[index]"
+                                @click="
+                                    deleteComment(comment.id, comment.userId)
+                                "
+                                >删除</span
+                            >
+                        </div>
                         <div
                             class="reply_comment_content"
                             v-show="isShowReplyComment[index]"
@@ -113,21 +131,38 @@
                             :src="avatar(item.userId)"
                             alt="评论头像"
                         />
-                        <div class="sub_comment_main">
+                        <div
+                            class="sub_comment_main"
+                            @mouseenter="
+                                showSubDeleteBtn(index, subIndex, item.userId)
+                            "
+                            @mouseleave="hideSubDeleteBtn(index, subIndex)"
+                        >
                             <div class="user_nickname">
                                 {{ nickname(item.userId) }} 回复
                                 {{ nickname(item.replyUserId) }}
                             </div>
                             <div class="comment">{{ item.content }}</div>
-                            <span
-                                class="sub_action_btn"
-                                @click="
-                                    toggleSubShowReplyComment(index, subIndex)
-                                "
-                            >
-                                <i class="iconfont icon-pinglun2"></i>
-                                <span>回复</span>
-                            </span>
+                            <div class="sub_operate_btn">
+                                <span
+                                    class="sub_action_btn"
+                                    @click="
+                                        toggleSubShowReplyComment(
+                                            index,
+                                            subIndex
+                                        )
+                                    "
+                                >
+                                    <i class="iconfont icon-pinglun2"></i>
+                                    <span>回复</span>
+                                </span>
+                                <span
+                                    class="delete_comment_btn"
+                                    v-show="isShowSubDeleteBtn[index][subIndex]"
+                                    @click="deleteComment(item.id, item.userId)"
+                                    >删除</span
+                                >
+                            </div>
                             <div
                                 class="reply_sub_comment_content"
                                 v-show="isShowSubReplyComment[index][subIndex]"
@@ -143,7 +178,7 @@
                                             subIndex
                                         )
                                     "
-                                    ref="subReplyComment"
+                                    :ref="subReplyComment[index]"
                                 ></div>
                             </div>
                             <div
@@ -167,56 +202,52 @@
         </div>
         <!-- 侧边栏 -->
         <div class="aside">
-            <div class="author_info" @click="toUserPage(user.id)">
-                <img class="author_avatar" :src="user.avatar" alt="作者头像" />
-                <div class="author_nickname">{{ user.nickname }}</div>
-            </div>
-            <div class="operate_btn" v-if="!isCurrentUser">
-                <div class="follow" v-show="!isFollowed" @click="addFollow">
-                    <i class="iconfont"></i>
-                    <span>关注</span>
+            <div class="aside_top">
+                <div class="author_info" @click="toUserPage(user.id)">
+                    <img
+                        class="author_avatar"
+                        :src="user.avatar"
+                        alt="作者头像"
+                    />
+                    <div class="author_nickname">{{ user.nickname }}</div>
                 </div>
-                <div class="followed" v-show="isFollowed" @click="unFollow">
-                    <i class="iconfont"></i>
-                    <span>已关注</span>
+                <div class="operate_btn" v-if="!isCurrentUser">
+                    <div class="follow" v-show="!isFollowed" @click="addFollow">
+                        <i class="iconfont"></i>
+                        <span>关注</span>
+                    </div>
+                    <div class="followed" v-show="isFollowed" @click="unFollow">
+                        <i class="iconfont"></i>
+                        <span>已关注</span>
+                    </div>
                 </div>
-            </div>
-            <div class="follow_block">
-                <div class="follow_item" @click="toUserFollowList(user.id)">
-                    <span>关注</span>
-                    <span>{{ followList.length }}</span>
+                <div class="follow_block">
+                    <div class="follow_item" @click="toUserFollowList(user.id)">
+                        <span>关注</span>
+                        <span>{{ followList.length }}</span>
+                    </div>
+                    <div class="follow_item" @click="toUserFansList(user.id)">
+                        <span>粉丝</span>
+                        <span>{{ fansCount(fansList.length) }}</span>
+                    </div>
                 </div>
-                <div class="follow_item" @click="toUserFansList(user.id)">
-                    <span>粉丝</span>
-                    <span>{{ fansCount(fansList.length) }}</span>
-                </div>
-            </div>
-            <div class="author_achievement">
-                <div class="item">
-                    <i class="iconfont icon-dianzan1"></i>
-                    <span>获得点赞 234</span>
-                </div>
-                <div class="item">
-                    <i class="iconfont icon-dianzan1"></i>
-                    <span>文章被阅读 3456</span>
-                </div>
-            </div>
-            <div class="operate_list">
-                <div class="operate_item" @click="likeEntry">
-                    <i class="iconfont icon-dianzan_kuai"></i>
-                    <span class="like_count">{{
-                        likeCount(entry.likeCount)
-                    }}</span>
-                </div>
-                <div class="operate_item" @click="commentEntry">
-                    <i class="iconfont icon-pinglun1"></i>
-                    <span class="comment_count">{{ commentCount }}</span>
-                </div>
-                <div class="operate_item" @click="collectEntry">
-                    <i class="iconfont icon-shoucangxiao"></i>
-                    <span class="collect_count">{{
-                        collectCount(entry.collectCount)
-                    }}</span>
+                <div class="operate_list">
+                    <div class="operate_item" @click="likeEntry">
+                        <i class="iconfont icon-dianzan_kuai"></i>
+                        <span class="like_count">{{
+                            likeCount(entry.likeCount)
+                        }}</span>
+                    </div>
+                    <div class="operate_item" @click="commentEntry">
+                        <i class="iconfont icon-pinglun1"></i>
+                        <span class="comment_count">{{ commentCount }}</span>
+                    </div>
+                    <div class="operate_item" @click="collectEntry">
+                        <i class="iconfont icon-shoucangxiao"></i>
+                        <span class="collect_count">{{
+                            collectCount(entry.collectCount)
+                        }}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -244,7 +275,7 @@ export default {
         /* DOM 一级评论回复框 */
         const replyComment = ref('')
         /* DOM 二级评论回复框 */
-        const subReplyComment = ref('')
+        let subReplyComment = []
         const md = new MarkdownIt()
         let timeId
 
@@ -271,6 +302,16 @@ export default {
              * true  已经点赞
              */
             collectState: false,
+            /* 粉丝列表 */
+            fansList: {},
+            /* 关注列表 */
+            followList: {},
+            /* 文章评论列表 */
+            commentList: {},
+            /* 评论用户信息 */
+            userCache: {},
+            /* 评论数 */
+            commentCount: 0,
             /**
              * 是否是当前用户
              * true  是当前用户(不展示关注/关注)
@@ -291,18 +332,22 @@ export default {
             isShowReplyComment: [],
             /**
              * 是否显示二级回复评论框
+             * true  显示
+             * false 不显示
              */
             isShowSubReplyComment: [],
-            /* 粉丝列表 */
-            fansList: {},
-            /* 关注列表 */
-            followList: {},
-            /* 文章评论列表 */
-            commentList: {},
-            /* 评论用户信息 */
-            userCache: {},
-            /* 评论数 */
-            commentCount: 0,
+            /**
+             * 是否显示一级评论删除按钮
+             * true  显示
+             * false 不显示
+             */
+            isShowDeleteBtn: [],
+            /**
+             * 是否显示二级评论删除按钮
+             * true  显示
+             * false 不显示
+             */
+            isShowSubDeleteBtn: [],
         })
 
         onMounted(() => {
@@ -362,40 +407,6 @@ export default {
             // 清除增加浏览次数的定时器(在当前页面没有停留10s则不会增加浏览次数)
             clearTimeout(timeId)
         })
-
-        /* filter 评论过滤器 */
-        const commentFilter = comments => {
-            const commentList = []
-            // 遍历所有评论数据，分出 一级评论 和 二级评论
-            comments.forEach(item => {
-                // 给每条数据添加 children
-                item.children = []
-                if (item.parentId !== null) {
-                    // 二级评论
-                    commentList.forEach(comment => {
-                        // 证明是二级评论
-                        if (comment.id === item.parentId) {
-                            comment.children.push(item)
-                        }
-                    })
-                } else {
-                    // 一级评论
-                    commentList.push(item)
-                }
-            })
-            data.commentCount = comments.length
-            for (let i = 0; i < commentList.length; i++) {
-                // 根据一级评论的条数 生成 控制一级评论回复框是否显示的数组
-                data.isShowReplyComment.push(false)
-                // 根据一级评论中二级评论的条数生成一个控制二级评论回复框是否显示的二维数组
-                let arr = []
-                for (let j = 0; j < commentList[i].children.length; j++) {
-                    arr.push(false)
-                }
-                data.isShowSubReplyComment.push(arr)
-            }
-            data.commentList = commentList
-        }
 
         /* computed 博客更新时间 */
         const dateTime = computed(() => {
@@ -463,6 +474,58 @@ export default {
             }
         })
 
+        /* filter 评论过滤 */
+        const commentFilter = comments => {
+            const commentList = []
+            // 遍历所有评论数据，分出 一级评论 和 二级评论
+            comments.forEach(item => {
+                // 给每条数据添加 children
+                item.children = []
+                if (item.parentId !== null) {
+                    // 二级评论
+                    commentList.forEach(comment => {
+                        // 证明是二级评论
+                        if (comment.id === item.parentId) {
+                            comment.children.push(item)
+                        }
+                    })
+                } else {
+                    // 一级评论
+                    commentList.push(item)
+                    subReplyComment.push(ref(''))
+                }
+            })
+
+            // 因为每次再 onMounted、发表评论、回复评论都会调用 subReplyComment.push(ref(''))
+            // 但是并不需要如此多的 ref 对象，只需要保证 subReplyComment.length == commentList.length 即可
+            while (subReplyComment.length > commentList.length) {
+                // 删除掉多余的 ref 对象
+                subReplyComment.pop()
+            }
+
+            data.commentCount = comments.length
+            // 将原有的控制 一级/二级 回复评论框的数据清空
+            data.isShowReplyComment = []
+            data.isShowSubReplyComment = []
+            // 将原有的控制 一级/二级 评论删除按钮的数据清空
+            data.isShowDeleteBtn = []
+            data.isShowSubDeleteBtn = []
+            for (let i = 0; i < commentList.length; i++) {
+                // 根据一级评论的条数 生成 控制一级评论回复框是否显示的数组
+                data.isShowReplyComment.push(false)
+                // 根据一级评论的条数 生成 控制一级评论删除按钮显示状态的数组
+                data.isShowDeleteBtn.push(false)
+                // 根据一级评论中二级评论的条数 生成 一个控制 二级评论回复框是否显示 和 二级评论删除按钮显示状态的 数组
+                let temp = []
+                for (let j = 0; j < commentList[i].children.length; j++) {
+                    temp.push(false)
+                }
+                data.isShowSubReplyComment.push([...temp])
+                data.isShowSubDeleteBtn.push([...temp])
+            }
+            data.commentList = commentList
+        }
+
         /* input 评论输入框 */
         const inputComment = e => {
             // 是否显示评论框 placeholder
@@ -480,22 +543,36 @@ export default {
         }
         /* input 二级评论回复框 */
         const inputSubReplyComment = (userId, index, subIndex) => {
-            // 计算 id 偏移量
-            let offsetId = 0
-            for (let i = 0; i < index; i++) {
-                for (let j = 0; j < data.isShowSubReplyComment[i].length; j++) {
-                    offsetId++
-                }
-            }
-            // 是否显示评论回复框 placeholder
             const placeholder =
-                subReplyComment.value[offsetId + subIndex].innerText.length > 0
+                subReplyComment[index].value[subIndex].innerText.length > 0
                     ? ''
                     : '回复' + data.userCache[userId].nickname
-            subReplyComment.value[offsetId + subIndex].setAttribute(
+            subReplyComment[index].value[subIndex].setAttribute(
                 'placeholder',
                 placeholder
             )
+        }
+
+        /* mouseenter 一级评论 */
+        const showDeleteBtn = (index, commentUserId) => {
+            if (data.userId === commentUserId) {
+                data.isShowDeleteBtn[index] = true
+            }
+        }
+        /* mouseenter 二级评论 */
+        const showSubDeleteBtn = (index, subIndex, commentUserId) => {
+            if (data.userId === commentUserId) {
+                data.isShowSubDeleteBtn[index][subIndex] = true
+            }
+        }
+
+        /* mouseleave 一级评论 */
+        const hideDeleteBtn = index => {
+            data.isShowDeleteBtn[index] = false
+        }
+        /* mouseleave 二级评论 */
+        const hideSubDeleteBtn = (index, subIndex) => {
+            data.isShowSubDeleteBtn[index][subIndex] = false
         }
 
         /* click 侧边栏点赞 */
@@ -589,7 +666,6 @@ export default {
         }
         /* click 一级评论回复的发布按钮 */
         const submitReplyComment = (index, parentId, replyUserId) => {
-            // comment.value[index].innerText  -->  获取 评论框中的内容
             const content = replyComment.value[index].innerText
             // 判断评论长度
             if (content.length === 0) {
@@ -612,6 +688,11 @@ export default {
                     })
                     // 清空评论框中的数据
                     replyComment.value[index].innerText = ''
+                    // 设置 placeholder
+                    replyComment.value[index].setAttribute(
+                        'placeholder',
+                        '回复' + data.userCache[replyUserId].nickname
+                    )
                     // 关闭当前评论框
                     data.isShowReplyComment[index] = false
                 }
@@ -624,14 +705,7 @@ export default {
             parentId,
             replyUserId
         ) => {
-            // 计算 id 偏移量
-            let offsetId = 0
-            for (let i = 0; i < index; i++) {
-                for (let j = 0; j < data.isShowSubReplyComment[i].length; j++) {
-                    offsetId++
-                }
-            }
-            const content = subReplyComment.value[offsetId + subIndex].innerText
+            const content = subReplyComment[index].value[subIndex].innerText
             // 判断评论长度
             if (content.length === 0) {
                 alert('评论不能为空')
@@ -652,7 +726,12 @@ export default {
                         }
                     })
                     // 清空评论框中的数据
-                    subReplyComment.value[offsetId + subIndex].innerText = ''
+                    subReplyComment[index].value[subIndex].innerText = ''
+                    // 设置 placeholder
+                    subReplyComment[index].value[subIndex].setAttribute(
+                        'placeholder',
+                        '回复' + data.userCache[replyUserId].nickname
+                    )
                     // 关闭当前评论框
                     data.isShowSubReplyComment[index][subIndex] = false
                 }
@@ -706,6 +785,24 @@ export default {
                 .isShowSubReplyComment[index][subIndex]
                 ? false
                 : true
+        }
+        /* click 评论右下角的删除按钮 */
+        const deleteComment = (commentId, commentUserId) => {
+            // 判断当前用户id 是否等于 评论发布用户id
+            if (data.userId !== commentUserId) {
+                alert('请不要删除别人的评论，前端何苦为难前端')
+                return
+            }
+            deleteCommentInfo(commentId).then(res => {
+                if (res.data.code === 20021) {
+                    // 重新获取评论数据
+                    getCommentList(data.id).then(res => {
+                        if (res.data.code === 20041) {
+                            commentFilter(res.data.data)
+                        }
+                    })
+                }
+            })
         }
 
         /* http 获取博文信息 */
@@ -777,6 +874,10 @@ export default {
         const deleteFollowInfo = (followedUserId, followUserId) => {
             return http.delete(`/follows/${followedUserId}/${followUserId}`)
         }
+        /* http 删除评论 */
+        const deleteCommentInfo = commentId => {
+            return http.delete(`/comments/${commentId}`)
+        }
         /* http 发表评论 */
         const addComment = (
             content,
@@ -808,6 +909,10 @@ export default {
             inputComment,
             inputReplyComment,
             inputSubReplyComment,
+            showDeleteBtn,
+            showSubDeleteBtn,
+            hideDeleteBtn,
+            hideSubDeleteBtn,
             likeEntry,
             commentEntry,
             collectEntry,
@@ -821,6 +926,7 @@ export default {
             toUserFollowList,
             toggleShowReplyComment,
             toggleSubShowReplyComment,
+            deleteComment,
         }
     },
 }
@@ -836,7 +942,7 @@ $color: #fff;
 /* 边框分隔线颜色 */
 $border_line: #e8e8ed;
 
-/* 博客详情页面 
+/* 博客详情页面
 ----------------------------------------------------------------*/
 .detail_block {
     display: flex;
@@ -924,7 +1030,7 @@ $border_line: #e8e8ed;
             /* 左边博客内容 评论表单--内容(评论输入框) */
             .comment_main {
                 width: 685px;
-                height: 100px;
+                min-height: 100px;
                 padding: 10px 12px;
                 background-color: #f7f8f9;
                 font-size: 15px;
@@ -943,8 +1049,8 @@ $border_line: #e8e8ed;
         /* 左边博客内容 评论表单--发表评论按钮 */
         .submit_btn {
             position: absolute;
-            right: 6px;
-            bottom: -20px;
+            right: 45px;
+            bottom: -10px;
             width: 120px;
             height: 40px;
             background-color: #1e80ff;
@@ -986,17 +1092,32 @@ $border_line: #e8e8ed;
             font-size: 14px;
         }
 
-        /* 左边博客内容 评论列表--所有评论按钮 */
-        [class$='action_btn'] {
-            cursor: pointer;
-            &:hover {
-                color: skyblue;
+        /* 左边博客内容 评论内容-- */
+        .operate_btn,
+        .sub_operate_btn {
+            display: flex;
+            justify-content: space-between;
+
+            /* 左边博客内容 评论列表--所有评论的回复按钮 */
+            [class$='action_btn'] {
+                cursor: pointer;
+                &:hover {
+                    color: skyblue;
+                }
+                .iconfont {
+                    font-size: 15px;
+                }
+                span {
+                    font-size: 14px;
+                }
             }
-            .iconfont {
-                font-size: 15px;
-            }
-            span {
+
+            /* 左边博客内容 评论列表--一级评论删除按钮 */
+            .delete_comment_btn {
+                color: #f53f3f;
                 font-size: 14px;
+                line-height: 24px;
+                cursor: pointer;
             }
         }
 
@@ -1011,6 +1132,7 @@ $border_line: #e8e8ed;
         /* 左边博客内容 评论列表--楼主评论主体 */
         .comment_main {
             position: relative;
+            width: 680px;
             margin-bottom: 15px;
 
             /* 左边博客内容 评论列表--楼主评论主体(回复评论框) */
@@ -1041,8 +1163,8 @@ $border_line: #e8e8ed;
                 width: 80px;
                 height: 35px;
                 background: #1e80ff;
-                font-size: 14px;
                 color: #fff;
+                font-size: 14px;
                 text-align: center;
                 line-height: 35px;
                 cursor: pointer;
@@ -1054,9 +1176,13 @@ $border_line: #e8e8ed;
         .sub_comment_list {
             display: flex;
             position: relative;
-            width: 650px;
+            width: 654px;
             padding: 15px;
             background-color: #f1f2f5;
+
+            .sub_comment_main {
+                width: 620px;
+            }
 
             /* 左边博客内容 评论列表--回复者列表(回复评论框) */
             .reply_sub_comment_main {
@@ -1086,8 +1212,8 @@ $border_line: #e8e8ed;
                 width: 80px;
                 height: 35px;
                 background: #1e80ff;
-                font-size: 14px;
                 color: #fff;
+                font-size: 14px;
                 text-align: center;
                 line-height: 35px;
                 cursor: pointer;
@@ -1105,11 +1231,15 @@ $border_line: #e8e8ed;
     }
 }
 
-/* 右边作者相关
+/* 右边侧边栏
 ----------------------------------------------------------------*/
 .aside {
     width: 280px;
-    height: 280px;
+}
+
+/* 右边作者相关
+----------------------------------------------------------------*/
+.aside_top {
     padding: 25px 20px;
     background-color: $bg_color;
 
@@ -1164,14 +1294,14 @@ $border_line: #e8e8ed;
     /* 右边作者相关 关注/粉丝数 */
     .follow_block {
         display: flex;
-        height: 50px;
+        height: 40px;
         padding: 10px 0;
         border-top: 1px solid $border_line;
         border-bottom: 1px solid $border_line;
         [class='follow_item'] {
             flex: 1;
             display: flex;
-            font-size: 16px;
+            font-size: 15px;
             text-align: center;
             cursor: pointer;
             flex-direction: column;
@@ -1181,24 +1311,6 @@ $border_line: #e8e8ed;
             }
             &:first-child {
                 border-right: 1px solid $border_line;
-            }
-        }
-    }
-
-    /* 右边作者相关 作者成就 */
-    .author_achievement {
-        margin-bottom: 10px;
-        padding-top: 10px;
-        font-size: 14px;
-
-        /* 右边作者相关 作者成就--成就项 */
-        .item {
-            height: 30px;
-            line-height: 30px;
-
-            /* 右边作者相关 作者成就--成就项(字体图标) */
-            .iconfont {
-                margin-right: 10px;
             }
         }
     }
