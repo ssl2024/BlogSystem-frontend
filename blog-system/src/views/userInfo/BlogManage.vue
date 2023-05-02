@@ -7,16 +7,16 @@
                     class="search_condition_item"
                     type="text"
                     placeholder="标题"
-                    v-model="searchTitle"
+                    v-model.trim="searchTitle"
                 />
                 <input
                     class="search_condition_item"
                     type="text"
                     placeholder="类型"
-                    v-model="searchType"
+                    v-model.trim="searchType"
                 />
             </div>
-            <div class="search_btn" @click="searchBlog">搜索</div>
+            <div class="search_btn" @click="searchEntry">搜索</div>
         </div>
         <div class="manage_blog_block">
             <div class="blog_header">
@@ -90,10 +90,16 @@ export default {
             getEntryList()
         })
 
-        const getEntryList = () => {
-            http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
-                authorId: [store.state.userId],
-            }).then(res => {
+        const getEntryList = (title = '', type = '') => {
+            // 搜索条件处理
+            title = title !== '' ? [title] : null
+            type = type !== '' ? [type] : null
+            getLoginUserEntryList(
+                data.currentPage,
+                data.pageSize,
+                title,
+                type
+            ).then(res => {
                 data.entryList = res.data.data.records
                 data.pages = res.data.data.pages
             })
@@ -107,16 +113,17 @@ export default {
         })
 
         /* click 搜索按钮 */
-        const searchBlog = () => {
-            console.log(data.searchTitle, data.searchType)
+        const searchEntry = () => {
+            data.currentPage = 1
+            getEntryList(data.searchTitle, data.searchType)
         }
         /* click 修改 */
         const blogUpdate = id => {
             router.push(`/edit/${id}`)
         }
         /* click 删除 */
-        const blogDelete = id => {
-            http.delete('/blogs/' + id).then(res => {
+        const blogDelete = entryId => {
+            deleteEntry(entryId).then(res => {
                 if (res.data.code === 20021) {
                     alert('删除成功')
                     // 如果当前页只剩下最后一条数据
@@ -153,11 +160,29 @@ export default {
         const addBlog = () => {
             router.push('/edit')
         }
+
+        /* http 获取登录用户发表的博客 */
+        const getLoginUserEntryList = (
+            currentPage,
+            pageSize,
+            title = null,
+            type = null
+        ) => {
+            return http.post(`/blogs/${currentPage}/${pageSize}`, {
+                authorId: [store.state.userId],
+                title,
+                type,
+            })
+        }
+        /* http 删除博客 */
+        const deleteEntry = entryId => {
+            return http.delete(`/blogs/${entryId}`)
+        }
         return {
             ...toRefs(data),
             dateTime,
             getEntryList,
-            searchBlog,
+            searchEntry,
             blogUpdate,
             blogDelete,
             prevPage,
@@ -209,7 +234,7 @@ $color_pagination: #35bcb5;
             /* 博客管理 搜索栏--搜索列表(所有输入框) */
             input {
                 width: 180px;
-                height: 33x;
+                height: 33px;
                 margin-right: 15px;
                 padding-left: 15px;
                 border: 1px solid #c2c8d1;

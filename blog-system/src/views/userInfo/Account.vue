@@ -1,3 +1,10 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-12 11:51:43
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-02 21:33:10
+ * @Description: 账号设置
+-->
 <template>
     <div class="account_setting">
         <div class="setting_title">账号设置</div>
@@ -15,14 +22,29 @@
             <li class="setting_item">
                 <span>密码</span>
                 <span></span>
-                <span>重置</span>
+                <span @click="resetPwd">修改</span>
             </li>
         </ul>
     </div>
 </template>
 
 <script>
-export default {}
+import { reactive, toRefs } from 'vue'
+export default {
+    setup() {
+        const data = reactive({})
+
+        /* click 重置密码 */
+        const resetPwd = () => {
+            console.log('点击了重置密码')
+        }
+
+        return {
+            ...toRefs(data),
+            resetPwd,
+        }
+    },
+}
 </script>
 
 <style lang="scss" scoped="scoped">
@@ -44,6 +66,7 @@ $border_line: #e8e8ed;
     /* 账号设置 列表 */
     .setting_list {
         height: 55px;
+        font-size: 14px;
         line-height: 55px;
 
         /* 账号设置 列表--列表项 */
@@ -60,6 +83,7 @@ $border_line: #e8e8ed;
             :nth-child(3) {
                 width: 40px;
                 color: #1989fa;
+                cursor: pointer;
             }
         }
     }

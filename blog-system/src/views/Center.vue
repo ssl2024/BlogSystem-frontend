@@ -129,8 +129,13 @@
                     </router-link>
                 </ul>
                 <div class="list_search">
-                    <input type="text" placeholder="搜TA的内容" />
-                    <div class="search_btn">
+                    <input
+                        type="text"
+                        placeholder="搜TA的内容"
+                        v-model="searchText"
+                        @keydown.enter="searchEntry"
+                    />
+                    <div class="search_btn" @click="searchEntry">
                         <i class="iconfont icon-sousuo"></i>
                     </div>
                 </div>
@@ -155,18 +160,6 @@ export default {
         const router = useRouter()
 
         const data = reactive({
-            /**
-             * 是否是当前用户
-             * true  是当前用户(不展示关注/关注)
-             * false 不是当前用户(展示关注/已关注)
-             */
-            isCurrentUser: false,
-            /**
-             * 当前用户对于访问用户的关注状态
-             * true  已经关注
-             * false 没有关注
-             */
-            isFollowed: false,
             /* 侧边栏每页条数 */
             sidePageSize: 5,
             /* 当前页面展示的用户id */
@@ -192,6 +185,20 @@ export default {
                 // 关注列表
                 followList: [],
             },
+            /* 搜索框文本内容 */
+            searchText: '',
+            /**
+             * 是否是当前用户
+             * true  是当前用户(不展示关注/关注)
+             * false 不是当前用户(展示关注/已关注)
+             */
+            isCurrentUser: false,
+            /**
+             * 当前用户对于访问用户的关注状态
+             * true  已经关注
+             * false 没有关注
+             */
+            isFollowed: false,
         })
 
         onMounted(() => {
@@ -296,6 +303,10 @@ export default {
         const showFollowList = () => {
             router.push(`/center/${data.currentShowUserId}/follow`)
         }
+        /* click 搜索 */
+        const searchEntry = () => {
+            console.log(data.searchText)
+        }
 
         /* http 添加关注 */
         const addFollowInfo = (followedUserId, followUserId) => {
@@ -337,6 +348,7 @@ export default {
             unFollow,
             showFansList,
             showFollowList,
+            searchEntry,
         }
     },
 }

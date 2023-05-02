@@ -1,3 +1,10 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-10 20:45:12
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-03 02:17:51
+ * @Description: 
+-->
 <template>
     <div class="detail_block">
         <!-- 博客内容 -->
@@ -26,7 +33,10 @@
             <div class="content_figure">
                 <img src="https://iph.href.lu/780x450" alt="博文图片" />
             </div>
-            <div class="content_main" v-html="renderedMarkdown"></div>
+            <v-md-editor
+                :model-value="entry.content"
+                mode="preview"
+            ></v-md-editor>
             <div class="comment_form">
                 <div class="comment_title">评论</div>
                 <div class="comment_content">
@@ -259,8 +269,6 @@ import { reactive, toRefs, onMounted, ref, computed, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 
-import MarkdownIt from 'markdown-it'
-
 import http from '@/utils/http'
 import dateFormatter from '@/utils/dateFormatter'
 export default {
@@ -269,14 +277,13 @@ export default {
         const route = useRoute()
         const router = useRouter()
 
-        const renderedMarkdown = ref('')
         /* DOM 评论输入框 */
         const comment = ref('')
         /* DOM 一级评论回复框 */
         const replyComment = ref('')
         /* DOM 二级评论回复框 */
         let subReplyComment = []
-        const md = new MarkdownIt()
+        // const md = new MarkdownIt()
         let timeId
 
         const data = reactive({
@@ -360,7 +367,6 @@ export default {
             ]).then(res => {
                 if (res[0].data.code === 20041) {
                     data.entry = res[0].data.data
-                    renderedMarkdown.value = md.render(data.entry.content)
                     // 判断文章作者是否为当前登录用户
                     if (data.entry.authorId === data.userId) {
                         data.isCurrentUser = true
@@ -896,7 +902,6 @@ export default {
         }
         return {
             ...toRefs(data),
-            renderedMarkdown,
             comment,
             replyComment,
             subReplyComment,
@@ -931,6 +936,12 @@ export default {
     },
 }
 </script>
+
+<style lang="scss">
+pre {
+    padding: 15px;
+}
+</style>
 
 <style lang="scss" scoped="scoped">
 /* 背景颜色 */
@@ -994,11 +1005,6 @@ $border_line: #e8e8ed;
     /* 左边博客内容 展示图 */
     .content_figure {
         margin-bottom: 20px;
-    }
-
-    /* 左边博客内容 内容主体 */
-    .content_main {
-        margin-bottom: 30px;
     }
 
     /* 左边博客内容 评论表单 */
