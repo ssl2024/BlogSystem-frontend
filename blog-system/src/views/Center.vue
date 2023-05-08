@@ -132,7 +132,7 @@
                     <input
                         type="text"
                         placeholder="搜TA的内容"
-                        v-model="searchText"
+                        v-model.trim="searchText"
                         @keydown.enter="searchEntry"
                     />
                     <div class="search_btn" @click="searchEntry">
@@ -141,7 +141,11 @@
                 </div>
             </div>
             <ul class="list_entry">
-                <router-view :pageSize="sidePageSize"></router-view>
+                <router-view
+                    :pageSize="sidePageSize"
+                    :searchContent="searchContent"
+                    @clearSearchInput="clearSearchInput"
+                ></router-view>
             </ul>
         </div>
     </div>
@@ -187,6 +191,8 @@ export default {
             },
             /* 搜索框文本内容 */
             searchText: '',
+            /* 搜索内容 */
+            searchContent: '',
             /**
              * 是否是当前用户
              * true  是当前用户(不展示关注/关注)
@@ -213,6 +219,13 @@ export default {
                 init(route.params.id)
             }
         )
+
+        /* computed 粉丝数量 */
+        const fansCount = computed(() => {
+            return fansCount => {
+                return fansCount
+            }
+        })
 
         /* init 页面数据初始化 */
         const init = userId => {
@@ -261,12 +274,10 @@ export default {
                 })
         }
 
-        /* computed 粉丝数量 */
-        const fansCount = computed(() => {
-            return fansCount => {
-                return fansCount
-            }
-        })
+        /* customEvent 清空搜索框文本内容 */
+        const clearSearchInput = () => {
+            data.searchText = ''
+        }
 
         /* click 关注 */
         const addFollow = () => {
@@ -305,7 +316,7 @@ export default {
         }
         /* click 搜索 */
         const searchEntry = () => {
-            console.log(data.searchText)
+            data.searchContent = data.searchText
         }
 
         /* http 添加关注 */
@@ -344,6 +355,7 @@ export default {
         return {
             ...toRefs(data),
             fansCount,
+            clearSearchInput,
             addFollow,
             unFollow,
             showFansList,
@@ -411,6 +423,14 @@ $bg_color: #fff;
             height: 100px;
             margin-bottom: 15px;
             border-radius: 50%;
+        }
+
+        /* 左边个人信息 用户信息--用户昵称 */
+        .nickname {
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* 左边个人信息 用户信息--关注按钮 */
@@ -515,11 +535,14 @@ $bg_color: #fff;
         .list_nav {
             display: flex;
             width: 300px;
+
+            /* 右边列表项 页头--导航栏(列表项) */
             .nav_item {
                 flex: 1;
                 font-size: 16px;
                 text-align: center;
                 line-height: 48px;
+                cursor: pointer;
             }
         }
 

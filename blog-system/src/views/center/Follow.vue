@@ -1,3 +1,10 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-26 00:19:52
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-08 13:21:43
+ * @Description: 
+-->
 <template>
     <div class="follow_list">
         <user-item
@@ -25,7 +32,7 @@ export default {
             default: 5,
         },
     },
-    setup(props) {
+    setup(props, { emit }) {
         const route = useRoute()
 
         const data = reactive({
@@ -37,6 +44,8 @@ export default {
             pageSize: props.pageSize,
         })
         onMounted(() => {
+            // 清除搜索框内容
+            emit('clearSearchInput')
             // 根据用户id获取关注列表
             getFansIdList().then(res => {
                 // 对返回数据进行处理
@@ -46,12 +55,15 @@ export default {
                     res.data.data.forEach(item => {
                         followIdList.push(item.followedUserId)
                     })
-                    // 根据返回的关注id列表获取关注用户信息
-                    return getUserList(followIdList).then(res => {
-                        if (res.data.code === 20041) {
-                            data.fansList = res.data.data.records
-                        }
-                    })
+                    // 判断用户是否有关注的用户
+                    if (followIdList.length > 0) {
+                        // 根据返回的关注id列表获取关注用户信息
+                        getUserList(followIdList).then(res => {
+                            if (res.data.code === 20041) {
+                                data.fansList = res.data.data.records
+                            }
+                        })
+                    }
                 }
             })
         })

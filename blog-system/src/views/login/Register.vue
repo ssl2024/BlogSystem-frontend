@@ -163,7 +163,7 @@ export default {
             // 判断账号是否符合要求(6-12位字母或数字)
             if (matches(data.account, /[a-zA-Z0-9]{6,12}/, 12)) {
                 // 正则验证通过
-                http.get('/users/query/' + data.account).then(res => {
+                accountState(data.account).then(res => {
                     if (res.data.code == '10020') {
                         // 当前账号已存在
                         data.accountTips = 'warn'
@@ -227,7 +227,7 @@ export default {
             }
             data.checkPlaceholder = ''
             // 注册信息
-            http.post('/users/save', {
+            registerUser({
                 account: data.account,
                 pwd: md5(data.pwdText),
             }).then(res => {
@@ -266,7 +266,6 @@ export default {
         /* 接收组件返回加密后的验证码值 */
         const backImageCode = code => {
             data.imgCode = code
-            // console.log('data', data.imgCode)
         }
         /**
          * 正则表达式判断
@@ -282,6 +281,16 @@ export default {
             } else {
                 return reg.test(str) && str.length < maxLen
             }
+        }
+
+        /* http 查询账号是否存在 */
+        const accountState = account => {
+            return http.get(`/users/query/${account}`)
+        }
+
+        /* http 注册用户 */
+        const registerUser = user => {
+            return http.post(`/users`, user)
         }
         return {
             ...toRefs(data),

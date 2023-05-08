@@ -4,6 +4,7 @@
  * @Description: 对数据请求的封装
  */
 import axios from 'axios'
+
 const http = axios.create({
     baseURL: '',
     timeout: 10000,
@@ -28,9 +29,5 @@ http.interceptors.request.use(config => {
 http.all = requests => {
     return axios.all(requests)
 }
-
-// 在发送请求之前拦截 -- showLoading
-
-// 在成功后拦截 -- hideLoading
 
 export default http

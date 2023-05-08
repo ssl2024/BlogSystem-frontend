@@ -5,7 +5,7 @@
                 {{ entry.title }}
             </div>
             <div class="content_main">
-                {{ entry.content }}
+                {{ entry.blogAbstract }}
             </div>
             <ul class="action_list">
                 <li class="action_item">
@@ -103,6 +103,7 @@ $border_line: #e8e8ed;
     border-top: 1px solid $border_line;
     border-bottom: 1px solid $border_line;
     background-color: #fff;
+    cursor: pointer;
     &:hover {
         background-color: #fafafa;
     }
@@ -129,7 +130,8 @@ $border_line: #e8e8ed;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
             color: #555666;
-            font-size: 13px;
+            font-size: 14px;
+            letter-spacing: 1px;
         }
 
         /* 博客 数据列表 */

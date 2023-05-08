@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:20
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-03 00:17:12
+ * @LastEditTime: 2023-05-06 10:45:45
  * @Description: 个人资料
 -->
 <template>
@@ -54,6 +54,7 @@ export default {
         const updateUser = () => {
             updateUserInfo().then(res => {
                 if (res.data.code === 20031) {
+                    // 更新导航栏的用户昵称和头像
                     alert('修改成功')
                 } else {
                     alert('修改失败')

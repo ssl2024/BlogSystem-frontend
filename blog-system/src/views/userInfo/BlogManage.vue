@@ -84,6 +84,12 @@ export default {
             pages: 1,
             /* 文章列表 */
             entryList: [],
+            /**
+             * 是否点击了搜索按钮
+             * true  点击了搜索
+             * false 没有点击搜索
+             */
+            isClickSearch: false,
         })
 
         onMounted(() => {
@@ -115,6 +121,7 @@ export default {
         /* click 搜索按钮 */
         const searchEntry = () => {
             data.currentPage = 1
+            data.isClickSearch = true
             getEntryList(data.searchTitle, data.searchType)
         }
         /* click 修改 */
@@ -126,13 +133,24 @@ export default {
             deleteEntry(entryId).then(res => {
                 if (res.data.code === 20021) {
                     alert('删除成功')
+                    // 删除当前博客对应的所有评论数据
+                    deleteCommentsByEntryId(entryId)
+                    // 删除当前博客对应的所有点赞数据
+                    deleteLikesByEntryId(entryId)
+                    // 删除当前博客对应的所有收藏数据
+                    deleteCollectsByEntryId(entryId)
                     // 如果当前页只剩下最后一条数据
                     if (data.entryList.length === 1) {
                         // click 上一页
                         prevPage()
                     }
                     // 重新请求数据
-                    getEntryList()
+                    // 判断是否点击了搜索按钮
+                    if (data.isClickSearch) {
+                        getEntryList(data.searchTitle, data.searchType)
+                    } else {
+                        getEntryList()
+                    }
                 } else {
                     alert('删除失败，请重试')
                 }
@@ -142,7 +160,12 @@ export default {
         const prevPage = () => {
             if (data.currentPage > 1) {
                 data.currentPage--
-                getEntryList()
+                // 判断是否点击了搜索按钮
+                if (data.isClickSearch) {
+                    getEntryList(data.searchTitle, data.searchType)
+                } else {
+                    getEntryList()
+                }
             } else {
                 alert('没有上一页')
             }
@@ -151,7 +174,12 @@ export default {
         const nextPage = () => {
             if (data.currentPage < data.pages) {
                 data.currentPage++
-                getEntryList()
+                // 判断是否点击了搜索按钮
+                if (data.isClickSearch) {
+                    getEntryList(data.searchTitle, data.searchType)
+                } else {
+                    getEntryList()
+                }
             } else {
                 alert('没有下一页')
             }
@@ -169,14 +197,26 @@ export default {
             type = null
         ) => {
             return http.post(`/blogs/${currentPage}/${pageSize}`, {
-                authorId: [store.state.userId],
                 title,
                 type,
+                authorId: [store.state.userId],
             })
         }
         /* http 删除博客 */
         const deleteEntry = entryId => {
             return http.delete(`/blogs/${entryId}`)
+        }
+        /* http 根据博客id删除评论列表 */
+        const deleteCommentsByEntryId = entryId => {
+            return http.delete(`/comments/clear/${entryId}`)
+        }
+        /* http 根据博客id删除对应点赞列表 */
+        const deleteLikesByEntryId = entryId => {
+            return http.delete(`/likes/${entryId}`)
+        }
+        /* http 根据博客id删除对应收藏列表 */
+        const deleteCollectsByEntryId = entryId => {
+            return http.delete(`/collects/${entryId}`)
         }
         return {
             ...toRefs(data),

@@ -26,14 +26,19 @@
             </router-link>
         </ul>
         <div class="search">
-            <input type="text" />
-            <div class="search_icon">
+            <input
+                type="text"
+                v-model.trim="searchContent"
+                @keydown.enter="searchEntry"
+            />
+            <div class="search_icon" @click="searchEntry">
                 <i class="iconfont icon-sousuo"></i>
             </div>
         </div>
         <div class="center" @mouseenter="showProfile">
             <img :src="user.avatar" v-show="!isShowProfile" alt="头像" />
         </div>
+        <!-- 用户简介 -->
         <div class="profile" v-show="isShowProfile" @mouseleave="closeProfile">
             <div class="profile_top">
                 <div class="user_avatar">
@@ -85,17 +90,11 @@ import { useRouter } from 'vue-router'
 
 import http from '@/utils/http'
 export default {
-    setup() {
+    setup(_, { emit }) {
         const store = useStore()
         const router = useRouter()
 
         const data = reactive({
-            /**
-             * 是否显示用户简介
-             * false 不显示
-             * true  显示
-             */
-            isShowProfile: false,
             /* 当前登录的用户id */
             userId: store.state.userId,
             /* 当前登录用户信息 */
@@ -104,6 +103,14 @@ export default {
             fansCount: 0,
             /* 当前登录用户关注数量 */
             followCount: 0,
+            /**
+             * 是否显示用户简介
+             * false 不显示
+             * true  显示
+             */
+            isShowProfile: false,
+            /* 搜索框内容 */
+            searchContent: '',
         })
 
         onMounted(() => {
@@ -124,13 +131,19 @@ export default {
                 }
             })
         })
+        /* mouseleave  */
+        const closeProfile = () => {
+            data.isShowProfile = false
+        }
 
-        /* click 右上角用户头像 */
+        /* mouseenter 右上角用户头像 */
         const showProfile = () => {
             data.isShowProfile = true
         }
-        const closeProfile = () => {
-            data.isShowProfile = false
+
+        /* click 搜索 */
+        const searchEntry = () => {
+            emit('changeSearchEntry', data.searchContent)
         }
         /* click 个人主页 */
         const toUserPage = userId => {
@@ -160,6 +173,8 @@ export default {
         /* click 注销登录 */
         const logout = () => {
             // 发送 http 请求，删除在 redis 中的 token
+            // 修改 vuex 中的登录状态
+            store.commit('updateLoginState', false)
             // 删除本地 vuex 持久化数据
             sessionStorage.removeItem('vuex')
             // 跳转到 login 页面
@@ -180,6 +195,7 @@ export default {
         }
         return {
             ...toRefs(data),
+            searchEntry,
             toUserPage,
             toUserInfo,
             showProfile,
@@ -282,8 +298,9 @@ $bg_color: #fff;
             top: 7px;
             right: 60px;
             width: 42px;
-            height: 32px;
+            height: 31px;
             background-color: #f2f3f5;
+            cursor: pointer;
             border-radius: 5px;
             justify-content: center;
             align-items: center;

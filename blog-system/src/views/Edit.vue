@@ -5,7 +5,7 @@
                 <input
                     type="text"
                     placeholder="请输入文章标题"
-                    v-model="entry.title"
+                    v-model.trim="entry.title"
                 />
             </div>
             <div class="right_box">
@@ -15,7 +15,10 @@
                 </div>
             </div>
         </div>
-        <v-md-editor v-model="entry.content" :height="height"></v-md-editor>
+        <v-md-editor
+            v-model.trim="entry.content"
+            :height="height"
+        ></v-md-editor>
         <div class="dialog" v-show="dialogState">
             <div class="dialog_title">发布文章</div>
             <div class="entry_type">
@@ -43,7 +46,15 @@
                     <i class="iconfont icon-add"></i>
                 </div>
             </div>
-
+            <div class="entry_abstract">
+                <span>文章摘要：</span>
+                <textarea
+                    maxlength="150"
+                    autocomplete="false"
+                    rows="5"
+                    v-model.trim="entry.blogAbstract"
+                ></textarea>
+            </div>
             <div class="publish_btn">
                 <div class="btn_item" @click="cancel">取消</div>
                 <div v-show="isPublish" class="btn_item" @click="reConfirm">
@@ -74,6 +85,7 @@ export default {
                 title: '',
                 // 文章内容
                 content: '',
+                blogAbstract: '',
                 // 文章类型
                 type: '',
                 // 文章首图地址
@@ -85,7 +97,7 @@ export default {
                 // 文章作者 id
                 authorId: '',
             },
-            /* 文章类型 */
+            /* 所有文章类型 */
             types: [],
             /**
              * 文章是否为发布
@@ -127,6 +139,42 @@ export default {
             })
         })
 
+        /**
+         * 检查文章是否符合要求
+         * @param entry
+         * @return 对象(是否通过和提示信息)
+         */
+        const checkEntry = entry => {
+            // 创建返回结果对象
+            let obj = {
+                isPass: false,
+                msg: '',
+            }
+            // 判断文章标题是否为空
+            if (entry.title == '') {
+                obj.msg = '标题不能为空'
+                return obj
+            }
+            // 判断文章内容是否为空
+            if (entry.content == '') {
+                obj.msg = '内容不能为空'
+                return obj
+            }
+            // 判断是否选择文章类型
+            if (entry.type == '') {
+                obj.msg = '文章类型不能为空'
+                return obj
+            }
+            // 判断文章摘要长度是否符合要求
+            if (entry.blogAbstract.length < 35) {
+                obj.msg = '文章摘要字符不能低于35个字符'
+                return obj
+            }
+            // 所有要求满足
+            obj.isPass = true
+            return obj
+        }
+
         /* 浏览器窗口大小改变 */
         window.onresize = () => {
             data.height = window.innerHeight - 60 + 'px'
@@ -150,10 +198,16 @@ export default {
         }
         /* click 确定并发布 */
         const reConfirm = () => {
+            let temp = checkEntry(data.entry)
+            // 判断文章是否符合要求
+            if (!temp.isPass) {
+                // 文章不符合要求
+                return alert(temp.msg)
+            }
             const date = Number.parseInt(new Date().getTime() / 1000)
             data.entry.createTime = date
             data.entry.updateTime = date
-            http.post('/blogs', data.entry).then(res => {
+            addEntry(data.entry).then(res => {
                 if (res.data.code === 20011) {
                     alert('发布成功')
                     router.push('/userInfo/blogManage')
@@ -162,7 +216,13 @@ export default {
         }
         /* click 确定并更新 */
         const updateEntry = () => {
-            http.put('/blogs', data.entry).then(res => {
+            let temp = checkEntry(data.entry)
+            // 判断文章是否符合要求
+            if (!temp.isPass) {
+                // 文章不符合要求
+                return alert(temp.msg)
+            }
+            updateEntryInfo(data.entry).then(res => {
                 if (res.data.code === 20031) {
                     alert('更新成功')
                     router.push('/userInfo/blogManage')
@@ -170,6 +230,15 @@ export default {
                     alert('更新失败，请重试')
                 }
             })
+        }
+
+        /* http 新增博客 */
+        const addEntry = entry => {
+            return http.post(`/blogs`, entry)
+        }
+        /* http 更新博客 */
+        const updateEntryInfo = entry => {
+            return http.put(`/blogs`, entry)
         }
         return {
             ...toRefs(data),
@@ -247,7 +316,7 @@ $border_line: #e8e8ed;
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 440px;
+    width: 470px;
     border: 1px solid #ddd;
     background-color: #fff;
     border-radius: 2px;
@@ -326,7 +395,6 @@ $border_line: #e8e8ed;
     .entry_cover {
         display: flex;
         padding: 20px 30px;
-        border-bottom: 1px solid $border_line;
 
         /* 对话框 文章封面--上传封面按钮 */
         .cover_btn {
@@ -355,6 +423,23 @@ $border_line: #e8e8ed;
                 font-size: 18px;
                 font-weight: 600;
             }
+        }
+    }
+
+    /* 对话框 文章摘要 */
+    .entry_abstract {
+        display: flex;
+        padding: 20px 30px;
+        border-bottom: 1px solid $border_line;
+
+        /* 对话框 文章摘要 文本域 */
+        textarea {
+            width: 318px;
+            height: 130px;
+            padding: 6px 10px;
+            font-size: 14px;
+            line-height: 18px;
+            resize: none;
         }
     }
 

@@ -12,6 +12,11 @@
                     :entry="item"
                 ></blog>
             </div>
+            <div class="list_pagination" v-if="isShowPagination">
+                <div class="operate_prev" @click="prevPage">上一页</div>
+                <span>{{ currentPage }} / {{ pages }}</span>
+                <div class="operate_next" @click="nextPage">下一页</div>
+            </div>
         </div>
         <div class="aside">
             <div class="hot_list">
@@ -22,68 +27,23 @@
                     <span>热度</span>
                 </div>
                 <ul class="hot_list_data">
-                    <li class="hot_item">
-                        <div class="hot_sort">1</div>
+                    <li
+                        class="hot_item"
+                        v-for="(item, index) in hotList(userInfoList)"
+                        :key="item.id"
+                        @click="toUserPage(item.id)"
+                    >
+                        <div class="hot_sort">{{ index + 1 }}</div>
                         <div class="user_info">
                             <span class="avatar">
                                 <img
-                                    src="https://iph.href.lu/40x40"
+                                    :src="item.avatar"
                                     alt="热度榜单用户头像"
                                 />
                             </span>
-                            <span>石松林_前端基础</span>
+                            <span>{{ item.nickname }}</span>
                         </div>
-                        <div class="hot_score">789</div>
-                    </li>
-                    <li class="hot_item">
-                        <div class="hot_sort">2</div>
-                        <div class="user_info">
-                            <span class="avatar">
-                                <img
-                                    src="https://iph.href.lu/40x40"
-                                    alt="热度榜单用户头像"
-                                />
-                            </span>
-                            <span>石松林_前端框架</span>
-                        </div>
-                        <div class="hot_score">600</div>
-                    </li>
-                    <li class="hot_item">
-                        <div class="hot_sort">3</div>
-                        <div class="user_info">
-                            <span class="avatar">
-                                <img
-                                    src="https://iph.href.lu/40x40"
-                                    alt="热度榜单用户头像"
-                                />
-                            </span>
-                            <span>石松林_后端基础</span>
-                        </div>
-                        <div class="hot_score">499</div>
-                    </li>
-                    <li class="hot_item">
-                        <div class="hot_sort">4</div>
-                        <div class="user_info">
-                            <img
-                                src="https://iph.href.lu/40x40"
-                                alt="热度榜单用户头像"
-                            />
-                            <span>石松林_后端框架</span>
-                        </div>
-                        <div class="hot_score">456</div>
-                    </li>
-                    <li class="hot_item">
-                        <div class="hot_sort">5</div>
-                        <div class="user_info">
-                            <span class="avatar">
-                                <img
-                                    src="https://iph.href.lu/40x40"
-                                    alt="热度榜单用户头像"
-                                />
-                            </span>
-                            <span>这真是一个难做的项目</span>
-                        </div>
-                        <div class="hot_score">388</div>
+                        <div class="hot_score">{{ item.hot }}</div>
                     </li>
                 </ul>
             </div>
@@ -92,7 +52,8 @@
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 import http from '@/utils/http'
 
@@ -108,8 +69,18 @@ export default {
             type: Number,
             required: true,
         },
+        userInfoList: {
+            type: Array,
+            required: true,
+        },
+        searchContent: {
+            type: String,
+            default: '',
+        },
     },
     setup(props) {
+        const router = useRouter()
+
         const data = reactive({
             /* 文章列表 */
             entryList: [],
@@ -117,28 +88,138 @@ export default {
             currentPage: 1,
             /* 当前页博客数量 */
             pageSize: props.pageSize,
+            /* 一共多少页 */
+            pages: 1,
+            /* 当前文章类型 */
+            type: [],
+            /* 搜索内容 */
+            searchContent: '',
             /* 后端在数据库中的分组号 */
             classify: 2,
+            /* 用户信息列表 */
+            userInfoList: props.userInfoList,
+            /**
+             * 是否显示分页按钮
+             * true  显示
+             * false 不显示
+             */
+            isShowPagination: false,
+        })
+
+        watch(
+            () => props.searchContent,
+            () => {
+                data.searchContent = props.searchContent
+                let title =
+                    data.searchContent != '' ? [data.searchContent] : null
+                // 修改当前页码为 1
+                data.currentPage = 1
+                getBlogListByType(
+                    data.type,
+                    data.currentPage,
+                    data.pageSize,
+                    title
+                ).then(res => {
+                    if (res.data.code === 20041) {
+                        data.entryList = res.data.data.records
+                        data.pages = res.data.data.pages
+                        data.isShowPagination =
+                            res.data.data.total > data.pageSize ? true : false
+                    }
+                })
+            }
+        )
+
+        /* computed 用户热榜榜单 */
+        const hotList = computed(() => {
+            return list => {
+                // 按照热度进行排序
+                list.sort((a, b) => b.hot - a.hot)
+                // 返回热度前5的用户信息
+                return list.slice(0, 5)
+            }
         })
 
         /* change 博客类型 */
         const changeType = type => {
-            getBlogListByType(type).then(res => {
+            // 在修改博客类型之后，重置当前页码为 1
+            data.currentPage = 1
+            data.type = type
+            let title = data.searchContent != '' ? [data.searchContent] : null
+            getBlogListByType(
+                data.type,
+                data.currentPage,
+                data.pageSize,
+                title
+            ).then(res => {
                 if (res.data.code === 20041) {
                     data.entryList = res.data.data.records
+                    data.pages = res.data.data.pages
+                    data.isShowPagination =
+                        res.data.data.total > data.pageSize ? true : false
+                }
+            })
+        }
+
+        /* click 用户热榜榜单项 */
+        const toUserPage = userId => {
+            router.push(`/center/${userId}`)
+        }
+        /* click 上一页 */
+        const prevPage = () => {
+            // 判断是否为第一页
+            if (data.currentPage === 1) {
+                return alert('没有上一页')
+            }
+            data.currentPage--
+            let title = data.searchContent != '' ? [data.searchContent] : null
+            getBlogListByType(
+                data.type,
+                data.currentPage,
+                data.pageSize,
+                title
+            ).then(res => {
+                if (res.data.code === 20041) {
+                    data.entryList = res.data.data.records
+                    data.pages = res.data.data.pages
+                }
+            })
+        }
+        /* click 下一页 */
+        const nextPage = () => {
+            // 判断是否为最后一页
+            if (data.currentPage === data.pages) {
+                return alert('没有下一页')
+            }
+            data.currentPage++
+            let title = data.searchContent != '' ? [data.searchContent] : null
+            getBlogListByType(
+                data.type,
+                data.currentPage,
+                data.pageSize,
+                title
+            ).then(res => {
+                if (res.data.code === 20041) {
+                    data.entryList = res.data.data.records
+                    data.pages = res.data.data.pages
                 }
             })
         }
 
         /* http 根据博客类型获取博客列表 */
-        const getBlogListByType = type => {
-            return http.post(`/blogs/${data.currentPage}/${data.pageSize}`, {
+        const getBlogListByType = (type, currentPage, pageSize, title) => {
+            return http.post(`/blogs/${currentPage}/${pageSize}`, {
                 type,
+                title,
             })
         }
         return {
             ...toRefs(data),
+            hotList,
             changeType,
+            prevPage,
+            nextPage,
+            toUserPage,
         }
     },
 }
@@ -158,6 +239,26 @@ $bg_color: #fff;
 ----------------------------------------------------------------*/
 .list_container {
     width: 860px;
+
+    /* 左边博客 分页 */
+    .list_pagination {
+        display: flex;
+        margin-top: 15px;
+        font-size: 13px;
+        justify-content: space-between;
+        align-items: center;
+
+        /* 左边博客 分页 上/下一页按钮 */
+        [class^='operate'] {
+            width: 105px;
+            height: 35px;
+            border: 1px solid skyblue;
+            text-align: center;
+            line-height: 35px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    }
 }
 
 /* 右边侧边栏
@@ -198,6 +299,7 @@ $bg_color: #fff;
             line-height: 40px;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
             &:hover {
                 background-color: #f3f3f3;
             }
@@ -211,8 +313,10 @@ $bg_color: #fff;
 
                 /* 右边侧边栏 热度榜单--榜单想(用户信息-用户头像) */
                 img {
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 4px;
                     border-radius: 50%;
-                    margin-right: 2px;
                 }
             }
         }

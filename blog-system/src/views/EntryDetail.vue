@@ -2,8 +2,8 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-03 02:17:51
- * @Description: 
+ * @LastEditTime: 2023-05-08 23:49:59
+ * @Description: 博客详情页
 -->
 <template>
     <div class="detail_block">
@@ -243,8 +243,18 @@
                 </div>
                 <div class="operate_list">
                     <div class="operate_item" @click="likeEntry">
-                        <i class="iconfont icon-dianzan_kuai"></i>
-                        <span class="like_count">{{
+                        <i
+                            class="iconfont icon-dianzan_kuai"
+                            v-show="!likeState"
+                        ></i>
+                        <i
+                            class="iconfont icon-dianzan_kuai"
+                            v-show="likeState"
+                        ></i>
+                        <span class="like_count" v-show="likeState">{{
+                            likeCount(entry.likeCount)
+                        }}</span>
+                        <span class="like_count" v-show="!likeState">{{
                             likeCount(entry.likeCount)
                         }}</span>
                     </div>
@@ -253,8 +263,18 @@
                         <span class="comment_count">{{ commentCount }}</span>
                     </div>
                     <div class="operate_item" @click="collectEntry">
-                        <i class="iconfont icon-shoucangxiao"></i>
-                        <span class="collect_count">{{
+                        <i
+                            class="iconfont icon-shoucangxiao"
+                            v-show="!collectState"
+                        ></i>
+                        <i
+                            class="iconfont icon-shoucangxiao"
+                            v-show="collectState"
+                        ></i>
+                        <span class="collect_count" v-show="collectState">{{
+                            collectCount(entry.collectCount)
+                        }}</span>
+                        <span class="collect_count" v-show="!collectState">{{
                             collectCount(entry.collectCount)
                         }}</span>
                     </div>
@@ -377,6 +397,8 @@ export default {
                         getFollowState(data.entry.authorId),
                         getFansList(data.entry.authorId),
                         getFollowList(data.entry.authorId),
+                        getEntryLikeCount(data.id),
+                        getEntryCollectCount(data.id),
                     ]).then(res => {
                         if (res[0].data.code === 20041) {
                             data.user = res[0].data.data
@@ -389,6 +411,12 @@ export default {
                         }
                         if (res[3].data.code === 20041) {
                             data.followList = res[3].data.data
+                        }
+                        if (res[4].data.code === 20041) {
+                            data.entry.likeCount = res[4].data.data
+                        }
+                        if (res[5].data.code === 20041) {
+                            data.entry.collectCount = res[5].data.data
                         }
                     })
                 }
@@ -482,6 +510,9 @@ export default {
 
         /* filter 评论过滤 */
         const commentFilter = comments => {
+            // 更新博客信息
+            data.entry.commentCount = comments.length
+            updateEntry()
             const commentList = []
             // 遍历所有评论数据，分出 一级评论 和 二级评论
             comments.forEach(item => {
@@ -590,8 +621,13 @@ export default {
                     if (res.data.code === 20021) {
                         // 修改文章的点赞状态
                         data.likeState = false
-                        data.entry.likeCount--
                         alert('取消点赞成功')
+                        // 获取文章点赞数量
+                        getEntryLikeCount(data.id).then(res => {
+                            if (res.data.code === 20041) {
+                                data.entry.likeCount = res.data.data
+                            }
+                        })
                     } else {
                         alert('取消点赞失败')
                     }
@@ -602,8 +638,13 @@ export default {
                     if (res.data.code === 20011) {
                         // 修改文章的点赞状态
                         data.likeState = true
-                        data.entry.likeCount++
                         alert('点赞文章成功')
+                        // 获取文章点赞数量
+                        getEntryLikeCount(data.id).then(res => {
+                            if (res.data.code === 20041) {
+                                data.entry.likeCount = res.data.data
+                            }
+                        })
                     } else {
                         alert('点赞文章失败')
                     }
@@ -622,7 +663,12 @@ export default {
                     if (res.data.code === 20021) {
                         // 修改文章的点赞状态
                         data.collectState = false
-                        data.entry.collectCount--
+                        // 获取文章收藏数量
+                        getEntryCollectCount(data.id).then(res => {
+                            if (res.data.code === 20041) {
+                                data.entry.collectCount = res.data.data
+                            }
+                        })
                         alert('取消收藏成功')
                     } else {
                         alert('取消收藏失败')
@@ -634,8 +680,13 @@ export default {
                     if (res.data.code === 20011) {
                         // 修改文章的点赞状态
                         data.collectState = true
-                        data.entry.collectCount++
                         alert('收藏文章成功')
+                        // 获取文章收藏数量
+                        getEntryCollectCount(data.id).then(res => {
+                            if (res.data.code === 20041) {
+                                data.entry.collectCount = res.data.data
+                            }
+                        })
                     } else {
                         alert('收藏文章失败')
                     }
@@ -842,6 +893,14 @@ export default {
         /* http 获取当前展示用户的关注列表 */
         const getFollowList = userId => {
             return http.get(`/follows/follow/${userId}`)
+        }
+        /* http 获取文章的点赞数量 */
+        const getEntryLikeCount = entryId => {
+            return http.get(`/likes/count/${entryId}`)
+        }
+        /* http 获取文章的收藏数量 */
+        const getEntryCollectCount = entryId => {
+            return http.get(`/collects/count/${entryId}`)
         }
         /* http 点赞文章 */
         const addLike = (blogId, userId) => {
@@ -1346,17 +1405,31 @@ $border_line: #e8e8ed;
                 right: -15px;
                 min-width: 21px;
                 padding: 0 5px;
-                background-color: #8a919f;
                 color: $color;
                 border-radius: 8px;
+
+                &:nth-child(odd) {
+                    background-color: salmon;
+                }
+                &:nth-child(even) {
+                    background-color: #8a919f;
+                    &:hover {
+                        background-color: salmon;
+                    }
+                }
             }
 
             /* 右边作者相关 文章相关--操作项(字体图标) */
             .iconfont {
-                color: #8a919f;
                 font-size: 25px;
                 line-height: 50px;
-                &:hover {
+                &:nth-child(1) {
+                    color: #8a919f;
+                    &:hover {
+                        color: salmon;
+                    }
+                }
+                &:nth-child(2) {
                     color: salmon;
                 }
             }

@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 15:20:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-30 17:07:40
+ * @LastEditTime: 2023-05-08 13:21:24
  * @Description: 
 -->
 <template>
@@ -32,7 +32,7 @@ export default {
             default: 5,
         },
     },
-    setup(props) {
+    setup(props, { emit }) {
         const route = useRoute()
 
         const data = reactive({
@@ -44,6 +44,8 @@ export default {
             pageSize: props.pageSize,
         })
         onMounted(() => {
+            // 清除搜索框内容
+            emit('clearSearchInput')
             // 根据用户id获取粉丝列表
             getFansIdList().then(res => {
                 // 对返回数据进行处理
@@ -53,12 +55,15 @@ export default {
                     res.data.data.forEach(item => {
                         fansIdList.push(item.followUserId)
                     })
-                    // 根据返回的粉丝id列表获取粉丝用户信息
-                    return getUserList(fansIdList).then(res => {
-                        if (res.data.code === 20041) {
-                            data.fansList = res.data.data.records
-                        }
-                    })
+                    // 判断用户是否有粉丝
+                    if (fansIdList.length > 0) {
+                        // 根据返回的粉丝id列表获取粉丝用户信息
+                        getUserList(fansIdList).then(res => {
+                            if (res.data.code === 20041) {
+                                data.fansList = res.data.data.records
+                            }
+                        })
+                    }
                 }
             })
         })
