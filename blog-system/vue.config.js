@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-29 21:05:30
+ * @LastEditTime: 2023-05-09 14:32:03
  * @Description:
  */
 const { defineConfig } = require('@vue/cli-service')
@@ -49,12 +49,12 @@ module.exports = defineConfig({
                 changeOrigin: true,
             },
             // 方式 2  -->  防止重名出现
-            // '/kerwin': {
-            //     target: 'https://m.maoyan.com/', // 该路径会加在整个请求的最前面
+            // '/ssl': {
+            //     target: 'https://baidu.com/', // 该路径会加在整个请求的最前面
             //     changeOrigin: true,
             //     pathRewrite: {
             //         // 路径重写
-            //         '/kerwin': '',
+            //         '/ssl': '',
             //     },
             // },
         },

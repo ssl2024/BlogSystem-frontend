@@ -173,12 +173,16 @@ export default {
         /* click 注销登录 */
         const logout = () => {
             // 发送 http 请求，删除在 redis 中的 token
-            // 修改 vuex 中的登录状态
-            store.commit('updateLoginState', false)
-            // 删除本地 vuex 持久化数据
-            sessionStorage.removeItem('vuex')
-            // 跳转到 login 页面
-            router.push('/login')
+            deleteToken().then(res => {
+                if (res.data.code === 20021) {
+                    // 修改 vuex 中的登录状态
+                    store.commit('updateLoginState', false)
+                    // 删除本地 vuex 持久化数据
+                    sessionStorage.removeItem('vuex')
+                    // 跳转到 login 页面
+                    router.push('/login')
+                }
+            })
         }
 
         /* http 获取当前登录用户信息 */
@@ -192,6 +196,10 @@ export default {
         /* http 获取关注列表 */
         const getFollowList = userId => {
             return http.get(`/follows/follow/${userId}`)
+        }
+        /* http 删除后端token */
+        const deleteToken = () => {
+            return http.delete(`/users/logout`)
         }
         return {
             ...toRefs(data),

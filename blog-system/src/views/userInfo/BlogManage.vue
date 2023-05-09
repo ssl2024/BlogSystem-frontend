@@ -41,7 +41,7 @@
                         </div>
                         <div
                             class="operate_delete"
-                            @click="blogDelete(item.id)"
+                            @click="showConfirm(item.id)"
                         >
                             删除
                         </div>
@@ -56,6 +56,10 @@
                 <div class="operate_add" @click="addBlog">新增</div>
             </div>
         </div>
+        <confirm-dialog
+            :confirmState="confirmState"
+            @selectResult="selectResult"
+        ></confirm-dialog>
     </div>
 </template>
 
@@ -66,7 +70,12 @@ import { useRouter } from 'vue-router'
 
 import http from '@/utils/http'
 import dateFormatter from '@/utils/dateFormatter'
+
+import confirmDialog from '@/components/ConfirmDialog'
 export default {
+    components: {
+        confirmDialog,
+    },
     setup() {
         const router = useRouter()
         const store = useStore()
@@ -90,12 +99,17 @@ export default {
              * false 没有点击搜索
              */
             isClickSearch: false,
+            /* 确认框显示状态 */
+            confirmState: false,
+            /* 当前要删除的博客id */
+            entryId: null,
         })
 
         onMounted(() => {
             getEntryList()
         })
 
+        /* 获取文章列表 */
         const getEntryList = (title = '', type = '') => {
             // 搜索条件处理
             title = title !== '' ? [title] : null
@@ -118,27 +132,25 @@ export default {
             }
         })
 
-        /* click 搜索按钮 */
-        const searchEntry = () => {
-            data.currentPage = 1
-            data.isClickSearch = true
-            getEntryList(data.searchTitle, data.searchType)
-        }
-        /* click 修改 */
-        const blogUpdate = id => {
-            router.push(`/edit/${id}`)
-        }
-        /* click 删除 */
-        const blogDelete = entryId => {
-            deleteEntry(entryId).then(res => {
+        /* customEvent 确认框 */
+        const selectResult = res => {
+            // 判断用户选择的操作
+            if (!res) {
+                // 取消操作，隐藏确认框
+                return (data.confirmState = false)
+            }
+            // 确认操作，删除博客
+            deleteEntry(data.entryId).then(res => {
                 if (res.data.code === 20021) {
                     alert('删除成功')
+                    // 隐藏确认框
+                    data.confirmState = false
                     // 删除当前博客对应的所有评论数据
-                    deleteCommentsByEntryId(entryId)
+                    deleteCommentsByEntryId(data.entryId)
                     // 删除当前博客对应的所有点赞数据
-                    deleteLikesByEntryId(entryId)
+                    deleteLikesByEntryId(data.entryId)
                     // 删除当前博客对应的所有收藏数据
-                    deleteCollectsByEntryId(entryId)
+                    deleteCollectsByEntryId(data.entryId)
                     // 如果当前页只剩下最后一条数据
                     if (data.entryList.length === 1) {
                         // click 上一页
@@ -155,6 +167,24 @@ export default {
                     alert('删除失败，请重试')
                 }
             })
+        }
+
+        /* click 搜索按钮 */
+        const searchEntry = () => {
+            data.currentPage = 1
+            data.isClickSearch = true
+            getEntryList(data.searchTitle, data.searchType)
+        }
+        /* click 修改 */
+        const blogUpdate = id => {
+            router.push(`/edit/${id}`)
+        }
+        /* click 删除 */
+        const showConfirm = entryId => {
+            // 传递被删除的文章id
+            data.entryId = entryId
+            // 显示确认框
+            data.confirmState = true
         }
         /* click 上一页 */
         const prevPage = () => {
@@ -221,10 +251,12 @@ export default {
         return {
             ...toRefs(data),
             dateTime,
+
             getEntryList,
+            selectResult,
             searchEntry,
             blogUpdate,
-            blogDelete,
+            showConfirm,
             prevPage,
             nextPage,
             addBlog,

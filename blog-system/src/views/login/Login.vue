@@ -16,7 +16,8 @@
                     type="password"
                     placeholder="请输入密码"
                     ref="pwd"
-                    v-model.lazy="pwdText"
+                    v-model.trim="pwdText"
+                    @keydown.enter="login"
                 />
                 <i
                     v-show="!pwdState"
@@ -68,13 +69,20 @@ export default {
         /* DOM 密码框 */
         const pwd = ref()
 
+        /* 在 url 后添加随机参数(暂未使用) */
+        const addRandomQueryParam = url => {
+            const randomParamName = 'nonce'
+            const randomParamValue = Math.random()
+            const separator = url.includes('?') ? '&' : '?'
+            return `${url}${separator}${randomParamName}=${randomParamValue}`
+        }
+
         /* click 登录 */
         const login = () => {
             // 判断账号框和密码框是否为空
             if (data.account.length === 0 || data.pwdText.length === 0) {
                 // 账号框 或 密码为空
-                alert('账号或密码不能为空')
-                return
+                return alert('账号或密码不能为空')
             }
             userLogin(data.account, md5(data.pwdText)).then(res => {
                 if (res.data.code === 20041) {
@@ -117,14 +125,24 @@ export default {
 
         /* http 用户登录 */
         const userLogin = (account, pwd) => {
-            return http.post(`/users/login`, {
-                account,
-                pwd,
+            return http({
+                method: 'POST',
+                url: `/users/login`,
+                data: {
+                    account,
+                    pwd,
+                },
+                // 禁用浏览器缓存
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    Pragma: 'no-cache',
+                },
             })
         }
         return {
             ...toRefs(data),
             pwd,
+            addRandomQueryParam,
             login,
             register,
             forgetPwd,
