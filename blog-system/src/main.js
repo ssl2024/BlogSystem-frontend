@@ -36,6 +36,12 @@ VMdEditor.use(githubTheme, {
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import messageBox from '@/components/MessageBox' // 引入消息提示框
 import '@/assets/font/iconfont.css' // 引入字体图标
 
-createApp(App).use(store).use(router).use(VMdEditor).mount('#app')
+createApp(App)
+    .use(store)
+    .use(router)
+    .use(VMdEditor)
+    .component('message-box', messageBox)
+    .mount('#app')

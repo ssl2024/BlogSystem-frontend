@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-08 23:49:59
+ * @LastEditTime: 2023-05-11 01:46:23
  * @Description: 博客详情页
 -->
 <template>
@@ -58,7 +58,7 @@
                     @click="submitComment"
                     @keydown="submitComment"
                 >
-                    发表评论(Enter)
+                    发表评论
                 </div>
             </div>
             <div class="comment_title" v-show="commentCount">
@@ -281,6 +281,12 @@
                 </div>
             </div>
         </div>
+        <!-- 消息提示框 -->
+        <message-box
+            :message="message"
+            :messageId="messageId"
+            :type="messageType"
+        ></message-box>
     </div>
 </template>
 
@@ -375,6 +381,12 @@ export default {
              * false 不显示
              */
             isShowSubDeleteBtn: [],
+            /* 消息提示框内容 */
+            message: '',
+            /* 消息提示框id */
+            messageId: -1,
+            /* 消息提示框类型 */
+            messageType: '',
         })
 
         onMounted(() => {
@@ -508,6 +520,14 @@ export default {
             }
         })
 
+        /* 显示消息提示框 */
+        const showMessageBox = (message, type) => {
+            let date = new Date()
+            data.message = message
+            data.messageType = type
+            data.messageId = date.getTime()
+        }
+
         /* filter 评论过滤 */
         const commentFilter = comments => {
             // 更新博客信息
@@ -621,7 +641,7 @@ export default {
                     if (res.data.code === 20021) {
                         // 修改文章的点赞状态
                         data.likeState = false
-                        alert('取消点赞成功')
+                        showMessageBox('取消点赞成功', 'success')
                         // 获取文章点赞数量
                         getEntryLikeCount(data.id).then(res => {
                             if (res.data.code === 20041) {
@@ -629,7 +649,7 @@ export default {
                             }
                         })
                     } else {
-                        alert('取消点赞失败')
+                        showMessageBox('取消点赞失败', 'error')
                     }
                 })
             } else {
@@ -638,7 +658,7 @@ export default {
                     if (res.data.code === 20011) {
                         // 修改文章的点赞状态
                         data.likeState = true
-                        alert('点赞文章成功')
+                        showMessageBox('点赞文章成功', 'success')
                         // 获取文章点赞数量
                         getEntryLikeCount(data.id).then(res => {
                             if (res.data.code === 20041) {
@@ -646,7 +666,7 @@ export default {
                             }
                         })
                     } else {
-                        alert('点赞文章失败')
+                        showMessageBox('点赞文章失败', 'error')
                     }
                 })
             }
@@ -669,9 +689,9 @@ export default {
                                 data.entry.collectCount = res.data.data
                             }
                         })
-                        alert('取消收藏成功')
+                        showMessageBox('取消收藏成功', 'success')
                     } else {
-                        alert('取消收藏失败')
+                        showMessageBox('取消收藏失败', 'error')
                     }
                 })
             } else {
@@ -680,7 +700,7 @@ export default {
                     if (res.data.code === 20011) {
                         // 修改文章的点赞状态
                         data.collectState = true
-                        alert('收藏文章成功')
+                        showMessageBox('收藏文章成功', 'success')
                         // 获取文章收藏数量
                         getEntryCollectCount(data.id).then(res => {
                             if (res.data.code === 20041) {
@@ -688,7 +708,7 @@ export default {
                             }
                         })
                     } else {
-                        alert('收藏文章失败')
+                        showMessageBox('收藏文章失败', 'error')
                     }
                 })
             }
@@ -699,17 +719,18 @@ export default {
             const content = comment.value.innerText
             // 判断评论长度
             if (content.length === 0) {
-                alert('评论不能为空')
+                showMessageBox('评论不能为空', 'warning')
                 return
             }
             if (content.length >= 255) {
-                alert('评论不能超过255字符')
+                showMessageBox('评论不能超过255字符', 'warning')
                 return
             }
             // 获取当前时间戳
             const createTime = Number.parseInt(new Date().getTime() / 1000)
             addComment(content, createTime).then(res => {
                 if (res.data.code === 20011) {
+                    showMessageBox('发表评论成功', 'success')
                     // 重新获取评论数据
                     getCommentList(data.id).then(res => {
                         if (res.data.code === 20041) {
@@ -718,6 +739,8 @@ export default {
                     })
                     // 清空评论框中的数据
                     comment.value.innerText = ''
+                } else {
+                    showMessageBox('发表评论失败', 'error')
                 }
             })
         }
@@ -726,17 +749,18 @@ export default {
             const content = replyComment.value[index].innerText
             // 判断评论长度
             if (content.length === 0) {
-                alert('评论不能为空')
+                showMessageBox('评论不能为空', 'warning')
                 return
             }
             if (content.length >= 255) {
-                alert('评论不能超过255字符')
+                showMessageBox('评论不能超过255字符', 'warning')
                 return
             }
             // 获取当前时间戳
             const createTime = Number.parseInt(new Date().getTime() / 1000)
             addComment(content, createTime, parentId, replyUserId).then(res => {
                 if (res.data.code === 20011) {
+                    showMessageBox('回复评论成功', 'success')
                     // 重新获取评论数据
                     getCommentList(data.id).then(res => {
                         if (res.data.code === 20041) {
@@ -752,6 +776,8 @@ export default {
                     )
                     // 关闭当前评论框
                     data.isShowReplyComment[index] = false
+                } else {
+                    showMessageBox('回复评论失败', 'error')
                 }
             })
         }
@@ -765,17 +791,18 @@ export default {
             const content = subReplyComment[index].value[subIndex].innerText
             // 判断评论长度
             if (content.length === 0) {
-                alert('评论不能为空')
+                showMessageBox('评论不能为空', 'warning')
                 return
             }
             if (content.length >= 255) {
-                alert('评论不能超过255字符')
+                showMessageBox('评论不能超过255字符', 'warning')
                 return
             }
             // 获取当前时间戳
             const createTime = Number.parseInt(new Date().getTime() / 1000)
             addComment(content, createTime, parentId, replyUserId).then(res => {
                 if (res.data.code === 20011) {
+                    showMessageBox('回复评论成功', 'success')
                     // 重新获取评论数据
                     getCommentList(data.id).then(res => {
                         if (res.data.code === 20041) {
@@ -791,6 +818,8 @@ export default {
                     )
                     // 关闭当前评论框
                     data.isShowSubReplyComment[index][subIndex] = false
+                } else {
+                    showMessageBox('回复评论失败', 'error')
                 }
             })
         }
@@ -798,10 +827,11 @@ export default {
         const addFollow = () => {
             addFollowInfo(data.user.id, data.userId).then(res => {
                 if (res.data.code === 20011) {
+                    showMessageBox('关注用户成功', 'success')
                     data.isFollowed = true
                     data.fansList.length++
                 } else {
-                    alert('关注用户失败')
+                    showMessageBox('关注用户失败', 'error')
                 }
             })
         }
@@ -809,10 +839,11 @@ export default {
         const unFollow = () => {
             deleteFollowInfo(data.user.id, data.userId).then(res => {
                 if (res.data.code === 20021) {
+                    showMessageBox('取消关注成功', 'success')
                     data.isFollowed = false
                     data.fansList.length--
                 } else {
-                    alert('取消关注失败')
+                    showMessageBox('取消关注失败', 'error')
                 }
             })
         }
@@ -847,17 +878,24 @@ export default {
         const deleteComment = (commentId, commentUserId) => {
             // 判断当前用户id 是否等于 评论发布用户id
             if (data.userId !== commentUserId) {
-                alert('请不要删除别人的评论，前端何苦为难前端')
+                showMessageBox(
+                    '请不要删除别人的评论，前端何苦为难前端',
+                    'warning'
+                )
                 return
             }
+            // 删除评论
             deleteCommentInfo(commentId).then(res => {
                 if (res.data.code === 20021) {
+                    showMessageBox('删除评论成功', 'success')
                     // 重新获取评论数据
                     getCommentList(data.id).then(res => {
                         if (res.data.code === 20041) {
                             commentFilter(res.data.data)
                         }
                     })
+                } else {
+                    showMessageBox('删除评论失败', 'error')
                 }
             })
         }
@@ -1016,6 +1054,7 @@ $border_line: #e8e8ed;
 ----------------------------------------------------------------*/
 .detail_block {
     display: flex;
+    opacity: 0.75;
 }
 
 /* 左边博客内容

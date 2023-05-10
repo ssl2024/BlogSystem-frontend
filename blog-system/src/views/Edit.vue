@@ -65,11 +65,17 @@
                 </div>
             </div>
         </div>
+        <!-- 消息提示框 -->
+        <message-box
+            :message="message"
+            :messageId="messageId"
+            :type="messageType"
+        ></message-box>
     </div>
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from 'vue'
+import { onMounted, onUnmounted, reactive, toRefs } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 import http from '@/utils/http'
@@ -119,6 +125,14 @@ export default {
              * true  显示
              */
             typeListState: false,
+            /* 消息提示框内容 */
+            message: '',
+            /* 消息提示框id */
+            messageId: -1,
+            /* 消息提示框类型 */
+            messageType: '',
+            /* 定时器引用 */
+            timeId: null,
         })
 
         onMounted(() => {
@@ -138,6 +152,19 @@ export default {
                 }
             })
         })
+
+        onUnmounted(() => {
+            // 清除定时器
+            data.timeId && clearTimeout(data.timeId)
+        })
+
+        /* 显示消息提示框 */
+        const showMessageBox = (message, type) => {
+            let date = new Date()
+            data.message = message
+            data.messageType = type
+            data.messageId = date.getTime()
+        }
 
         /**
          * 检查文章是否符合要求
@@ -202,15 +229,19 @@ export default {
             // 判断文章是否符合要求
             if (!temp.isPass) {
                 // 文章不符合要求
-                return alert(temp.msg)
+                return showMessageBox(temp.msg, 'warning')
             }
             const date = Number.parseInt(new Date().getTime() / 1000)
             data.entry.createTime = date
             data.entry.updateTime = date
             addEntry(data.entry).then(res => {
                 if (res.data.code === 20011) {
-                    alert('发布成功')
-                    router.push('/userInfo/blogManage')
+                    showMessageBox('发布成功', 'success')
+                    data.timeId = setTimeout(() => {
+                        router.push('/userInfo/blogManage')
+                    }, 1000)
+                } else {
+                    showMessageBox('发布失败', 'error')
                 }
             })
         }
@@ -220,14 +251,16 @@ export default {
             // 判断文章是否符合要求
             if (!temp.isPass) {
                 // 文章不符合要求
-                return alert(temp.msg)
+                return showMessageBox(temp.msg, 'warning')
             }
             updateEntryInfo(data.entry).then(res => {
                 if (res.data.code === 20031) {
-                    alert('更新成功')
-                    router.push('/userInfo/blogManage')
+                    showMessageBox('更新发布成功', 'success')
+                    data.timeId = setTimeout(() => {
+                        router.push('/userInfo/blogManage')
+                    }, 1000)
                 } else {
-                    alert('更新失败，请重试')
+                    showMessageBox('更新发布失败', 'error')
                 }
             })
         }

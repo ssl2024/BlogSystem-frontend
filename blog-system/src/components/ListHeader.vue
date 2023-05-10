@@ -1,6 +1,6 @@
 <template>
     <div class="list_header">
-        <ul class="nav_list">
+        <!-- <ul class="nav_list">
             <li class="nav_item">
                 <i class="iconfont icon-remen"></i>
                 <span>最热</span>
@@ -9,7 +9,7 @@
                 <i class="iconfont icon-remen"></i>
                 <span>最新</span>
             </li>
-        </ul>
+        </ul> -->
         <div class="list_header_select">
             <!-- 列表当前选项 -->
             <div class="item_current" @click="showDropdownSelect">
@@ -125,8 +125,9 @@ export default {
     height: 24px;
     padding: 12px 20px;
     border-bottom: 1px solid #e8e8ed;
-    background-color: #fff;
-    justify-content: space-between;
+    background-color: rgba($color: #efedee, $alpha: 0.4);
+    // justify-content: space-between;
+    justify-content: flex-end;
 
     /* 博客导航栏 导航列表 */
     .nav_list {
@@ -153,6 +154,7 @@ export default {
         line-height: 22px;
         cursor: pointer;
         border-radius: 5px;
+        z-index: 1;
 
         /* 博客导航栏 博客下拉选择框--当前选项 */
         .item_current {

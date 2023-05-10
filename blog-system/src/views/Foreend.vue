@@ -48,6 +48,12 @@
                 </ul>
             </div>
         </div>
+        <!-- 消息提示框 -->
+        <message-box
+            :message="message"
+            :messageId="messageId"
+            :type="messageType"
+        ></message-box>
     </div>
 </template>
 
@@ -102,6 +108,12 @@ export default {
              * false 不显示
              */
             isShowPagination: false,
+            /* 消息提示框内容 */
+            message: '',
+            /* 消息提示框id */
+            messageId: -1,
+            /* 消息提示框类型 */
+            messageType: '',
         })
 
         watch(
@@ -138,6 +150,14 @@ export default {
             }
         })
 
+        /* 显示消息提示框 */
+        const showMessageBox = (message, type) => {
+            let date = new Date()
+            data.message = message
+            data.messageType = type
+            data.messageId = date.getTime()
+        }
+
         /* change 博客类型 */
         const changeType = type => {
             // 在修改博客类型之后，重置当前页码为 1
@@ -163,7 +183,7 @@ export default {
         const prevPage = () => {
             // 判断是否为第一页
             if (data.currentPage === 1) {
-                return alert('没有上一页')
+                return showMessageBox('已经是第一页', 'warning')
             }
             data.currentPage--
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -183,7 +203,7 @@ export default {
         const nextPage = () => {
             // 判断是否为最后一页
             if (data.currentPage === data.pages) {
-                return alert('没有下一页')
+                return showMessageBox('已经是最后一页', 'warning')
             }
             data.currentPage++
             let title = data.searchContent != '' ? [data.searchContent] : null

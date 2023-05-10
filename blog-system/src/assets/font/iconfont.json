@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "22064301",
+      "name": "color-success",
+      "font_class": "color-success",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "22064808",
+      "name": "color-error",
+      "font_class": "color-error",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
       "icon_id": "582603",
       "name": "失败",
       "font_class": "71shibai",
@@ -22,7 +36,7 @@
     {
       "icon_id": "6204756",
       "name": "失败",
-      "font_class": "shibai",
+      "font_class": "error",
       "unicode": "e64e",
       "unicode_decimal": 58958
     },
@@ -36,14 +50,14 @@
     {
       "icon_id": "9752794",
       "name": "成功",
-      "font_class": "chenggong1",
+      "font_class": "success",
       "unicode": "e60d",
       "unicode_decimal": 58893
     },
     {
       "icon_id": "9826664",
       "name": "警告",
-      "font_class": "jinggao1",
+      "font_class": "warning",
       "unicode": "e616",
       "unicode_decimal": 58902
     },

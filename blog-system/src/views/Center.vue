@@ -1,5 +1,6 @@
 <template>
     <div class="user_center">
+        <!-- 左边用户个人信息 -->
         <div class="aside">
             <div class="user_info">
                 <div class="user_avatar">
@@ -59,6 +60,7 @@
                 </div>
             </div>
         </div>
+        <!-- 右边用户相关信息 -->
         <div class="list_wrap">
             <div class="list_header">
                 <ul class="list_nav">
@@ -144,10 +146,17 @@
                 <router-view
                     :pageSize="sidePageSize"
                     :searchContent="searchContent"
+                    @showMessageBox="showMessageBox"
                     @clearSearchInput="clearSearchInput"
                 ></router-view>
             </ul>
         </div>
+        <!-- 消息提示框 -->
+        <message-box
+            :message="message"
+            :messageId="messageId"
+            :type="messageType"
+        ></message-box>
     </div>
 </template>
 
@@ -205,6 +214,12 @@ export default {
              * false 没有关注
              */
             isFollowed: false,
+            /* 消息提示框内容 */
+            message: '',
+            /* 消息提示框id */
+            messageId: -1,
+            /* 消息提示框类型 */
+            messageType: '',
         })
 
         onMounted(() => {
@@ -226,6 +241,14 @@ export default {
                 return fansCount
             }
         })
+
+        /* 显示消息提示框 */
+        const showMessageBox = args => {
+            let date = new Date()
+            data.message = args.message
+            data.messageType = args.type
+            data.messageId = date.getTime()
+        }
 
         /* init 页面数据初始化 */
         const init = userId => {
@@ -270,7 +293,7 @@ export default {
                     }
                 })
                 .catch(err => {
-                    alert(err)
+                    showMessageBox({ message: err, type: 'error' })
                 })
         }
 
@@ -284,10 +307,17 @@ export default {
             addFollowInfo(data.currentShowUserId, data.currentLoginUserId).then(
                 res => {
                     if (res.data.code === 20011) {
+                        showMessageBox({
+                            message: '关注用户成功',
+                            type: 'success',
+                        })
                         data.isFollowed = true
                         data.userInfo.fansList.length++
                     } else {
-                        alert('关注用户失败')
+                        showMessageBox({
+                            message: '关注用户失败',
+                            type: 'error',
+                        })
                     }
                 }
             )
@@ -299,10 +329,11 @@ export default {
                 data.currentLoginUserId
             ).then(res => {
                 if (res.data.code === 20021) {
+                    showMessageBox({ message: '取消关注成功', type: 'success' })
                     data.isFollowed = false
                     data.userInfo.fansList.length--
                 } else {
-                    alert('取消关注失败')
+                    showMessageBox({ message: '取消关注失败', type: 'error' })
                 }
             })
         }
@@ -355,6 +386,7 @@ export default {
         return {
             ...toRefs(data),
             fansCount,
+            showMessageBox,
             clearSearchInput,
             addFollow,
             unFollow,

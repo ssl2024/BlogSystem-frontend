@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:20
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-06 10:45:45
+ * @LastEditTime: 2023-05-10 19:44:45
  * @Description: 个人资料
 -->
 <template>
@@ -29,7 +29,7 @@ import { useStore } from 'vuex'
 
 import http from '@/utils/http'
 export default {
-    setup() {
+    setup(_, { emit }) {
         const store = useStore()
 
         const data = reactive({
@@ -48,16 +48,22 @@ export default {
 
         /* click 修改头像 */
         const updateUserAvatar = () => {
-            console.log('点击了修改用户头像')
+            alert('修改头像功能暂未实现')
         }
         /* click 保存修改 */
         const updateUser = () => {
             updateUserInfo().then(res => {
                 if (res.data.code === 20031) {
                     // 更新导航栏的用户昵称和头像
-                    alert('修改成功')
+                    emit('showMessageBox', {
+                        message: '修改信息成功',
+                        type: 'success',
+                    })
                 } else {
-                    alert('修改失败')
+                    emit('showMessageBox', {
+                        message: '修改信息失败',
+                        type: 'error',
+                    })
                 }
             })
         }

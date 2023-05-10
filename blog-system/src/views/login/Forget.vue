@@ -44,7 +44,7 @@ export default {
 
         /* click 返回登录 */
         const goBackLogin = () => {
-            emit('changeLoginState', 1)
+            emit('changeLoginState', { loginState: 1 })
         }
         /* click 验证方式中的 向下箭头 */
         const changeFindMethod = newState => {
@@ -72,7 +72,8 @@ export default {
     top: 50%;
     left: 50%;
     padding: 30px 70px;
-    background-color: #fff4ea;
+    background-color: rgba($color: #b6e4f4, $alpha: 0.7);
+    color: rgba($color: #000000, $alpha: 0.7);
     border-radius: 25px;
     transform: translate(-50%, -50%);
 

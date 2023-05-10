@@ -2,11 +2,10 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-10 02:07:25
- * @Description: 
+ * @LastEditTime: 2023-05-11 01:37:32
+ * @Description: 根组件
 -->
 <template>
-    <button @click="showMessage">点击</button>
     <navbar v-if="isLogin" @changeSearchEntry="changeSearchEntry"></navbar>
     <router-view
         :pageSize="pageSize"
@@ -15,7 +14,6 @@
     ></router-view>
     <footers v-if="isLogin"></footers>
     <loading v-show="isLoading"></loading>
-    <message-tips :message="message"></message-tips>
 </template>
 
 <script>
@@ -29,13 +27,11 @@ import '@/assets/css/cssReset.css'
 import navbar from '@/components/Navbar'
 import footers from '@/components/Footer'
 import loading from '@/components/Loading'
-import messageTips from '@/components/MessageTips.vue'
 export default {
     components: {
         navbar,
         footers,
         loading,
-        messageTips,
     },
     setup() {
         const store = useStore()
@@ -54,8 +50,6 @@ export default {
             userInfoList: [],
             /* 导航栏搜索框内容 */
             searchContent: '',
-            /* 显示消息 */
-            message: '',
         })
 
         watch(
@@ -65,11 +59,6 @@ export default {
                 getHotListInfo()
             }
         )
-
-        const showMessage = () => {
-            let r = Math.random()
-            data.message = '这是需要显示的内容' + r
-        }
 
         onMounted(() => {
             // 获取用户热榜信息(浏览器F5刷新之后)
@@ -138,18 +127,29 @@ export default {
             isLogin,
             ...toRefs(data),
             changeSearchEntry,
-            showMessage,
         }
     },
 }
 </script>
 
 <style lang="scss">
-body,
-html {
+body {
     width: 1170px;
     margin: 0 auto;
     padding: 0 15px;
-    background-color: #f2f3f5;
+    // background-color: #f2f3f5;
+    // background-color: ;
+    background-color: rgba($color: #b6e3f6, $alpha: 0.8);
+    // background-color: transparent;
+    // opacity: 0.8;
+}
+
+html {
+    // background-color: skyblue;
+    // background: url(@/assets/bg.webp)
+    //     no-repeat fixed;
+    background: url(https://pic3.zhimg.com/v2-3afda695650a99e5c7349b26745090ca_r.jpg)
+        no-repeat fixed;
+    background-size: cover;
 }
 </style>

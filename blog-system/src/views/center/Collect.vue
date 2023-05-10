@@ -2,12 +2,14 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 19:52:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-08 18:03:20
+ * @LastEditTime: 2023-05-10 22:54:40
  * @Description: 个人主页-用户收藏
 -->
 <template>
     <div>
-        <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
+        <div class="list">
+            <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
+        </div>
         <div class="list_pagination" v-if="isShowPagination">
             <div class="operate_prev" @click="prevPage">上一页</div>
             <span>{{ currentPage }} / {{ pages }}</span>
@@ -122,7 +124,10 @@ export default {
         const prevPage = () => {
             // 判断是否是第一页
             if (data.currentPage === 1) {
-                return alert('没有上一页')
+                return emit('showMessageBox', {
+                    message: '已经是第一页',
+                    type: 'warning',
+                })
             }
             data.currentPage--
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -142,7 +147,10 @@ export default {
         const nextPage = () => {
             // 判断是否是最后一页
             if (data.currentPage === data.pages) {
-                return alert('没有下一页')
+                return emit('showMessageBox', {
+                    message: '已经是最后一页',
+                    type: 'warning',
+                })
             }
             data.currentPage++
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -185,6 +193,9 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+.list {
+    min-height: 625px;
+}
 .list_pagination {
     display: flex;
     margin-top: 15px;

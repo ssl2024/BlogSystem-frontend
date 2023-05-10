@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref } from 'vue'
+import { reactive, toRefs, ref, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -48,26 +48,46 @@ import md5 from 'md5'
 
 import http from '@/utils/http'
 export default {
-    setup(_, { emit }) {
+    props: {
+        user: {
+            type: Object,
+        },
+    },
+    setup(props, { emit }) {
         const store = useStore()
         const router = useRouter()
         const route = useRoute()
 
         const data = reactive({
             /* 账号框 */
-            account: '',
+            account: props.user.account,
             /* 密码框 */
-            pwdText: '',
+            pwdText: props.user.pwd,
             /**
              * 是否显示密码框
              * false 不显示
              * true  显示
              */
             pwdState: false,
+            /* 定时器引用 */
+            timeId: null,
         })
 
         /* DOM 密码框 */
         const pwd = ref()
+
+        onUnmounted(() => {
+            // 清除定时器
+            data.timeId && clearTimeout(data.timeId)
+        })
+
+        watch(
+            () => props.user,
+            () => {
+                data.account = props.user.account
+                data.pwdText = props.user.pwd
+            }
+        )
 
         /* 在 url 后添加随机参数(暂未使用) */
         const addRandomQueryParam = url => {
@@ -80,42 +100,60 @@ export default {
         /* click 登录 */
         const login = () => {
             // 判断账号框和密码框是否为空
-            if (data.account.length === 0 || data.pwdText.length === 0) {
+            if (data.account === '' || data.pwdText === '') {
                 // 账号框 或 密码为空
-                return alert('账号或密码不能为空')
+                return emit('showMessageBox', {
+                    message: '账号或密码不能为空',
+                    type: 'error',
+                })
             }
             userLogin(data.account, md5(data.pwdText)).then(res => {
                 if (res.data.code === 20041) {
                     // 登录成功
-                    alert('登录成功')
-                    // 将 token 存入 vuex
-                    store.commit('updateToken', res.data.data.token)
-                    // 更新登录状态
-                    store.commit('updateLoginState', true)
-                    // 将 当前用户id 存入 vuex
-                    store.commit('updateUserId', res.data.data.user.id)
-                    // 跳转页面
-                    if (route.query.redirect) {
-                        router.push(route.query.redirect)
-                    } else {
-                        router.push('/rcommd')
-                    }
+                    emit('showMessageBox', {
+                        message: '登录成功',
+                        type: 'success',
+                    })
+                    setTimeout(() => {
+                        // 将 token 存入 vuex
+                        store.commit('updateToken', res.data.data.token)
+                        // 更新登录状态
+                        store.commit('updateLoginState', true)
+                        // 将 当前用户id 存入 vuex
+                        store.commit('updateUserId', res.data.data.user.id)
+                        // 跳转页面
+                        if (route.query.redirect) {
+                            router.push(route.query.redirect)
+                        } else {
+                            router.push('/rcommd')
+                        }
+                    }, 1000)
                 } else if (res.data.code === 20040) {
                     // 账号或密码错误
-                    alert(res.data.msg)
+                    emit('showMessageBox', {
+                        message: '账号或密码错误',
+                        type: 'error',
+                    })
                 } else {
                     // 其他错误
-                    alert('未知错误')
+                    emit('showMessageBox', {
+                        message: '未知错误，请稍后重试',
+                        type: 'error',
+                    })
                 }
             })
         }
         /* click 注册账号 */
         const register = () => {
-            emit('changeLoginState', 2)
+            emit('changeLoginState', { loginState: 2 })
         }
         /* click 忘记密码 */
         const forgetPwd = () => {
-            emit('changeLoginState', 3)
+            return emit('showMessageBox', {
+                message: '找回密码功能暂未实现，正努力开发中。。。',
+                type: 'error',
+            })
+            // emit('changeLoginState', { loginState: 3 })
         }
         /* click 密码小眼睛 */
         const changePwdState = () => {
@@ -125,18 +163,9 @@ export default {
 
         /* http 用户登录 */
         const userLogin = (account, pwd) => {
-            return http({
-                method: 'POST',
-                url: `/users/login`,
-                data: {
-                    account,
-                    pwd,
-                },
-                // 禁用浏览器缓存
-                headers: {
-                    'Cache-Control': 'no-cache',
-                    Pragma: 'no-cache',
-                },
+            return http.post(`/users/login`, {
+                account,
+                pwd,
             })
         }
         return {
@@ -154,7 +183,7 @@ export default {
 
 <style lang="scss" scoped="scoped">
 /* 边框分隔线颜色 */
-$border_line: skyblue;
+$border_line: #b6e4f4;
 
 /* 登录页面--登录
 ----------------------------------------------------------------*/
@@ -163,7 +192,8 @@ $border_line: skyblue;
     top: 50%;
     left: 50%;
     padding: 30px 70px;
-    background-color: #fff4ea;
+    background-color: rgba($color: #b6e4f4, $alpha: 0.7);
+    color: rgba($color: #000000, $alpha: 0.7);
     border-radius: 25px;
     transform: translate(-50%, -50%);
 
@@ -181,7 +211,7 @@ $border_line: skyblue;
     .login_form {
         /* 登录 表单--所有的输入框 */
         input {
-            width: 350px;
+            width: 353px;
             height: 45px;
             margin-bottom: 30px;
             padding-left: 20px;
@@ -210,8 +240,7 @@ $border_line: skyblue;
             width: 375px;
             height: 50px;
             margin-bottom: 30px;
-            border: 1px solid $border_line;
-            background-color: #8f2b26;
+            background-color: #45b8cc;
             color: #fff;
             font-size: 18px;
             font-weight: 600;

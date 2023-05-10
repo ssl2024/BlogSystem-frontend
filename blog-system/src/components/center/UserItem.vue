@@ -27,7 +27,7 @@ import { useRouter } from 'vue-router'
 import http from '@/utils/http'
 export default {
     props: ['user'],
-    setup(props) {
+    setup(props, { emit }) {
         const store = useStore()
         const router = useRouter()
 
@@ -73,9 +73,15 @@ export default {
             }).then(res => {
                 if (res.data.code === 20011) {
                     data.isFollowed = true
-                    alert('关注用户成功')
+                    emit('showMessageBox', {
+                        message: '关注用户成功',
+                        type: 'success',
+                    })
                 } else {
-                    alert('关注用户失败')
+                    emit('showMessageBox', {
+                        message: '关注用户失败',
+                        type: 'error',
+                    })
                 }
             })
         }
@@ -84,9 +90,15 @@ export default {
             http.delete(`/follows/${userId}/${data.loginUserId}`).then(res => {
                 if (res.data.code === 20021) {
                     data.isFollowed = false
-                    alert('取消关注成功')
+                    emit('showMessageBox', {
+                        message: '取消关注成功',
+                        type: 'success',
+                    })
                 } else {
-                    alert('取消关注失败')
+                    emit('showMessageBox', {
+                        message: '取消关注失败',
+                        type: 'error',
+                    })
                 }
             })
         }

@@ -21,10 +21,12 @@ import Follow from '@/views/center/Follow'
 import Edit from '@/views/Edit'
 
 const routes = [
+    /* 登录 */
     {
         path: '/login',
         component: Login,
     },
+    /* 关注 */
     {
         path: '/attention',
         component: Attention,
@@ -32,6 +34,7 @@ const routes = [
             required: true,
         },
     },
+    /* 推荐 */
     {
         path: '/rcommd',
         component: Rcommd,
@@ -39,6 +42,7 @@ const routes = [
             required: true,
         },
     },
+    /* 前端 */
     {
         path: '/foreend',
         component: Foreend,
@@ -46,6 +50,7 @@ const routes = [
             required: true,
         },
     },
+    /* 后端 */
     {
         path: '/backend',
         component: Backend,
@@ -63,6 +68,7 @@ const routes = [
             },
         ],
     },
+    /* 博客详情 */
     {
         path: '/entryDetail/:id',
         component: EntryDetail,

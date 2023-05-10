@@ -1,6 +1,6 @@
 <template>
-    <div v-if="show" class="message_box">
-        <i class="iconfont icon-chenggong2"></i>
+    <div v-if="show" class="message_box" :class="type">
+        <i class="iconfont" :class="'icon-' + type"></i>
         <span>{{ message }}</span>
     </div>
 </template>
@@ -10,7 +10,18 @@ import { ref, watchEffect, onUnmounted } from 'vue'
 
 export default {
     props: {
-        message: String,
+        message: {
+            type: String,
+            required: true,
+        },
+        messageId: {
+            type: Number,
+            default: -1,
+        },
+        type: {
+            type: String,
+            default: 'success',
+        },
         duration: {
             type: Number,
             default: 3000, // 默认显示3秒
@@ -28,11 +39,17 @@ export default {
 
         onUnmounted(() => {
             // 如果存在定时器则清除定时器
+            console.log('清除了定时器', timer)
             timer && clearTimeout(timer)
         })
 
         watchEffect(() => {
-            if (props.message) {
+            if (timer) {
+                console.log('当前存在已有的定时器', timer)
+            } else {
+                console.log('当前没有存在的定时器', timer)
+            }
+            if (props.messageId != -1) {
                 // 创建消息提示框
                 show.value = true
                 // 如果存在定时器则清除定时器
@@ -44,7 +61,9 @@ export default {
             }
         })
 
-        return { show }
+        return {
+            show,
+        }
     },
 }
 </script>
@@ -58,8 +77,6 @@ export default {
     left: 50%;
     width: 380px;
     height: 45px;
-    background-color: #f0f9eb;
-    color: #67c23a;
     font-size: 14px;
     border-radius: 5px;
     opacity: 1;
@@ -71,6 +88,23 @@ export default {
     :first-child {
         margin-right: 10px;
     }
+}
+
+/* 成功样式 */
+.success {
+    background-color: #f0f9eb;
+    color: #67c23a;
+}
+
+.warning {
+    background-color: #fdf6ec;
+    color: #e6a23c;
+}
+
+/* 失败样式 */
+.error {
+    background-color: #fef0f0;
+    color: #f56c6c;
 }
 
 @keyframes show-message {
@@ -87,7 +121,7 @@ export default {
         top: 30px;
     }
     100% {
-        opacity: 0;
+        opacity: -1;
         top: -30px;
     }
 }

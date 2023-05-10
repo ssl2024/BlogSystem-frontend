@@ -56,6 +56,7 @@
                 <div class="operate_add" @click="addBlog">新增</div>
             </div>
         </div>
+        <!-- 确认对话框 -->
         <confirm-dialog
             :confirmState="confirmState"
             @selectResult="selectResult"
@@ -76,7 +77,7 @@ export default {
     components: {
         confirmDialog,
     },
-    setup() {
+    setup(_, { emit }) {
         const router = useRouter()
         const store = useStore()
 
@@ -137,12 +138,16 @@ export default {
             // 判断用户选择的操作
             if (!res) {
                 // 取消操作，隐藏确认框
+                emit('showMessageBox', { message: '取消删除', type: 'error' })
                 return (data.confirmState = false)
             }
             // 确认操作，删除博客
             deleteEntry(data.entryId).then(res => {
                 if (res.data.code === 20021) {
-                    alert('删除成功')
+                    emit('showMessageBox', {
+                        message: '删除成功',
+                        type: 'success',
+                    })
                     // 隐藏确认框
                     data.confirmState = false
                     // 删除当前博客对应的所有评论数据
@@ -164,7 +169,10 @@ export default {
                         getEntryList()
                     }
                 } else {
-                    alert('删除失败，请重试')
+                    emit('showMessageBox', {
+                        message: '删除失败，请重试',
+                        type: 'error',
+                    })
                 }
             })
         }
@@ -197,7 +205,10 @@ export default {
                     getEntryList()
                 }
             } else {
-                alert('没有上一页')
+                emit('showMessageBox', {
+                    message: '已经是第一页',
+                    type: 'warning',
+                })
             }
         }
         /* click 下一页 */
@@ -211,7 +222,10 @@ export default {
                     getEntryList()
                 }
             } else {
-                alert('没有下一页')
+                emit('showMessageBox', {
+                    message: '已经是最后一页',
+                    type: 'warning',
+                })
             }
         }
         /* click 新增 */
@@ -354,6 +368,11 @@ $color_pagination: #35bcb5;
             .title_item {
                 flex: 1;
             }
+        }
+
+        /* 博客管理 博客展示--博客列表 */
+        .blog_list {
+            min-height: 180px;
         }
 
         /* 博客管理 博客展示--博客列表项 */

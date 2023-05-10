@@ -79,7 +79,7 @@ $border_line: skyblue;
 .forget_form {
     /* 找回方式 所有的输入框 */
     input {
-        width: 350px;
+        width: 353px;
         height: 45px;
         margin-bottom: 30px;
         padding-left: 20px;
@@ -123,13 +123,14 @@ $border_line: skyblue;
             top: 110%;
             left: -2px;
             width: 375px;
-            border: 1px solid #f3f3f3;
+            border: none;
             background-color: $bg_color;
 
             /* 找回方式 找回方式选择--找回方式列表(列表项) */
             .method_item {
                 padding-left: 55px;
                 border-top: 1px solid #f3f3f3;
+                transition: all 0.3s;
                 &:hover {
                     background-color: skyblue;
                     color: $color;
@@ -143,7 +144,7 @@ $border_line: skyblue;
         width: 375px;
         height: 50px;
         margin-bottom: 30px;
-        background-color: #8f2b26;
+        background-color: #45b8cc;
         color: $color;
         font-size: 18px;
         font-weight: 600;

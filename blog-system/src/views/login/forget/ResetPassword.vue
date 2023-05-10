@@ -96,7 +96,7 @@ $border_line: skyblue;
 .forget_form {
     /* 重置密码 所有的输入框 */
     input {
-        width: 355px;
+        width: 353px;
         height: 45px;
         margin-bottom: 30px;
         padding-left: 20px;
@@ -110,7 +110,7 @@ $border_line: skyblue;
     .validation_method {
         display: flex;
         position: relative;
-        width: 355px;
+        width: 353px;
         height: 45px;
         margin-bottom: 30px;
         padding-left: 20px;
@@ -149,8 +149,7 @@ $border_line: skyblue;
         width: 375px;
         height: 50px;
         margin-bottom: 30px;
-        border: 1px solid $border_line;
-        background-color: #8f2b26;
+        background-color: #45b8cc;
         color: #fff;
         font-size: 18px;
         font-weight: 600;

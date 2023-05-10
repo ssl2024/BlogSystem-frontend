@@ -13,11 +13,11 @@
                 />
                 <i
                     v-show="accountTips === 'success'"
-                    class="flag_success iconfont icon-chenggong2"
+                    class="flag_success iconfont icon-success"
                 ></i>
                 <i
                     v-show="accountTips === 'warn'"
-                    class="flag_warn iconfont icon-jinggao1"
+                    class="flag_warn iconfont icon-warning"
                 ></i>
             </div>
             <div class="register_pwd" :placeholder="pwdPlaceholder">
@@ -40,11 +40,11 @@
                 ></i>
                 <i
                     v-show="pwdTips === 'success'"
-                    class="flag_success iconfont icon-chenggong2"
+                    class="flag_success iconfont icon-success"
                 ></i>
                 <i
                     v-show="pwdTips === 'warn'"
-                    class="flag_warn iconfont icon-jinggao1"
+                    class="flag_warn iconfont icon-warning"
                 ></i>
             </div>
             <div class="register_rePwd">
@@ -67,11 +67,11 @@
                 ></i>
                 <i
                     v-show="pwdTips === 'success'"
-                    class="flag_success iconfont icon-chenggong2"
+                    class="flag_success iconfont icon-success"
                 ></i>
                 <i
                     v-show="pwdTips === 'warn'"
-                    class="flag_warn iconfont icon-jinggao1"
+                    class="flag_warn iconfont icon-warning"
                 ></i>
             </div>
             <div class="check_code" :placeholder="checkPlaceholder">
@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref } from 'vue'
+import { reactive, toRefs, ref, onUnmounted } from 'vue'
 
 import http from '@/utils/http'
 import md5 from 'md5'
@@ -151,12 +151,19 @@ export default {
             imgCode: '',
             /* 验证码框 */
             checkCode: '',
+            /* 定时器引用 */
+            timeId: null,
         })
 
         /* DOM 密码框 */
         const pwd = ref()
         /* DOM 确认密码框 */
         const rePwd = ref()
+
+        onUnmounted(() => {
+            // 清除定时器
+            data.timeId && clearTimeout(data.timeId)
+        })
 
         /* change 账号输入框 */
         const accountChange = () => {
@@ -176,7 +183,10 @@ export default {
                     } else {
                         // 其他错误
                         console.log(res.data)
-                        alert('发生了未知错误，请稍后再试')
+                        emit('showMessageBox', {
+                            message: '未知错误，请稍后再试',
+                            type: 'error',
+                        })
                     }
                 })
             } else {
@@ -214,16 +224,17 @@ export default {
         const register = () => {
             // 判断账号框和密码框是否符合要求(success)
             if (data.accountTips != 'success' || data.pwdTips != 'success') {
-                alert('账号或密码不符合规则，不能登录')
-                return
+                return emit('showMessageBox', {
+                    message: '账号或密码不符合规则，请修改',
+                    type: 'warning',
+                })
             }
             // 判断验证码是否相同
             if (md5(data.checkCode.toUpperCase()) != data.imgCode) {
                 // 验证码错误
                 data.checkPlaceholder = '验证码错误'
                 // 刷新验证码
-                changeImageCode()
-                return
+                return changeImageCode()
             }
             data.checkPlaceholder = ''
             // 注册信息
@@ -231,23 +242,38 @@ export default {
                 account: data.account,
                 pwd: md5(data.pwdText),
             }).then(res => {
-                console.log(res.data)
                 if (res.data.code == '20011') {
-                    // 添加成功返回登录页面
-                    alert(res.data.msg)
-                    goBackLogin()
+                    // 注册成功返回登录页面
+                    emit('showMessageBox', {
+                        message: res.data.msg,
+                        type: 'success',
+                    })
+                    data.timeId = setTimeout(() => {
+                        goBackLogin()
+                    }, 1000)
                 } else if (res.data.code == '20010') {
-                    // 添加失败
-                    alert(res.data.msg)
+                    // 注册失败
+                    emit('showMessageBox', {
+                        message: res.data.msg,
+                        type: 'error',
+                    })
                 } else {
                     // 其他错误
-                    alert('其他错误，请稍后再试')
+                    emit('showMessageBox', {
+                        message: '未知错误，请稍后再试',
+                        type: 'error',
+                    })
                 }
             })
         }
         /* click 返回登录 */
         const goBackLogin = () => {
-            emit('changeLoginState', 1)
+            // 切换到登录页面同时携带账号和密码
+            emit('changeLoginState', {
+                loginState: 1,
+                account: data.account,
+                pwd: data.pwdText,
+            })
         }
         /* click 密码框小眼睛 */
         const changePwdState = () => {
@@ -312,7 +338,7 @@ export default {
 
 <style lang="scss" scoped="scoped">
 /* 边框分隔线颜色 */
-$border_line: skyblue;
+$border_line: #b6e4f4;
 
 /* 登录页面--注册
 ----------------------------------------------------------------*/
@@ -321,7 +347,8 @@ $border_line: skyblue;
     top: 50%;
     left: 50%;
     padding: 30px 70px;
-    background-color: #fff4ea;
+    background-color: rgba($color: #b6e4f4, $alpha: 0.7);
+    color: rgba($color: #000000, $alpha: 0.7);
     border-radius: 25px;
     transform: translate(-50%, -50%);
 
@@ -339,7 +366,7 @@ $border_line: skyblue;
     .register_form {
         /* 注册 表单--所有的输入框 */
         input {
-            width: 350px;
+            width: 353px;
             height: 45px;
             margin-bottom: 30px;
             padding-left: 20px;
@@ -443,8 +470,7 @@ $border_line: skyblue;
             width: 375px;
             height: 50px;
             margin-bottom: 30px;
-            border: 1px solid $border_line;
-            background-color: #8f2b26;
+            background-color: #45b8cc;
             color: #fff;
             font-size: 18px;
             font-weight: 600;

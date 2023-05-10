@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4007235 */
-  src: url('iconfont.woff2?t=1681814365094') format('woff2'),
-       url('iconfont.woff?t=1681814365094') format('woff'),
-       url('iconfont.ttf?t=1681814365094') format('truetype');
+  src: url('iconfont.woff2?t=1683701090094') format('woff2'),
+       url('iconfont.woff?t=1683701090094') format('woff'),
+       url('iconfont.ttf?t=1683701090094') format('truetype');
 }
 
 .iconfont {
@@ -13,6 +13,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-color-success:before {
+  content: "\e601";
+}
+
+.icon-color-error:before {
+  content: "\e602";
+}
+
 .icon-71shibai:before {
   content: "\e64a";
 }
@@ -21,7 +29,7 @@
   content: "\e605";
 }
 
-.icon-shibai:before {
+.icon-error:before {
   content: "\e64e";
 }
 
@@ -29,11 +37,11 @@
   content: "\e86a";
 }
 
-.icon-chenggong1:before {
+.icon-success:before {
   content: "\e60d";
 }
 
-.icon-jinggao1:before {
+.icon-warning:before {
   content: "\e616";
 }
 

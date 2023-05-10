@@ -34,7 +34,11 @@
             </ul>
         </div>
         <div class="picture">
-            <img src="https://iph.href.lu/176x99" alt="博客展示图片" />
+            <!-- <img src="https://iph.href.lu/176x99" alt="博客展示图片" /> -->
+            <img
+                src="http://cdn.xiongsihao.com/blogFirstPicture53.jpg"
+                alt="博客展示图片"
+            />
         </div>
     </div>
 </template>
@@ -102,10 +106,17 @@ $border_line: #e8e8ed;
     padding-bottom: 10px;
     border-top: 1px solid $border_line;
     border-bottom: 1px solid $border_line;
-    background-color: #fff;
+    // background-color: rgba($color: #58acc4, $alpha: 0.4);
+    // background-color: ;
+    // opacity: 0.4;
     cursor: pointer;
+    transition: all 0.3s;
     &:hover {
-        background-color: #fafafa;
+        // opacity: 1;
+        background-color: rgba($color: #fefefe, $alpha: 0.8);
+        .picture img {
+            opacity: 1;
+        }
     }
 
     /* 博客 包装 */
@@ -169,6 +180,11 @@ $border_line: #e8e8ed;
     .picture {
         padding: 7px;
         width: 176px;
+        img {
+            width: 176px;
+            height: 101px;
+            opacity: 0.8;
+        }
     }
 }
 </style>

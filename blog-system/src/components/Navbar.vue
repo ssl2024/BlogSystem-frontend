@@ -222,7 +222,10 @@ export default {
 $border_line: #e8e8ed;
 
 /* 背景颜色 */
-$bg_color: #fff;
+$bg_color: rgba(
+    $color: #efedee,
+    $alpha: 0.4,
+);
 
 /* 导航栏当前选中项 */
 .current {

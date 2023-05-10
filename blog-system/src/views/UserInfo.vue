@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:01:27
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-28 15:59:17
+ * @LastEditTime: 2023-05-10 19:43:53
  * @Description: 
 -->
 <template>
@@ -56,24 +56,50 @@
             </li>
         </ul>
         <div class="setting_profile">
-            <router-view></router-view>
+            <router-view @showMessageBox="showMessageBox"></router-view>
         </div>
+        <!-- 消息提示框 -->
+        <message-box
+            :message="message"
+            :messageId="messageId"
+            :type="messageType"
+        ></message-box>
     </div>
 </template>
 
 <script>
-import { useStore } from "vuex";
-import { useRouter} from 'vue-router'
+import { reactive, toRefs } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 export default {
     setup() {
         const store = useStore()
         const router = useRouter()
+
+        const data = reactive({
+            /* 消息提示框内容 */
+            message: '',
+            /* 消息提示框id */
+            messageId: -1,
+            /* 消息提示框类型 */
+            messageType: '',
+        })
+
+        /* 显示消息提示框 */
+        const showMessageBox = (args) => {
+            let date = new Date()
+            data.message = args.message
+            data.messageType = args.type
+            data.messageId = date.getTime()
+        }
 
         /* click 返回个人主页 */
         const goBack = () => {
             router.push(`/center/${store.state.userId}`)
         }
         return {
+            ...toRefs(data),
+            showMessageBox,
             goBack,
         }
     },
