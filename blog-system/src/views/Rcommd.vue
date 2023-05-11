@@ -9,11 +9,18 @@
                     :entry="item"
                 ></blog>
             </div>
-            <div class="list_pagination" v-if="isShowPagination">
+            <!-- <div class="list_pagination" v-if="isShowPagination">
                 <div class="operate_prev" @click="prevPage">上一页</div>
-                <span>{{ currentPage }} / {{ pages }}</span>
+                <span class="page_number">{{ currentPage }} / {{ pages }}</span>
                 <div class="operate_next" @click="nextPage">下一页</div>
-            </div>
+            </div> -->
+            <pagination
+                v-if="isShowPagination"
+                :currentPage="currentPage"
+                :pages="pages"
+                @prevPage="prevPage"
+                @nextPage="nextPage"
+            ></pagination>
         </div>
         <div class="aside">
             <div class="hot_list">
@@ -26,6 +33,7 @@
                 <ul class="hot_list_data">
                     <li
                         class="hot_item"
+                        :title="'查看 ' + item.nickname + ' 主页'"
                         v-for="(item, index) in hotList(userInfoList)"
                         :key="item.id"
                         @click="toUserPage(item.id)"
@@ -45,12 +53,6 @@
                 </ul>
             </div>
         </div>
-        <!-- 消息提示框 -->
-        <message-box
-            :message="message"
-            :messageId="messageId"
-            :type="messageType"
-        ></message-box>
     </div>
 </template>
 
@@ -62,10 +64,12 @@ import http from '@/utils/http'
 
 import blog from '@/components/Blog'
 import listHeader from '@/components/ListHeader'
+import pagination from '@/components/Pagination'
 export default {
     components: {
         blog,
         listHeader,
+        pagination,
     },
     props: {
         pageSize: {
@@ -81,7 +85,7 @@ export default {
             default: '',
         },
     },
-    setup(props) {
+    setup(props, { emit }) {
         const router = useRouter()
 
         const data = reactive({
@@ -105,12 +109,6 @@ export default {
              * false 不显示
              */
             isShowPagination: false,
-            /* 消息提示框内容 */
-            message: '',
-            /* 消息提示框id */
-            messageId: -1,
-            /* 消息提示框类型 */
-            messageType: '',
         })
 
         watch(
@@ -147,12 +145,12 @@ export default {
             }
         })
 
-        /* 显示消息提示框 */
-        const showMessageBox = (message, type) => {
-            let date = new Date()
-            data.message = message
-            data.messageType = type
-            data.messageId = date.getTime()
+        /*  显示消息框 */
+        const showMessageBox = args => {
+            emit('showMessageBox', {
+                message: args.message,
+                type: args.type,
+            })
         }
 
         /* change 博客类型 */
@@ -180,7 +178,10 @@ export default {
         const prevPage = () => {
             // 判断是否为第一页
             if (data.currentPage === 1) {
-                return showMessageBox('已经是第一页', 'warning')
+                return showMessageBox({
+                    message: '已经是第一页',
+                    type: 'warning',
+                })
             }
             data.currentPage--
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -200,7 +201,10 @@ export default {
         const nextPage = () => {
             // 判断是否为最后一页
             if (data.currentPage === data.pages) {
-                return showMessageBox('已经是最后一页', 'warning')
+                return showMessageBox({
+                    message: '已经是最后一页',
+                    type: 'warning',
+                })
             }
             data.currentPage++
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -247,15 +251,13 @@ export default {
 
 <style lang="scss" scoped>
 /* 背景颜色 */
-$bg_color: rgba(
-    $color: #efedee,
-    $alpha: 0.4,
-);
+$bg_color: #fff;
 
-/* 后端页面 
+/* 推荐页面 
 ----------------------------------------------------------------*/
 .container {
     display: flex;
+    margin-top: 125px;
 }
 
 /* 左边博客 
@@ -264,24 +266,42 @@ $bg_color: rgba(
     width: 860px;
 
     /* 左边博客 分页 */
-    .list_pagination {
-        display: flex;
-        margin-top: 15px;
-        font-size: 13px;
-        justify-content: space-between;
-        align-items: center;
+    // .list_pagination {
+    //     display: flex;
+    //     padding: 5px;
+    //     border: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+    //     // border-bottom: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+    //     // background-color: rgba($color: $bg_color, $alpha: 0.1);
+    //     background-color: transparent;
+    //     border-radius: 0 0 5px 5px;
+    //     box-shadow: 0 4px 4px rgb(0 0 0 / 0.1), 0 2px 2px rgb(0 0 0 / 0.1);
+    //     font-size: 13px;
+    //     justify-content: space-between;
+    //     align-items: center;
 
-        /* 左边博客 分页 上/下一页按钮 */
-        [class^='operate'] {
-            width: 105px;
-            height: 35px;
-            border: 1px solid skyblue;
-            text-align: center;
-            line-height: 35px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-    }
+    //     /* 左边博客 分页--上/下一页按钮 */
+    //     [class^='operate'] {
+    //         position: relative;
+    //         width: 120px;
+    //         height: 45px;
+    //         background-color: rgba($color: #fefefe, $alpha: 0.8);
+    //         text-align: center;
+    //         line-height: 45px;
+    //         cursor: pointer;
+    //         border-radius: 5px;
+    //         transition: all 0.3s;
+    //         &:hover {
+    //             background-color: rgba($color: #62aec5, $alpha: 0.7);
+    //             color: #fff;
+    //         }
+    //     }
+
+    //     /* 左边博客 分页--页码 */
+    //     .page_number {
+    //         color: #fff;
+    //         opacity: 0.8;
+    //     }
+    // }
 }
 
 /* 右边侧边栏
@@ -293,7 +313,11 @@ $bg_color: rgba(
     /* 右边侧边栏 热度榜单 */
     .hot_list {
         padding: 10px 0;
-        background-color: $bg_color;
+        border-top: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+        border-bottom: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+        background-color: rgba($color: $bg_color, $alpha: 0.1);
+        border-radius: 5px;
+        box-shadow: 0 4px 4px rgb(0 0 0 / 0.1), 0 2px 2px rgb(0 0 0 / 0.1);
 
         /* 右边侧边栏 热度榜单--标题 */
         .hot_list_header {
@@ -323,8 +347,9 @@ $bg_color: rgba(
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            transition: all 0.2s;
             &:hover {
-                background-color: #f3f3f3;
+                background-color: rgba($color: $bg_color, $alpha: 0.7);
             }
 
             /* 右边侧边栏 热度榜单--榜单项(用户信息) */

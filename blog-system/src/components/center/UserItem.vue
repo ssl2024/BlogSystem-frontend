@@ -123,18 +123,18 @@ export default {
 
 <style lang="scss" scoped="scoped">
 /* 边框分隔线颜色 */
-$border_line: #e8e8ed;
+$border_line: #cbe5eb;
 
 /* 背景颜色 */
-$bg_color: #fff;
+// $bg_color: #fff;
 
 /* 用户列表 列表项 */
 .user_item {
     display: flex;
     height: 80px;
     padding: 5px 25px;
-    border-top: 1px solid $border_line;
     border-bottom: 1px solid $border_line;
+    background-color: rgba($color: #fefefe, $alpha: 0.8);
     cursor: pointer;
     justify-content: space-between;
     align-items: center;
@@ -164,11 +164,12 @@ $bg_color: #fff;
         line-height: 30px;
         cursor: pointer;
         border-radius: 5px;
-        span {
-            display: block;
-        }
+        transition: all 0.2s;
         &:hover {
             background-color: #9cd74e;
+        }
+        span {
+            display: block;
         }
     }
 }

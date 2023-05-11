@@ -2,18 +2,44 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-11 01:37:32
+ * @LastEditTime: 2023-05-12 01:06:45
  * @Description: 根组件
 -->
 <template>
-    <navbar v-if="isLogin" @changeSearchEntry="changeSearchEntry"></navbar>
+    <navbar
+        v-if="isLogin"
+        @changeSearchEntry="changeSearchEntry"
+        @showMessageBox="showMessageBox"
+    ></navbar>
     <router-view
         :pageSize="pageSize"
         :userInfoList="userInfoList"
         :searchContent="searchContent"
+        @showMessageBox="showMessageBox"
     ></router-view>
     <footers v-if="isLogin"></footers>
     <loading v-show="isLoading"></loading>
+    <!-- 消息提示框 -->
+    <message-box
+        :message="message"
+        :messageId="messageId"
+        :type="messageType"
+    ></message-box>
+    <ul class="cs">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
 </template>
 
 <script>
@@ -50,6 +76,12 @@ export default {
             userInfoList: [],
             /* 导航栏搜索框内容 */
             searchContent: '',
+            /* 消息提示框内容 */
+            message: '',
+            /* 消息提示框id */
+            messageId: -1,
+            /* 消息提示框类型 */
+            messageType: '',
         })
 
         watch(
@@ -113,6 +145,13 @@ export default {
         const changeSearchEntry = searchContent => {
             data.searchContent = searchContent
         }
+        /* customEvent 显示消息提示框 */
+        const showMessageBox = args => {
+            let date = new Date()
+            data.message = args.message
+            data.messageType = args.type
+            data.messageId = date.getTime()
+        }
 
         /* http 获取用户列表 */
         const getUserIdList = () => {
@@ -127,6 +166,7 @@ export default {
             isLogin,
             ...toRefs(data),
             changeSearchEntry,
+            showMessageBox,
         }
     },
 }
@@ -139,7 +179,8 @@ body {
     padding: 0 15px;
     // background-color: #f2f3f5;
     // background-color: ;
-    background-color: rgba($color: #b6e3f6, $alpha: 0.8);
+    // background-color: rgba($color: #b6e3f6, $alpha: 0.85);
+    background-color: transparent;
     // background-color: transparent;
     // opacity: 0.8;
 }
@@ -150,6 +191,57 @@ html {
     //     no-repeat fixed;
     background: url(https://pic3.zhimg.com/v2-3afda695650a99e5c7349b26745090ca_r.jpg)
         no-repeat fixed;
-    background-size: cover;
+    background-size: 100vw 100vh;
+}
+.cs {
+    position: absolute;
+    top: 120px;
+    left: 50px;
+    li {
+        display: block;
+        width: 120px;
+        height: 30px;
+        margin-bottom: 15px;
+
+        &:nth-child(1) {
+            background-color: #cbe5d9;
+        }
+        &:nth-child(2) {
+            background-color: #d9cbe5;
+        }
+        &:nth-child(3) {
+            background-color: #e5d9cb;
+        }
+        &:nth-child(4) {
+            background-color: #cbe5e0;
+        }
+        &:nth-child(5) {
+            background-color: #e5cbe1;
+        }
+        &:nth-child(6) {
+            background-color: #cbe5eb;
+        }
+        &:nth-child(7) {
+            background-color: #f8bbd0;
+        }
+        &:nth-child(8) {
+            background-color: #e1bee7;
+        }
+        &:nth-child(9) {
+            background-color: #a5d6a7;
+        }
+        &:nth-child(10) {
+            background-color: #2e7d32;
+        }
+        &:nth-child(11) {
+            background-color: #ffcc80;
+        }
+        &:nth-child(12) {
+            background-color: #ff5722;
+        }
+        &:nth-child(13) {
+            background-color: #d2691e;
+        }
+    }
 }
 </style>

@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-26 00:19:52
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-10 22:50:43
+ * @LastEditTime: 2023-05-11 17:48:47
  * @Description: 个人主页-用户关注
 -->
 <template>
@@ -14,6 +14,10 @@
                 :user="item"
                 @showMessageBox="showMessageBox"
             ></user-item>
+            <default-content
+                v-if="total === 0"
+                message="没有博主能够吸引他，所以他谁都没有关注"
+            ></default-content>
         </div>
         <div class="list_pagination" v-if="isShowPagination">
             <div class="operate_prev" @click="prevPage">上一页</div>
@@ -30,9 +34,11 @@ import { useRoute } from 'vue-router'
 import http from '@/utils/http'
 
 import userItem from '@/components/center/UserItem'
+import defaultContent from '@/components/center/DefaultContent'
 export default {
     components: {
         userItem,
+        defaultContent,
     },
     props: {
         pageSize: {
@@ -54,6 +60,8 @@ export default {
             pageSize: props.pageSize,
             /* 一共多少页 */
             pages: 1,
+            /* 一共多少条 */
+            total: 1,
             /**
              * 是否显示分页按钮
              * true  显示
@@ -84,12 +92,16 @@ export default {
                             if (res.data.code === 20041) {
                                 data.followList = res.data.data.records
                                 data.pages = res.data.data.pages
+                                data.total = res.data.data.total
                                 data.isShowPagination =
                                     res.data.data.total > data.pageSize
                                         ? true
                                         : false
                             }
                         })
+                    } else {
+                        // 用户没有关注
+                        data.total = 0
                     }
                 }
             })
@@ -172,7 +184,7 @@ export default {
 .follow_list {
     min-height: 460px;
     height: 460px;
-    background-color: #fff;
+    // background-color: rgba($color: #fff, $alpha: 0.85);
 }
 
 .list_pagination {

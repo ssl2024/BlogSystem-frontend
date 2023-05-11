@@ -124,9 +124,11 @@ export default {
     display: flex;
     height: 24px;
     padding: 12px 20px;
-    border-bottom: 1px solid #e8e8ed;
-    background-color: rgba($color: #efedee, $alpha: 0.4);
-    // justify-content: space-between;
+    border-top: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+    border-bottom: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+    background-color: transparent;
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0 4px 4px rgb(0 0 0 / 0.1), 0 2px 2px rgb(0 0 0 / 0.1);
     justify-content: flex-end;
 
     /* 博客导航栏 导航列表 */
@@ -153,7 +155,7 @@ export default {
         background-color: #f3f3f3;
         line-height: 22px;
         cursor: pointer;
-        border-radius: 5px;
+        border-radius: 3px;
         z-index: 1;
 
         /* 博客导航栏 博客下拉选择框--当前选项 */
@@ -177,7 +179,8 @@ export default {
             overflow-y: auto;
             width: 164px;
             height: 144px;
-            background-color: slategray;
+            // background-color: slategray;
+            background-color: rgba($color: #fefefe, $alpha: 0.95);
 
             /* 博客导航栏 博客下拉选择框--下拉菜单(菜单项) */
             .item_select {
@@ -185,9 +188,10 @@ export default {
                 height: 20px;
                 padding: 8px 0 8px 16px;
                 line-height: 20px;
+                transition: all 0.25s;
                 &:hover {
-                    background-color: skyblue;
-                    color: #376f9d;
+                    background-color: rgba($color: #62aec5, $alpha: 0.7);
+                    color: #fff;
                 }
             }
         }

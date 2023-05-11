@@ -27,6 +27,7 @@
                 <li
                     class="action_item"
                     @click.stop="toUserCenter(entry.authorId)"
+                    :title="'查看 ' + nickname + ' 主页'"
                 >
                     <i class="iconfont icon-user"></i>
                     <span>{{ nickname }}</span>
@@ -97,23 +98,28 @@ export default {
 
 <style lang="scss" scoped="scoped">
 /* 边框分隔线颜色 */
-$border_line: #e8e8ed;
+$border_line: rgba(
+    $color: #b3e2f2,
+    $alpha: 1,
+);
 
 /* 博客组件
 ----------------------------------------------------------------*/
 .item {
     display: flex;
     padding-bottom: 10px;
-    border-top: 1px solid $border_line;
     border-bottom: 1px solid $border_line;
     // background-color: rgba($color: #58acc4, $alpha: 0.4);
+
+    background-color: rgba($color: #fefefe, $alpha: 0.8);
     // background-color: ;
     // opacity: 0.4;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
     &:hover {
         // opacity: 1;
-        background-color: rgba($color: #fefefe, $alpha: 0.8);
+        // background-color: rgba($color: #b6e3f6, $alpha: 0.8);
+        background-color: rgba($color: #cbe5eb, $alpha: 0.9);
         .picture img {
             opacity: 1;
         }
@@ -156,8 +162,9 @@ $border_line: #e8e8ed;
                 /* 博客 数据列表--数据项(用户名称) */
                 &:last-child {
                     cursor: pointer;
+                    transition: all 0.2s;
                     &:hover {
-                        color: #1d7cf7;
+                        color: #47acbe;
                     }
                 }
 

@@ -2,13 +2,14 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 19:51:45
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-10 22:53:43
+ * @LastEditTime: 2023-05-11 17:29:41
  * @Description: 个人主页-用户发表的博客
 -->
 <template>
     <div>
         <div class="list">
             <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
+            <default-content v-if="total === 0"></default-content>
         </div>
         <div class="list_pagination" v-if="isShowPagination">
             <div class="operate_prev" @click="prevPage">上一页</div>
@@ -25,9 +26,11 @@ import { useRoute } from 'vue-router'
 import http from '@/utils/http'
 
 import blog from '@/components/Blog'
+import defaultContent from '@/components/center/DefaultContent'
 export default {
     components: {
         blog,
+        defaultContent,
     },
     props: {
         pageSize: {
@@ -51,6 +54,8 @@ export default {
             pageSize: props.pageSize,
             /* 一共多少页 */
             pages: 1,
+            /* 一共多少条 */
+            total: 1,
             /* 搜索内容 */
             searchContent: '',
             /**
@@ -68,11 +73,27 @@ export default {
                 if (res.data.code === 20041) {
                     data.entryList = res.data.data.records
                     data.pages = res.data.data.pages
+                    data.total = res.data.data.total
                     data.isShowPagination =
                         res.data.data.total > data.pageSize ? true : false
                 }
             })
         })
+
+        watch(
+            () => route.params.id,
+            () => {
+                // 分页获取用户发表的博客
+                getUserEntryList(data.currentPage, data.pageSize).then(res => {
+                    if (res.data.code === 20041) {
+                        data.entryList = res.data.data.records
+                        data.pages = res.data.data.pages
+                        data.isShowPagination =
+                            res.data.data.total > data.pageSize ? true : false
+                    }
+                })
+            }
+        )
 
         /* watch 搜索内容 */
         watch(

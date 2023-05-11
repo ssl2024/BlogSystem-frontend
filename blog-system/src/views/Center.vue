@@ -29,11 +29,19 @@
                 </div>
             </div>
             <div class="follow_block">
-                <div class="follow_item" @click="showFollowList">
+                <div
+                    class="follow_item"
+                    title="查看用户关注列表"
+                    @click="showFollowList"
+                >
                     <span>关注</span>
                     <span>{{ userInfo.followList.length }}</span>
                 </div>
-                <div class="follow_item" @click="showFansList">
+                <div
+                    class="follow_item"
+                    title="查看用户粉丝列表"
+                    @click="showFansList"
+                >
                     <span>粉丝</span>
                     <span>{{ fansCount(userInfo.fansList.length) }}</span>
                 </div>
@@ -151,12 +159,6 @@
                 ></router-view>
             </ul>
         </div>
-        <!-- 消息提示框 -->
-        <message-box
-            :message="message"
-            :messageId="messageId"
-            :type="messageType"
-        ></message-box>
     </div>
 </template>
 
@@ -167,7 +169,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 import http from '@/utils/http'
 export default {
-    setup() {
+    setup(_, { emit }) {
         const store = useStore()
         const route = useRoute()
         const router = useRouter()
@@ -214,12 +216,6 @@ export default {
              * false 没有关注
              */
             isFollowed: false,
-            /* 消息提示框内容 */
-            message: '',
-            /* 消息提示框id */
-            messageId: -1,
-            /* 消息提示框类型 */
-            messageType: '',
         })
 
         onMounted(() => {
@@ -242,12 +238,12 @@ export default {
             }
         })
 
-        /* 显示消息提示框 */
+        /* customEvent 显示消息框 */
         const showMessageBox = args => {
-            let date = new Date()
-            data.message = args.message
-            data.messageType = args.type
-            data.messageId = date.getTime()
+            emit('showMessageBox', {
+                message: args.message,
+                type: args.type,
+            })
         }
 
         /* init 页面数据初始化 */
@@ -406,24 +402,15 @@ $border_line: #e8e8ed;
 $bg_color: #fff;
 
 /* 个人主页-博文导航栏-当前选中项 */
-.current {
-    position: relative;
-    &::after {
-        content: '';
-        display: block;
-        position: absolute;
-        left: 20%;
-        bottom: 0;
-        width: 60%;
-        height: 2px;
-        background-color: #b6d7a8;
-    }
+.current::after {
+    width: 60% !important; // 权重太低不得不用 !important
 }
 
 /* 个人主页页面
 ----------------------------------------------------------------*/
 .user_center {
     display: flex;
+    margin-top: 125px;
 }
 
 /* 左边个人信息
@@ -442,7 +429,7 @@ $bg_color: #fff;
         display: flex;
         margin-bottom: 10px;
         padding: 25px 0;
-        background-color: $bg_color;
+        background-color: rgba($color: $bg_color, $alpha: 0.85);
         font-size: 18px;
         flex-direction: column;
         align-items: center;
@@ -481,7 +468,7 @@ $bg_color: #fff;
             }
             /* 左边个人信息 用户信息--关注按钮(已关注) */
             .followed {
-                background-color: #f2f3f5;
+                background-color: rgba($color: #fff, $alpha: 0.8);
                 color: #8a919f;
             }
         }
@@ -491,7 +478,7 @@ $bg_color: #fff;
     .follow_block {
         display: flex;
         padding: 15px 25px;
-        background-color: $bg_color;
+        background-color: rgba($color: $bg_color, $alpha: 0.85);
         justify-content: space-around;
 
         /* 左边个人信息 关注与粉丝--列表项 */
@@ -502,12 +489,13 @@ $bg_color: #fff;
             cursor: pointer;
             transition: all 0.3s;
             flex-direction: column;
+            transition: all 0.2s;
+            &:hover {
+                color: #47acbe;
+            }
             &:first-child {
                 padding-right: 45px;
                 border-right: 1px solid $border_line;
-            }
-            &:hover {
-                color: #1e80ff;
             }
         }
     }
@@ -518,7 +506,7 @@ $bg_color: #fff;
         height: 200px;
         margin-top: 10px;
         padding: 10px 0;
-        background-color: $bg_color;
+        background-color: rgba($color: $bg_color, $alpha: 0.85);
         flex-direction: column;
         justify-content: space-around;
 
@@ -560,7 +548,7 @@ $bg_color: #fff;
         display: flex;
         position: relative;
         height: 48px;
-        background-color: $bg_color;
+        background-color: rgba($color: $bg_color, $alpha: 0.85);
         justify-content: space-between;
 
         /* 右边列表项 页头--导航栏  */
@@ -571,10 +559,26 @@ $bg_color: #fff;
             /* 右边列表项 页头--导航栏(列表项) */
             .nav_item {
                 flex: 1;
+                position: relative;
                 font-size: 16px;
                 text-align: center;
                 line-height: 48px;
                 cursor: pointer;
+                &:hover::after {
+                    width: 60%;
+                }
+                &::after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    bottom: 0;
+                    left: 50%;
+                    width: 0;
+                    height: 2px;
+                    background-color: #5db8cd;
+                    transform: translateX(-50%);
+                    transition: all 0.35s;
+                }
             }
         }
 
@@ -592,10 +596,14 @@ $bg_color: #fff;
                 border-radius: 5px;
                 outline: none;
                 &:hover {
-                    border-color: salmon;
+                    border-color: #aabac7;
                 }
                 &:focus {
-                    border-color: skyblue;
+                    border-color: #b5e4f4;
+                    ~ .search_btn {
+                        background-color: rgba($color: #47acbf, $alpha: 0.4);
+                        color: #fff;
+                    }
                 }
             }
 
@@ -605,13 +613,14 @@ $bg_color: #fff;
                 position: absolute;
                 top: 6px;
                 right: 11px;
-                width: 35px;
+                width: 40px;
                 height: 35px;
                 background-color: #f2f3f5;
                 cursor: pointer;
                 border-radius: 5px;
                 justify-content: center;
                 align-items: center;
+                transition: all 0.3s;
             }
         }
     }

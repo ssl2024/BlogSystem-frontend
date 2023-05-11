@@ -39,16 +39,10 @@ export default {
 
         onUnmounted(() => {
             // 如果存在定时器则清除定时器
-            console.log('清除了定时器', timer)
             timer && clearTimeout(timer)
         })
 
         watchEffect(() => {
-            if (timer) {
-                console.log('当前存在已有的定时器', timer)
-            } else {
-                console.log('当前没有存在的定时器', timer)
-            }
             if (props.messageId != -1) {
                 // 创建消息提示框
                 show.value = true

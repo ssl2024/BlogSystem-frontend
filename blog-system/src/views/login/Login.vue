@@ -107,41 +107,43 @@ export default {
                     type: 'error',
                 })
             }
-            userLogin(data.account, md5(data.pwdText)).then(res => {
-                if (res.data.code === 20041) {
-                    // 登录成功
-                    emit('showMessageBox', {
-                        message: '登录成功',
-                        type: 'success',
-                    })
-                    setTimeout(() => {
-                        // 将 token 存入 vuex
-                        store.commit('updateToken', res.data.data.token)
-                        // 更新登录状态
-                        store.commit('updateLoginState', true)
-                        // 将 当前用户id 存入 vuex
-                        store.commit('updateUserId', res.data.data.user.id)
-                        // 跳转页面
-                        if (route.query.redirect) {
-                            router.push(route.query.redirect)
-                        } else {
-                            router.push('/rcommd')
-                        }
-                    }, 1000)
-                } else if (res.data.code === 20040) {
-                    // 账号或密码错误
-                    emit('showMessageBox', {
-                        message: '账号或密码错误',
-                        type: 'error',
-                    })
-                } else {
+            userLogin(data.account, md5(data.pwdText))
+                .then(res => {
+                    if (res.data.code === 20041) {
+                        // 登录成功
+                        emit('showMessageBox', {
+                            message: '登录成功',
+                            type: 'success',
+                        })
+                        setTimeout(() => {
+                            // 将 token 存入 vuex
+                            store.commit('updateToken', res.data.data.token)
+                            // 更新登录状态
+                            store.commit('updateLoginState', true)
+                            // 将 当前用户id 存入 vuex
+                            store.commit('updateUserId', res.data.data.user.id)
+                            // 跳转页面
+                            if (route.query.redirect) {
+                                router.push(route.query.redirect)
+                            } else {
+                                router.push('/rcommd')
+                            }
+                        }, 1000)
+                    } else if (res.data.code === 20040) {
+                        // 账号或密码错误
+                        emit('showMessageBox', {
+                            message: '账号或密码错误',
+                            type: 'error',
+                        })
+                    }
+                })
+                .catch(() => {
                     // 其他错误
                     emit('showMessageBox', {
                         message: '未知错误，请稍后重试',
                         type: 'error',
                     })
-                }
-            })
+                })
         }
         /* click 注册账号 */
         const register = () => {

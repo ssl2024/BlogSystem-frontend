@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 15:20:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-10 22:49:44
+ * @LastEditTime: 2023-05-11 17:44:24
  * @Description: 个人主页-用户粉丝
 -->
 <template>
@@ -14,6 +14,10 @@
                 :user="item"
                 @showMessageBox="showMessageBox"
             ></user-item>
+            <default-content
+                v-if="total === 0"
+                message="好看的皮囊千篇一律，有趣的灵魂万里挑一，快来关注他吧"
+            ></default-content>
         </div>
         <div class="list_pagination" v-if="isShowPagination">
             <div class="operate_prev" @click="prevPage">上一页</div>
@@ -30,9 +34,11 @@ import { useRoute } from 'vue-router'
 import http from '@/utils/http'
 
 import userItem from '@/components/center/UserItem'
+import defaultContent from '@/components/center/DefaultContent'
 export default {
     components: {
         userItem,
+        defaultContent,
     },
     props: {
         pageSize: {
@@ -54,6 +60,8 @@ export default {
             pageSize: props.pageSize,
             /* 一共多少页 */
             pages: 1,
+            /* 一共多少条 */
+            total: 1,
             /**
              * 是否显示分页按钮
              * true  显示
@@ -84,12 +92,16 @@ export default {
                             if (res.data.code === 20041) {
                                 data.fansList = res.data.data.records
                                 data.pages = res.data.data.pages
+                                data.total = res.data.data.total
                                 data.isShowPagination =
                                     res.data.data.total > data.pageSize
                                         ? true
                                         : false
                             }
                         })
+                    } else {
+                        // 用户没有粉丝
+                        data.total = 0
                     }
                 }
             })
@@ -168,7 +180,7 @@ export default {
 .fans_list {
     min-height: 460px;
     height: 460px;
-    background-color: #fff;
+    // background-color: rgba($color: #fff, $alpha: 0.85);
 }
 
 .list_pagination {

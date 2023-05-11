@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-13 00:46:55
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-10 23:57:45
+ * @LastEditTime: 2023-05-11 18:30:08
  * @Description: 登录页面
 -->
 <template>
@@ -24,12 +24,6 @@
             v-if="loginState === 3"
             @changeLoginState="changeLoginState"
         ></forget>
-        <!-- 消息提示框 -->
-        <message-box
-            :message="message"
-            :messageId="messageId"
-            :type="messageType"
-        ></message-box>
 </template>
 
 <script>
@@ -44,7 +38,7 @@ export default {
         register,
         forget,
     },
-    setup() {
+    setup(_,{emit}) {
         const data = reactive({
             /**
              * 登录状态
@@ -53,12 +47,6 @@ export default {
              * 3 忘记密码
              */
             loginState: 1,
-            /* 消息提示框内容 */
-            message: '',
-            /* 消息提示框id */
-            messageId: -1,
-            /* 消息提示框类型 */
-            messageType: '',
             /* 用户信息 */
             user: {
                 // 用户账号
@@ -68,12 +56,12 @@ export default {
             },
         })
 
-        /* 显示消息提示框 */
+        /* customEvent 显示消息框 */
         const showMessageBox = args => {
-            let date = new Date()
-            data.message = args.message
-            data.messageType = args.type
-            data.messageId = date.getTime()
+            emit('showMessageBox', {
+                message: args.message,
+                type: args.type,
+            })
         }
 
         /* customEvent 修改登录状态 */

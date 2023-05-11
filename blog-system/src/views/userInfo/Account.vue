@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:43
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-02 21:33:10
+ * @LastEditTime: 2023-05-11 19:13:28
  * @Description: 账号设置
 -->
 <template>
@@ -31,12 +31,15 @@
 <script>
 import { reactive, toRefs } from 'vue'
 export default {
-    setup() {
+    setup(_, { emit }) {
         const data = reactive({})
 
         /* click 重置密码 */
         const resetPwd = () => {
-            console.log('点击了重置密码')
+            emit('showMessageBox', {
+                message: '暂不支持重置密码，努力开发中',
+                type: 'error',
+            })
         }
 
         return {

@@ -82,7 +82,8 @@ export default {
     .modal_content {
         max-width: 500px;
         width: 100%;
-        background-color: #fff;
+        background-color: rgba($color: #fff, $alpha: 0.9);
+        // color: rgba($color: #000000, $alpha: 0.7);
         border-radius: 5px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 
@@ -108,6 +109,7 @@ export default {
                 color: #ccc;
                 font-size: 30px;
                 cursor: pointer;
+                transition: 0.15s;
                 &:hover {
                     color: #000;
                 }
@@ -145,14 +147,22 @@ export default {
             /* 确认对话框 内容主体--取消按钮 */
             .cancel_btn {
                 margin-right: 10px;
-                background-color: #e74c3c;
+                background-color: rgba($color: #e74c3c, $alpha: 0.7);
                 color: #fff;
+                transition: all 0.15s;
+                &:hover {
+                    background-color: rgba($color: #e74c3c, $alpha: 1);
+                }
             }
 
             /* 确认对话框 内容主体--确认按钮 */
             .confirm_btn {
-                background-color: #2ecc71;
+                background-color: rgba($color: #45b8cc, $alpha: 0.7);
                 color: #fff;
+                transition: all 0.15s;
+                &:hover {
+                    background-color: rgba($color: #45b8cc, $alpha: 1);
+                }
             }
         }
     }

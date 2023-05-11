@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:01:27
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-10 19:43:53
+ * @LastEditTime: 2023-05-11 23:52:07
  * @Description: 
 -->
 <template>
@@ -58,39 +58,23 @@
         <div class="setting_profile">
             <router-view @showMessageBox="showMessageBox"></router-view>
         </div>
-        <!-- 消息提示框 -->
-        <message-box
-            :message="message"
-            :messageId="messageId"
-            :type="messageType"
-        ></message-box>
     </div>
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 export default {
-    setup() {
+    setup(_, { emit }) {
         const store = useStore()
         const router = useRouter()
 
-        const data = reactive({
-            /* 消息提示框内容 */
-            message: '',
-            /* 消息提示框id */
-            messageId: -1,
-            /* 消息提示框类型 */
-            messageType: '',
-        })
-
-        /* 显示消息提示框 */
-        const showMessageBox = (args) => {
-            let date = new Date()
-            data.message = args.message
-            data.messageType = args.type
-            data.messageId = date.getTime()
+        /* customEvent 显示消息框 */
+        const showMessageBox = args => {
+            emit('showMessageBox', {
+                message: args.message,
+                type: args.type,
+            })
         }
 
         /* click 返回个人主页 */
@@ -98,7 +82,6 @@ export default {
             router.push(`/center/${store.state.userId}`)
         }
         return {
-            ...toRefs(data),
             showMessageBox,
             goBack,
         }
@@ -128,6 +111,7 @@ $bg_check_color: #f0f0f5;
 .setting_view {
     display: flex;
     height: 475px;
+    margin-top: 125px;
 }
 
 /* 左边菜单栏
@@ -137,7 +121,7 @@ $bg_check_color: #f0f0f5;
     width: 200px;
     margin-right: 15px;
     padding: 10px;
-    background-color: $bg_color;
+    background-color: rgba($color: $bg_color, $alpha: 0.5);
     font-size: 15px;
     /* 左边菜单栏 列表项 */
     .menu_item {
@@ -171,6 +155,6 @@ $bg_check_color: #f0f0f5;
 .setting_profile {
     flex: 1;
     padding: 0 20px;
-    background-color: $bg_color;
+    background-color: rgba($color: #fff, $alpha: 0.8);
 }
 </style>

@@ -29,6 +29,7 @@
                 <ul class="hot_list_data">
                     <li
                         class="hot_item"
+                        :title="'查看 ' + item.nickname + ' 主页'"
                         v-for="(item, index) in hotList(userInfoList)"
                         :key="item.id"
                         @click="toUserPage(item.id)"
@@ -48,12 +49,6 @@
                 </ul>
             </div>
         </div>
-        <!-- 消息提示框 -->
-        <message-box
-            :message="message"
-            :messageId="messageId"
-            :type="messageType"
-        ></message-box>
     </div>
 </template>
 
@@ -84,7 +79,7 @@ export default {
             default: '',
         },
     },
-    setup(props) {
+    setup(props, { emit }) {
         const router = useRouter()
 
         const data = reactive({
@@ -108,12 +103,6 @@ export default {
              * false 不显示
              */
             isShowPagination: false,
-            /* 消息提示框内容 */
-            message: '',
-            /* 消息提示框id */
-            messageId: -1,
-            /* 消息提示框类型 */
-            messageType: '',
         })
 
         watch(
@@ -150,12 +139,12 @@ export default {
             }
         })
 
-        /* 显示消息提示框 */
-        const showMessageBox = (message, type) => {
-            let date = new Date()
-            data.message = message
-            data.messageType = type
-            data.messageId = date.getTime()
+        /*  显示消息框 */
+        const showMessageBox = args => {
+            emit('showMessageBox', {
+                message: args.message,
+                type: args.type,
+            })
         }
 
         /* change 博客类型 */
@@ -183,7 +172,10 @@ export default {
         const prevPage = () => {
             // 判断是否为第一页
             if (data.currentPage === 1) {
-                return showMessageBox('已经是第一页', 'warning')
+                return showMessageBox({
+                    message: '已经是第一页',
+                    type: 'warning',
+                })
             }
             data.currentPage--
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -203,7 +195,10 @@ export default {
         const nextPage = () => {
             // 判断是否为最后一页
             if (data.currentPage === data.pages) {
-                return showMessageBox('已经是最后一页', 'warning')
+                return showMessageBox({
+                    message: '已经是最后一页',
+                    type: 'warning',
+                })
             }
             data.currentPage++
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -257,6 +252,7 @@ $bg_color: #fff;
 ----------------------------------------------------------------*/
 .container {
     display: flex;
+    margin-top: 125px;
 }
 
 /* 左边博客 
@@ -294,7 +290,11 @@ $bg_color: #fff;
     /* 右边侧边栏 热度榜单 */
     .hot_list {
         padding: 10px 0;
-        background-color: $bg_color;
+        padding: 10px 0;
+        border-top: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+        border-bottom: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+        background-color: rgba($color: $bg_color, $alpha: 0.1);
+        box-shadow: 0 4px 4px rgb(0 0 0 / 0.1), 0 2px 2px rgb(0 0 0 / 0.1);
 
         /* 右边侧边栏 热度榜单--标题 */
         .hot_list_header {
@@ -324,8 +324,9 @@ $bg_color: #fff;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            transition: all 0.2s;
             &:hover {
-                background-color: #f3f3f3;
+                background-color: rgba($color: $bg_color, $alpha: 0.7);
             }
 
             /* 右边侧边栏 热度榜单--榜单项(用户信息) */

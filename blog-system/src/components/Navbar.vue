@@ -1,90 +1,116 @@
 <template>
-    <div class="container">
-        <div class="logo">
-            <img src="@/assets/user_logo.png" alt="logo" />
-        </div>
-        <ul class="nav">
-            <router-link to="/attention" custom v-slot="{ navigate, isActive }">
-                <li @click="navigate" :class="isActive ? 'current' : ''">
-                    关注
-                </li>
-            </router-link>
-            <router-link to="/rcommd" custom v-slot="{ navigate, isActive }">
-                <li @click="navigate" :class="isActive ? 'current' : ''">
-                    推荐
-                </li>
-            </router-link>
-            <router-link to="/foreend" custom v-slot="{ navigate, isActive }">
-                <li @click="navigate" :class="isActive ? 'current' : ''">
-                    前端
-                </li>
-            </router-link>
-            <router-link to="/backend" custom v-slot="{ navigate, isActive }">
-                <li @click="navigate" :class="isActive ? 'current' : ''">
-                    后端
-                </li>
-            </router-link>
-        </ul>
-        <div class="search">
-            <input
-                type="text"
-                v-model.trim="searchContent"
-                @keydown.enter="searchEntry"
-            />
-            <div class="search_icon" @click="searchEntry">
-                <i class="iconfont icon-sousuo"></i>
+    <div class="nav_wrapper">
+        <div class="nav">
+            <div class="logo">
+                <img src="@/assets/user_logo.png" alt="logo" />
             </div>
-        </div>
-        <div class="center" @mouseenter="showProfile">
-            <img :src="user.avatar" v-show="!isShowProfile" alt="头像" />
-        </div>
-        <!-- 用户简介 -->
-        <div class="profile" v-show="isShowProfile" @mouseleave="closeProfile">
-            <div class="profile_top">
-                <div class="user_avatar">
-                    <img :src="user.avatar" alt="用户头像" />
-                </div>
-                <div class="user_nickname">
-                    <span>{{ user.nickname }}</span>
-                </div>
-            </div>
-            <div class="profile_mid">
-                <div class="follow_btn" @click="toUserFollow(userId)">
-                    <div>关注</div>
-                    <div>{{ followCount }}</div>
-                </div>
-                <div class="fans_btn" @click="toUserFans(userId)">
-                    <div>粉丝</div>
-                    <div>{{ fansCount }}</div>
+            <ul class="nav_list">
+                <router-link
+                    to="/attention"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
+                    <li @click="navigate" :class="isActive ? 'current' : ''">
+                        关注
+                    </li>
+                </router-link>
+                <router-link
+                    to="/rcommd"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
+                    <li @click="navigate" :class="isActive ? 'current' : ''">
+                        推荐
+                    </li>
+                </router-link>
+                <router-link
+                    to="/foreend"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
+                    <li @click="navigate" :class="isActive ? 'current' : ''">
+                        前端
+                    </li>
+                </router-link>
+                <router-link
+                    to="/backend"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
+                    <li @click="navigate" :class="isActive ? 'current' : ''">
+                        后端
+                    </li>
+                </router-link>
+            </ul>
+            <div class="search">
+                <input
+                    type="text"
+                    :placeholder="placeholder"
+                    v-model.trim="searchContent"
+                    @keydown.enter="searchEntry"
+                    @focus="placeholder = '你想知道些什么'"
+                    @blur="placeholder = '搜索博客'"
+                />
+                <div class="search_icon" @click="searchEntry">
+                    <i class="iconfont icon-sousuo"></i>
                 </div>
             </div>
-            <div class="profile_bottom">
-                <ul class="profile_border_bottom">
-                    <li @click="toUserPage(userId)">
-                        <i class="iconfont icon-shouye1"></i>
-                        <span>个人主页</span>
-                    </li>
-                    <li @click="toUserInfo">
-                        <i class="iconfont icon-xingming"></i>
-                        <span>个人信息</span>
-                    </li>
-                    <li @click="toBlogManage">
-                        <i class="iconfont icon-xiangmuguanli"></i>
-                        <span>博客管理</span>
-                    </li>
-                    <li @click="logout">
-                        <i class="iconfont icon-tuichu"></i>
-                        <span>注销登录</span>
-                    </li>
-                </ul>
+            <div class="center">
+                <img
+                    :src="user.avatar"
+                    v-show="!isShowProfile"
+                    ref="avatar"
+                    alt="头像"
+                />
             </div>
-            <div></div>
+            <!-- 用户简介 -->
+            <div class="profile" v-show="isShowProfile">
+                <div class="profile_top">
+                    <div class="user_avatar">
+                        <img :src="user.avatar" alt="用户头像" />
+                    </div>
+                    <div class="user_nickname">
+                        <span>{{ user.nickname }}</span>
+                    </div>
+                </div>
+                <div class="profile_mid">
+                    <div class="follow_btn" @click="toUserFollow(userId)">
+                        <div>关注</div>
+                        <div>{{ followCount }}</div>
+                    </div>
+                    <div class="fans_btn" @click="toUserFans(userId)">
+                        <div>粉丝</div>
+                        <div>{{ fansCount }}</div>
+                    </div>
+                </div>
+                <div class="profile_bottom">
+                    <ul class="profile_border_bottom">
+                        <li @click="toUserPage(userId)">
+                            <i class="iconfont icon-shouye1"></i>
+                            <span>个人主页</span>
+                        </li>
+                        <li @click="toUserInfo">
+                            <i class="iconfont icon-xingming"></i>
+                            <span>个人信息</span>
+                        </li>
+                        <li @click="toBlogManage">
+                            <i class="iconfont icon-xiangmuguanli"></i>
+                            <span>博客管理</span>
+                        </li>
+                        <li @click="logout">
+                            <i class="iconfont icon-tuichu"></i>
+                            <span>注销登录</span>
+                        </li>
+                    </ul>
+                </div>
+                <div></div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from 'vue'
+import { onMounted, onUnmounted, reactive, toRefs, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
@@ -111,9 +137,18 @@ export default {
             isShowProfile: false,
             /* 搜索框内容 */
             searchContent: '',
+            /* 搜索框占位符 */
+            placeholder: '搜索博客',
+            /* 定时器引用 */
+            timeId: null,
         })
 
+        /* DOM 用户头像 */
+        const avatar = ref(null)
+
         onMounted(() => {
+            // 绑定 document 的点击事件
+            document.addEventListener('click', handleClick)
             // 获取当前用户的粉丝数量和关注数量
             http.all([
                 getUserInfo(data.userId),
@@ -131,16 +166,23 @@ export default {
                 }
             })
         })
-        /* mouseleave  */
-        const closeProfile = () => {
-            data.isShowProfile = false
-        }
 
-        /* mouseenter 右上角用户头像 */
-        const showProfile = () => {
-            data.isShowProfile = true
-        }
+        onUnmounted(() => {
+            // 清除定时器
+            data.timeId && clearTimeout(data.timeId)
+            // 解绑 document 的点击事件
+            document.removeEventListener('click', handleClick)
+        })
 
+        /* click document */
+        const handleClick = event => {
+            // 判断是否显示用户简介
+            if (event.target === avatar.value) {
+                data.isShowProfile = true
+            } else {
+                data.isShowProfile = false
+            }
+        }
         /* click 搜索 */
         const searchEntry = () => {
             emit('changeSearchEntry', data.searchContent)
@@ -175,12 +217,18 @@ export default {
             // 发送 http 请求，删除在 redis 中的 token
             deleteToken().then(res => {
                 if (res.data.code === 20021) {
-                    // 修改 vuex 中的登录状态
-                    store.commit('updateLoginState', false)
-                    // 删除本地 vuex 持久化数据
-                    sessionStorage.removeItem('vuex')
-                    // 跳转到 login 页面
-                    router.push('/login')
+                    emit('showMessageBox', {
+                        message: '注销成功',
+                        type: 'success',
+                    })
+                    data.timeId = setTimeout(() => {
+                        // 修改 vuex 中的登录状态
+                        store.commit('updateLoginState', false)
+                        // 删除本地 vuex 持久化数据
+                        sessionStorage.removeItem('vuex')
+                        // 跳转到 login 页面
+                        router.push('/login')
+                    }, 1000)
                 }
             })
         }
@@ -203,11 +251,10 @@ export default {
         }
         return {
             ...toRefs(data),
+            avatar,
             searchEntry,
             toUserPage,
             toUserInfo,
-            showProfile,
-            closeProfile,
             toBlogManage,
             toUserFans,
             toUserFollow,
@@ -222,60 +269,102 @@ export default {
 $border_line: #e8e8ed;
 
 /* 背景颜色 */
-$bg_color: rgba(
-    $color: #efedee,
-    $alpha: 0.4,
-);
+// $bg_color: rgba(
+//     $color: #fff,
+//     $alpha: 0.85,
+// );
+$bg_color: transparent;
 
 /* 导航栏当前选中项 */
 .current {
-    position: relative;
+    // position: relative;
+    background-color: rgba($color: #b4e2f2, $alpha: 0.7);
+    color: #fff;
+    border-radius: 5px;
     &::after {
-        content: '';
-        display: block;
-        position: absolute;
-        left: 20%;
-        bottom: 0;
-        width: 60%;
-        height: 2px;
-        background-color: #b6d7a8;
+        opacity: 0;
     }
+}
+
+.nav_wrapper {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 93px;
+    // border-top: 1px solid #47acbf;
+    border-top: 1px solid rgba($color: #47acbf, $alpha: 0.1);
+    border-bottom: 1px solid rgba($color: #47acbf, $alpha: 0.1);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1);
+    // background-color: red;
+    justify-content: center;
+    align-items: center;
 }
 
 /* 导航栏组件
 ----------------------------------------------------------------*/
-.container {
+.nav {
     display: flex;
     position: relative;
-    margin-bottom: 20px;
+    width: 1330px;
+    // margin-bottom: 20px;
     padding: 0 20px;
     background-color: $bg_color;
+    align-items: center;
 
     /* 导航栏 网站logo */
     .logo {
-        width: 80px;
-        height: 44px;
+        // width: 80px;
+        // height: 44px;
+        display: flex;
+        width: 120px;
+        height: 72px;
+        margin-right: 30px;
         text-align: center;
-        line-height: 44px;
-
+        align-items: center;
+        // line-height: 72px;
         /* 导航栏 网站logo--logo图片 */
         img {
-            height: 100%;
+            width: 100%;
         }
     }
 
     /* 导航栏 导航栏列表 */
-    .nav {
+    .nav_list {
         display: flex;
 
         /* 导航栏 导航栏列表--列表项 */
         li {
-            padding: 0 10px;
-            width: 80px;
-            height: 45px;
-            font-size: 16px;
+            position: relative;
+            width: 75px;
+            height: 40px;
+            margin-right: 7px;
+            font-size: 14px;
             text-align: center;
-            line-height: 45px;
+            line-height: 40px;
+            cursor: pointer;
+            transition: all 0.4s ease-out;
+            &:hover {
+                color: #fff;
+                &::after {
+                    height: 100%;
+                    border-radius: 5px;
+                }
+            }
+
+            &::after {
+                content: '';
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 0px;
+                background-color: rgba($color: #b4e2f2, $alpha: 0.7);
+                z-index: -1;
+                transition: all 0.4s;
+            }
         }
     }
 
@@ -283,36 +372,44 @@ $bg_color: rgba(
     .search {
         flex: 1;
         position: relative;
-        padding: 0 30px;
-        text-align: center;
+        padding-left: 60px;
         line-height: 45px;
 
         /* 导航栏 搜索框--搜索输入框 */
         input {
-            width: 300px;
-            height: 16px;
+            width: 320px;
+            height: 18px;
             padding: 8px 15px;
             border: 1px solid #c2c8d1;
             border-radius: 5px;
             outline: none;
+            transition: all 0.3s;
             &:hover {
-                border-color: salmon;
+                border-color: #feaaaa;
             }
             &:focus {
+                width: 375px;
                 border-color: skyblue;
+                ~ .search_icon {
+                    right: 124px;
+                    background-color: rgba($color: #47acbf, $alpha: 0.4);
+                    color: #fff;
+                }
             }
         }
+
         /* 导航栏 搜索框--搜索图标 */
         .search_icon {
             display: flex;
             position: absolute;
-            top: 7px;
-            right: 60px;
+            top: 6px;
+            right: 181px;
             width: 42px;
-            height: 31px;
+            height: 34px;
             background-color: #f2f3f5;
             cursor: pointer;
             border-radius: 5px;
+            transition: all 0.3s;
             justify-content: center;
             align-items: center;
         }
@@ -320,9 +417,9 @@ $bg_color: rgba(
 
     /* 导航栏 用户头像 */
     .center {
-        width: 200px;
+        width: 260px;
         height: 45px;
-        text-align: center;
+        // text-align: center;
         img {
             width: 45px;
             height: 45px;
@@ -333,10 +430,11 @@ $bg_color: rgba(
     /* 导航栏 用户简介 */
     .profile {
         position: absolute;
-        top: 50px;
-        right: 20px;
+        top: 70px;
+        right: 155px;
         width: 180px;
-        background-color: $bg_color;
+        // background-color: $bg_color;
+        background-color: rgba($color: #fff, $alpha: 0.9);
         z-index: 1;
 
         /* 导航栏 用户简介--顶部 */
@@ -370,19 +468,20 @@ $bg_color: rgba(
         /* 导航栏 用户简介--中间 */
         .profile_mid {
             display: flex;
-            height: 45px;
-            padding: 8px 0;
             border-top: 1px solid $border_line;
             font-size: 15px;
             text-align: center;
             justify-content: space-around;
-
             /* 导航栏 用户简介--中间(列表项) */
             [class$='btn'] {
                 flex: 1;
+                height: 45px;
+                padding: 8px 0;
                 cursor: pointer;
+                transition: all 0.3s;
                 &:hover {
-                    color: skyblue;
+                    background-color: rgba($color: #62aec5, $alpha: 0.7);
+                    color: #fff;
                 }
                 &:first-child {
                     border-right: 1px solid $border_line;
@@ -403,8 +502,10 @@ $bg_color: rgba(
                 text-align: center;
                 line-height: 40px;
                 cursor: pointer;
+                transition: all 0.3s;
                 &:hover {
-                    background-color: skyblue;
+                    background-color: rgba($color: #62aec5, $alpha: 0.7);
+                    color: #fff;
                 }
 
                 /* 导航栏 用户简介--底部(菜单项-字体图标) */

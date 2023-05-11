@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:53:57
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-11 00:01:54
+ * @LastEditTime: 2023-05-11 23:49:35
  * @Description: 关注页面
 -->
 <template>
@@ -22,12 +22,6 @@
             </div>
             <div class="aside"></div>
         </div>
-        <!-- 消息提示框 -->
-        <message-box
-            :message="message"
-            :messageId="messageId"
-            :type="messageType"
-        ></message-box>
     </div>
 </template>
 
@@ -52,7 +46,7 @@ export default {
             default: '',
         },
     },
-    setup(props) {
+    setup(props, { emit }) {
         const store = useStore()
 
         const data = reactive({
@@ -76,12 +70,6 @@ export default {
              * false 不显示
              */
             isShowPagination: false,
-            /* 消息提示框内容 */
-            message: '',
-            /* 消息提示框id */
-            messageId: -1,
-            /* 消息提示框类型 */
-            messageType: '',
         })
 
         onMounted(() => {
@@ -133,19 +121,22 @@ export default {
             }
         )
 
-        /* 显示消息提示框 */
-        const showMessageBox = (message, type) => {
-            let date = new Date()
-            data.message = message
-            data.messageType = type
-            data.messageId = date.getTime()
+        /* 显示消息框 */
+        const showMessageBox = args => {
+            emit('showMessageBox', {
+                message: args.message,
+                type: args.type,
+            })
         }
 
         /* click 上一页 */
         const prevPage = () => {
             // 判断是否为第一页
             if (data.currentPage === 1) {
-                return showMessageBox('已经是第一页', 'warning')
+                return showMessageBox({
+                    message: '已经是第一页',
+                    type: 'warning',
+                })
             }
             data.currentPage--
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -165,7 +156,10 @@ export default {
         const nextPage = () => {
             // 判断是否为最后一页
             if (data.currentPage === data.pages) {
-                return showMessageBox('已经是最后一页', 'warning')
+                return showMessageBox({
+                    message: '已经是最后一页',
+                    type: 'warning',
+                })
             }
             data.currentPage++
             let title = data.searchContent != '' ? [data.searchContent] : null
@@ -205,6 +199,7 @@ export default {
 <style lang="scss" scoped="scoped">
 .container {
     display: flex;
+    margin-top: 125px;
 
     /* 关注页面 文章内容 */
     .content {

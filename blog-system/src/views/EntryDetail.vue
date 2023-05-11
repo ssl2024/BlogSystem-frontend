@@ -2,11 +2,11 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-11 01:46:23
+ * @LastEditTime: 2023-05-11 23:50:48
  * @Description: 博客详情页
 -->
 <template>
-    <div class="detail_block">
+    <div class="detail_block" @scroll="scroll">
         <!-- 博客内容 -->
         <div class="content">
             <div class="content_header">
@@ -31,13 +31,14 @@
                 </div>
             </div>
             <div class="content_figure">
-                <img src="https://iph.href.lu/780x450" alt="博文图片" />
+                <!-- <img src="https://iph.href.lu/780x450" alt="博文图片" /> -->
+                <img src="http://cdn.sakurac.cn/blog42.jpg" alt="博文图片" />
             </div>
             <v-md-editor
                 :model-value="entry.content"
                 mode="preview"
             ></v-md-editor>
-            <div class="comment_form">
+            <div id="comment" class="comment_form">
                 <div class="comment_title">评论</div>
                 <div class="comment_content">
                     <img
@@ -219,7 +220,12 @@
                         :src="user.avatar"
                         alt="作者头像"
                     />
-                    <div class="author_nickname">{{ user.nickname }}</div>
+                    <div
+                        class="author_nickname"
+                        :title="'查看 ' + user.nickname + ' 主页'"
+                    >
+                        {{ user.nickname }}
+                    </div>
                 </div>
                 <div class="operate_btn" v-if="!isCurrentUser">
                     <div class="follow" v-show="!isFollowed" @click="addFollow">
@@ -232,11 +238,19 @@
                     </div>
                 </div>
                 <div class="follow_block">
-                    <div class="follow_item" @click="toUserFollowList(user.id)">
+                    <div
+                        class="follow_item"
+                        :title="'查看 ' + user.nickname + ' 关注列表'"
+                        @click="toUserFollowList(user.id)"
+                    >
                         <span>关注</span>
                         <span>{{ followList.length }}</span>
                     </div>
-                    <div class="follow_item" @click="toUserFansList(user.id)">
+                    <div
+                        class="follow_item"
+                        :title="'查看 ' + user.nickname + ' 粉丝列表'"
+                        @click="toUserFansList(user.id)"
+                    >
                         <span>粉丝</span>
                         <span>{{ fansCount(fansList.length) }}</span>
                     </div>
@@ -258,10 +272,10 @@
                             likeCount(entry.likeCount)
                         }}</span>
                     </div>
-                    <div class="operate_item" @click="commentEntry">
+                    <a href="#comment" class="operate_item">
                         <i class="iconfont icon-pinglun1"></i>
                         <span class="comment_count">{{ commentCount }}</span>
-                    </div>
+                    </a>
                     <div class="operate_item" @click="collectEntry">
                         <i
                             class="iconfont icon-shoucangxiao"
@@ -281,12 +295,6 @@
                 </div>
             </div>
         </div>
-        <!-- 消息提示框 -->
-        <message-box
-            :message="message"
-            :messageId="messageId"
-            :type="messageType"
-        ></message-box>
     </div>
 </template>
 
@@ -298,7 +306,7 @@ import { useRoute, useRouter } from 'vue-router'
 import http from '@/utils/http'
 import dateFormatter from '@/utils/dateFormatter'
 export default {
-    setup() {
+    setup(_, { emit }) {
         const store = useStore()
         const route = useRoute()
         const router = useRouter()
@@ -381,12 +389,6 @@ export default {
              * false 不显示
              */
             isShowSubDeleteBtn: [],
-            /* 消息提示框内容 */
-            message: '',
-            /* 消息提示框id */
-            messageId: -1,
-            /* 消息提示框类型 */
-            messageType: '',
         })
 
         onMounted(() => {
@@ -520,12 +522,16 @@ export default {
             }
         })
 
-        /* 显示消息提示框 */
-        const showMessageBox = (message, type) => {
-            let date = new Date()
-            data.message = message
-            data.messageType = type
-            data.messageId = date.getTime()
+        /* 显示消息框 */
+        const showMessageBox = args => {
+            emit('showMessageBox', {
+                message: args.message,
+                type: args.type,
+            })
+        }
+
+        const scroll = () => {
+            console.log(1)
         }
 
         /* filter 评论过滤 */
@@ -641,7 +647,10 @@ export default {
                     if (res.data.code === 20021) {
                         // 修改文章的点赞状态
                         data.likeState = false
-                        showMessageBox('取消点赞成功', 'success')
+                        showMessageBox({
+                            message: '取消点赞成功',
+                            type: 'success',
+                        })
                         // 获取文章点赞数量
                         getEntryLikeCount(data.id).then(res => {
                             if (res.data.code === 20041) {
@@ -649,7 +658,10 @@ export default {
                             }
                         })
                     } else {
-                        showMessageBox('取消点赞失败', 'error')
+                        showMessageBox({
+                            message: '取消点赞失败',
+                            type: 'error',
+                        })
                     }
                 })
             } else {
@@ -658,7 +670,10 @@ export default {
                     if (res.data.code === 20011) {
                         // 修改文章的点赞状态
                         data.likeState = true
-                        showMessageBox('点赞文章成功', 'success')
+                        showMessageBox({
+                            message: '点赞文章成功',
+                            type: 'success',
+                        })
                         // 获取文章点赞数量
                         getEntryLikeCount(data.id).then(res => {
                             if (res.data.code === 20041) {
@@ -666,7 +681,10 @@ export default {
                             }
                         })
                     } else {
-                        showMessageBox('点赞文章失败', 'error')
+                        showMessageBox({
+                            message: '点赞文章失败',
+                            type: 'error',
+                        })
                     }
                 })
             }
@@ -689,9 +707,15 @@ export default {
                                 data.entry.collectCount = res.data.data
                             }
                         })
-                        showMessageBox('取消收藏成功', 'success')
+                        showMessageBox({
+                            message: '取消收藏成功',
+                            type: 'success',
+                        })
                     } else {
-                        showMessageBox('取消收藏失败', 'error')
+                        showMessageBox({
+                            message: '取消收藏失败',
+                            type: 'error',
+                        })
                     }
                 })
             } else {
@@ -700,7 +724,10 @@ export default {
                     if (res.data.code === 20011) {
                         // 修改文章的点赞状态
                         data.collectState = true
-                        showMessageBox('收藏文章成功', 'success')
+                        showMessageBox({
+                            message: '收藏文章成功',
+                            type: 'success',
+                        })
                         // 获取文章收藏数量
                         getEntryCollectCount(data.id).then(res => {
                             if (res.data.code === 20041) {
@@ -708,7 +735,10 @@ export default {
                             }
                         })
                     } else {
-                        showMessageBox('收藏文章失败', 'error')
+                        showMessageBox({
+                            message: '收藏文章失败',
+                            type: 'error',
+                        })
                     }
                 })
             }
@@ -719,18 +749,21 @@ export default {
             const content = comment.value.innerText
             // 判断评论长度
             if (content.length === 0) {
-                showMessageBox('评论不能为空', 'warning')
+                showMessageBox({ message: '评论不能为空', type: 'warning' })
                 return
             }
             if (content.length >= 255) {
-                showMessageBox('评论不能超过255字符', 'warning')
+                showMessageBox({
+                    message: '评论不能超过255字符',
+                    type: 'warning',
+                })
                 return
             }
             // 获取当前时间戳
             const createTime = Number.parseInt(new Date().getTime() / 1000)
             addComment(content, createTime).then(res => {
                 if (res.data.code === 20011) {
-                    showMessageBox('发表评论成功', 'success')
+                    showMessageBox({ message: '发表评论成功', type: 'success' })
                     // 重新获取评论数据
                     getCommentList(data.id).then(res => {
                         if (res.data.code === 20041) {
@@ -740,7 +773,7 @@ export default {
                     // 清空评论框中的数据
                     comment.value.innerText = ''
                 } else {
-                    showMessageBox('发表评论失败', 'error')
+                    showMessageBox({ message: '发表评论失败', type: 'error' })
                 }
             })
         }
@@ -749,18 +782,21 @@ export default {
             const content = replyComment.value[index].innerText
             // 判断评论长度
             if (content.length === 0) {
-                showMessageBox('评论不能为空', 'warning')
+                showMessageBox({ message: '评论不能为空', type: 'warning' })
                 return
             }
             if (content.length >= 255) {
-                showMessageBox('评论不能超过255字符', 'warning')
+                showMessageBox({
+                    message: '评论不能超过255字符',
+                    type: 'warning',
+                })
                 return
             }
             // 获取当前时间戳
             const createTime = Number.parseInt(new Date().getTime() / 1000)
             addComment(content, createTime, parentId, replyUserId).then(res => {
                 if (res.data.code === 20011) {
-                    showMessageBox('回复评论成功', 'success')
+                    showMessageBox({ message: '回复评论成功', type: 'success' })
                     // 重新获取评论数据
                     getCommentList(data.id).then(res => {
                         if (res.data.code === 20041) {
@@ -777,7 +813,7 @@ export default {
                     // 关闭当前评论框
                     data.isShowReplyComment[index] = false
                 } else {
-                    showMessageBox('回复评论失败', 'error')
+                    showMessageBox({ message: '回复评论失败', type: 'error' })
                 }
             })
         }
@@ -791,18 +827,21 @@ export default {
             const content = subReplyComment[index].value[subIndex].innerText
             // 判断评论长度
             if (content.length === 0) {
-                showMessageBox('评论不能为空', 'warning')
+                showMessageBox({ message: '评论不能为空', type: 'warning' })
                 return
             }
             if (content.length >= 255) {
-                showMessageBox('评论不能超过255字符', 'warning')
+                showMessageBox({
+                    message: '评论不能超过255字符',
+                    type: 'warning',
+                })
                 return
             }
             // 获取当前时间戳
             const createTime = Number.parseInt(new Date().getTime() / 1000)
             addComment(content, createTime, parentId, replyUserId).then(res => {
                 if (res.data.code === 20011) {
-                    showMessageBox('回复评论成功', 'success')
+                    showMessageBox({ message: '回复评论成功', type: 'success' })
                     // 重新获取评论数据
                     getCommentList(data.id).then(res => {
                         if (res.data.code === 20041) {
@@ -819,7 +858,7 @@ export default {
                     // 关闭当前评论框
                     data.isShowSubReplyComment[index][subIndex] = false
                 } else {
-                    showMessageBox('回复评论失败', 'error')
+                    showMessageBox({ message: '回复评论失败', type: 'error' })
                 }
             })
         }
@@ -827,11 +866,11 @@ export default {
         const addFollow = () => {
             addFollowInfo(data.user.id, data.userId).then(res => {
                 if (res.data.code === 20011) {
-                    showMessageBox('关注用户成功', 'success')
+                    showMessageBox({ message: '关注用户成功', type: 'success' })
                     data.isFollowed = true
                     data.fansList.length++
                 } else {
-                    showMessageBox('关注用户失败', 'error')
+                    showMessageBox({ message: '关注用户失败', type: 'error' })
                 }
             })
         }
@@ -839,11 +878,11 @@ export default {
         const unFollow = () => {
             deleteFollowInfo(data.user.id, data.userId).then(res => {
                 if (res.data.code === 20021) {
-                    showMessageBox('取消关注成功', 'success')
+                    showMessageBox({ message: '取消关注成功', type: 'success' })
                     data.isFollowed = false
                     data.fansList.length--
                 } else {
-                    showMessageBox('取消关注失败', 'error')
+                    showMessageBox({ message: '取消关注失败', type: 'error' })
                 }
             })
         }
@@ -878,16 +917,16 @@ export default {
         const deleteComment = (commentId, commentUserId) => {
             // 判断当前用户id 是否等于 评论发布用户id
             if (data.userId !== commentUserId) {
-                showMessageBox(
-                    '请不要删除别人的评论，前端何苦为难前端',
-                    'warning'
-                )
+                showMessageBox({
+                    message: '请不要删除别人的评论，前端何苦为难前端',
+                    type: 'warning',
+                })
                 return
             }
             // 删除评论
             deleteCommentInfo(commentId).then(res => {
                 if (res.data.code === 20021) {
-                    showMessageBox('删除评论成功', 'success')
+                    showMessageBox({ message: '删除评论成功', type: 'success' })
                     // 重新获取评论数据
                     getCommentList(data.id).then(res => {
                         if (res.data.code === 20041) {
@@ -895,7 +934,7 @@ export default {
                         }
                     })
                 } else {
-                    showMessageBox('删除评论失败', 'error')
+                    showMessageBox({ message: '删除评论失败', type: 'error' })
                 }
             })
         }
@@ -1008,6 +1047,7 @@ export default {
             fansCount,
             nickname,
             avatar,
+            scroll,
             inputComment,
             inputReplyComment,
             inputSubReplyComment,
@@ -1054,7 +1094,8 @@ $border_line: #e8e8ed;
 ----------------------------------------------------------------*/
 .detail_block {
     display: flex;
-    opacity: 0.75;
+    margin-top: 125px;
+    opacity: 0.9;
 }
 
 /* 左边博客内容
@@ -1103,6 +1144,10 @@ $border_line: #e8e8ed;
     /* 左边博客内容 展示图 */
     .content_figure {
         margin-bottom: 20px;
+        img {
+            width: 780px;
+            height: 450px;
+        }
     }
 
     /* 左边博客内容 评论表单 */
@@ -1344,6 +1389,8 @@ $border_line: #e8e8ed;
 /* 右边作者相关
 ----------------------------------------------------------------*/
 .aside_top {
+    // position: fixed;
+    // width: 240px;
     padding: 25px 20px;
     background-color: $bg_color;
 
@@ -1355,6 +1402,10 @@ $border_line: #e8e8ed;
         font-size: 17px;
         line-height: 60px;
         cursor: pointer;
+        transition: all 0.2s;
+        &:hover {
+            color: #47acbe;
+        }
 
         /* 右边作者相关 作者信息--作者头像 */
         img {
@@ -1436,6 +1487,10 @@ $border_line: #e8e8ed;
             text-align: center;
             cursor: pointer;
             border-radius: 50%;
+            /* 去掉 hover 评论的下划线 */
+            &:hover {
+                text-decoration: none;
+            }
 
             /* 右边作者相关 文章相关--操作项(点赞/评论/收藏-数量) */
             [class$='count'] {
