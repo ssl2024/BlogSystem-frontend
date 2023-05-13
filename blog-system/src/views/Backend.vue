@@ -1,11 +1,21 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-09 23:56:23
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 00:56:24
+ * @Description: 后端页面
+-->
 <template>
+    <!-- S 后端模块 -->
     <div class="container">
-        <!-- 左边后端博文内容主体 -->
+        <!-- 博客列表 -->
         <div class="list_container">
+            <!-- 博客分页组件 -->
             <list-header
                 :classify="classify"
                 @changeType="changeType"
             ></list-header>
+            <!-- 博客列表 -->
             <div class="list_wrap">
                 <blog
                     v-for="item in entryList"
@@ -13,6 +23,7 @@
                     :entry="item"
                 ></blog>
             </div>
+            <!-- 分页组件 -->
             <pagination
                 v-if="isShowPagination"
                 :currentPage="currentPage"
@@ -21,8 +32,9 @@
                 @nextPage="nextPage"
             ></pagination>
         </div>
-        <!-- 侧边栏热度榜单 -->
+        <!-- 侧边栏 -->
         <div class="aside">
+            <!-- 用户热榜 -->
             <div class="hot_list">
                 <div class="hot_list_header">热度榜单</div>
                 <div class="hot_list_fields">
@@ -54,6 +66,7 @@
             </div>
         </div>
     </div>
+    <!-- E 后端模块 -->
 </template>
 
 <script>

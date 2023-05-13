@@ -2,23 +2,28 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-26 00:19:52
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 09:16:48
- * @Description: 个人主页-用户关注
+ * @LastEditTime: 2023-05-14 01:19:10
+ * @Description: 用户主页-关注模块
 -->
 <template>
-    <div>
+    <!-- S 关注模块 -->
+    <div class="follow_wrap">
+        <!-- 关注列表 -->
         <div class="follow_list">
+            <!-- 用户组件 -->
             <user-item
                 v-for="item in followList"
                 :key="item.id"
                 :user="item"
                 @showMessageBox="showMessageBox"
             ></user-item>
+            <!-- 默认内容组件 -->
             <default-content
                 v-if="total === 0"
                 message="没有博主能够吸引他，所以他谁都没有关注"
             ></default-content>
         </div>
+        <!-- 分页组件 -->
         <pagination
             v-if="isShowPagination"
             :currentPage="currentPage"
@@ -27,6 +32,7 @@
             @nextPage="nextPage"
         ></pagination>
     </div>
+    <!-- E 关注模块 -->
 </template>
 
 <script>
@@ -36,11 +42,9 @@ import { useRoute } from 'vue-router'
 import http from '@/utils/http'
 
 import userItem from '@/components/center/UserItem'
-import defaultContent from '@/components/center/DefaultContent'
 export default {
     components: {
         userItem,
-        defaultContent,
     },
     props: {
         pageSize: {

@@ -1,9 +1,19 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-09 23:05:24
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 02:13:20
+ * @Description: 导航栏组件
+-->
 <template>
+    <!-- S 导航栏组件 -->
     <div class="nav_wrapper">
         <div class="nav">
+            <!-- logo -->
             <div class="logo">
                 <img src="@/assets/user_logo.png" alt="logo" />
             </div>
+            <!-- 导航列表 -->
             <ul class="nav_list">
                 <router-link
                     to="/attention"
@@ -42,6 +52,7 @@
                     </li>
                 </router-link>
             </ul>
+            <!-- 搜索 -->
             <div class="search">
                 <input
                     type="text"
@@ -55,6 +66,7 @@
                     <i class="iconfont icon-sousuo"></i>
                 </div>
             </div>
+            <!-- 头像 -->
             <div class="center">
                 <img
                     :src="user.avatar"
@@ -65,6 +77,7 @@
             </div>
             <!-- 用户简介 -->
             <div class="profile" v-show="isShowProfile">
+                <!-- 用户信息 -->
                 <div class="profile_top">
                     <div class="user_avatar">
                         <img :src="user.avatar" alt="用户头像" />
@@ -73,6 +86,7 @@
                         <span>{{ user.nickname }}</span>
                     </div>
                 </div>
+                <!-- 用户关注与粉丝 -->
                 <div class="profile_mid">
                     <div class="follow_btn" @click="toUserFollow(userId)">
                         <div>关注</div>
@@ -83,40 +97,47 @@
                         <div>{{ fansCount }}</div>
                     </div>
                 </div>
-                <div class="profile_bottom">
-                    <ul class="profile_border_bottom">
-                        <li @click="toUserPage(userId)">
-                            <i class="iconfont icon-shouye1"></i>
-                            <span>个人主页</span>
-                        </li>
-                        <li @click="toUserInfo">
-                            <i class="iconfont icon-xingming"></i>
-                            <span>个人信息</span>
-                        </li>
-                        <li @click="toBlogManage">
-                            <i class="iconfont icon-xiangmuguanli"></i>
-                            <span>博客管理</span>
-                        </li>
-                        <li @click="logout">
-                            <i class="iconfont icon-tuichu"></i>
-                            <span>注销登录</span>
-                        </li>
-                    </ul>
-                </div>
-                <div></div>
+                <!-- 用户菜单 -->
+                <ul class="profile_bottom">
+                    <!-- 用户主页 -->
+                    <li @click="toUserPage(userId)">
+                        <i class="iconfont icon-shouye1"></i>
+                        <span>个人主页</span>
+                    </li>
+                    <!-- 用户信息 -->
+                    <li @click="toUserInfo">
+                        <i class="iconfont icon-xingming"></i>
+                        <span>个人信息</span>
+                    </li>
+                    <!-- 博客管理 -->
+                    <li @click="toBlogManage">
+                        <i class="iconfont icon-xiangmuguanli"></i>
+                        <span>博客管理</span>
+                    </li>
+                    <!-- 注销 -->
+                    <li @click="logout">
+                        <i class="iconfont icon-tuichu"></i>
+                        <span>注销登录</span>
+                    </li>
+                </ul>
             </div>
         </div>
+        <!-- /导航栏 -->
     </div>
+    <!-- E 导航栏组件 -->
 </template>
 
 <script>
-import { onMounted, onUnmounted, reactive, toRefs, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, toRefs, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 import http from '@/utils/http'
 export default {
-    setup(_, { emit }) {
+    props: {
+        updateUserTime: String,
+    },
+    setup(props, { emit }) {
         const store = useStore()
         const router = useRouter()
 
@@ -173,6 +194,17 @@ export default {
             // 解绑 document 的点击事件
             document.removeEventListener('click', handleClick)
         })
+
+        watch(
+            () => props.updateUserTime,
+            () => {
+                getUserInfo(data.userId).then(res => {
+                    if (res.data.code === 20041) {
+                        data.user = res.data.data
+                    }
+                })
+            }
+        )
 
         /* click document */
         const handleClick = event => {

@@ -1,8 +1,18 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-13 21:05:52
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 00:52:25
+ * @Description: 登录页面-登录模块
+-->
 <template>
+    <!-- S 登录模块 -->
     <div class="login_block">
+        <!-- 标题 -->
         <div class="login_title">
             <span>登&nbsp;&nbsp;录</span>
         </div>
+        <!-- 登录表单 -->
         <form class="login_form">
             <div class="login_account">
                 <input
@@ -32,11 +42,13 @@
             </div>
             <div class="login_btn" @click="login">登&nbsp;&nbsp;录</div>
         </form>
+        <!-- 其他选项(忘记密码/注册) -->
         <div class="login_other">
             <div class="forget_pwd" @click="forgetPwd">忘记密码</div>
             <div class="register" @click="register">注册账号</div>
         </div>
     </div>
+    <!-- E 登录模块 -->
 </template>
 
 <script>
@@ -250,6 +262,11 @@ $border_line: #b6e4f4;
             line-height: 50px;
             cursor: pointer;
             border-radius: 5px;
+            opacity: 0.8;
+            transition: all 0.3s;
+            &:hover {
+                opacity: 1;
+            }
         }
     }
 

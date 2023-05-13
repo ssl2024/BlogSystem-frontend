@@ -1,29 +1,46 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-10 00:08:54
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 01:55:40
+ * @Description: 博客组件
+-->
 <template>
+    <!-- S 博客组件 -->
     <div class="item" @click="toBlogDetail(entry.id)">
+        <!-- 内容 -->
         <div class="content_wrapper">
+            <!-- 标题 -->
             <div class="content_title">
                 {{ entry.title }}
             </div>
+            <!-- 摘要 -->
             <div class="content_main">
                 {{ entry.blogAbstract }}
             </div>
+            <!-- 博客相关信息 -->
             <ul class="action_list">
+                <!-- 浏览次数 -->
                 <li class="action_item">
                     <i class="iconfont icon-browse"></i>
                     <span>{{ entry.browseCount }}</span>
                 </li>
+                <!-- 点赞次数 -->
                 <li class="action_item">
                     <i class="iconfont icon-good"></i>
                     <span>{{ entry.likeCount }}</span>
                 </li>
+                <!-- 评论次数 -->
                 <li class="action_item">
                     <i class="iconfont icon-pinglun"></i>
                     <span>{{ entry.commentCount }}</span>
                 </li>
+                <!-- 更新时间 -->
                 <li class="action_item">
                     <i class="iconfont icon-shijian"></i>
                     <span>{{ updateTime(entry.updateTime) }}</span>
                 </li>
+                <!-- 博客作者 -->
                 <li
                     class="action_item"
                     @click.stop="toUserCenter(entry.authorId)"
@@ -34,14 +51,12 @@
                 </li>
             </ul>
         </div>
-        <div class="picture">
-            <!-- <img src="https://iph.href.lu/176x99" alt="博客展示图片" /> -->
-            <img
-                src="http://cdn.xiongsihao.com/blogFirstPicture53.jpg"
-                alt="博客展示图片"
-            />
+        <!-- 封面 -->
+        <div class="picture" v-if="entry.picture">
+            <img :src="entry.picture" alt="博客展示图片" />
         </div>
     </div>
+    <!-- E 博客组件 -->
 </template>
 
 <script>
@@ -107,18 +122,13 @@ $border_line: rgba(
 ----------------------------------------------------------------*/
 .item {
     display: flex;
-    padding-bottom: 10px;
+    height: 105px;
+    padding: 10px;
     border-bottom: 1px solid $border_line;
-    // background-color: rgba($color: #58acc4, $alpha: 0.4);
-
     background-color: rgba($color: #fefefe, $alpha: 0.8);
-    // background-color: ;
-    // opacity: 0.4;
     cursor: pointer;
     transition: all 0.2s;
     &:hover {
-        // opacity: 1;
-        // background-color: rgba($color: #b6e3f6, $alpha: 0.8);
         background-color: rgba($color: #cbe5eb, $alpha: 0.9);
         .picture img {
             opacity: 1;
@@ -129,7 +139,6 @@ $border_line: rgba(
     .content_wrapper {
         flex: 1;
         display: flex;
-        padding: 10px 0 0 10px;
         flex-direction: column;
         justify-content: space-around;
 
@@ -185,7 +194,6 @@ $border_line: rgba(
 
     /* 博客 展示图片 */
     .picture {
-        padding: 7px;
         width: 176px;
         img {
             width: 176px;

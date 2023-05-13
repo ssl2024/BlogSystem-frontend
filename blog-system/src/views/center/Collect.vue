@@ -2,18 +2,23 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 19:52:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 09:13:46
- * @Description: 个人主页-用户收藏
+ * @LastEditTime: 2023-05-14 01:18:30
+ * @Description: 用户主页-收藏模块
 -->
 <template>
-    <div>
-        <div class="list">
+    <!-- S 收藏模块 -->
+    <div class="collect_wrap">
+        <!-- 收藏列表 -->
+        <div class="collect_list">
+            <!-- 博客组件 -->
             <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
+            <!-- 默认内容组件 -->
             <default-content
                 v-if="total === 0"
                 message="没有其喜欢的内容，所以他一个都没收藏"
             ></default-content>
         </div>
+        <!-- 分页组件 -->
         <pagination
             v-if="isShowPagination"
             :currentPage="currentPage"
@@ -22,6 +27,7 @@
             @nextPage="nextPage"
         ></pagination>
     </div>
+    <!-- E 收藏模块 -->
 </template>
 
 <script>
@@ -31,11 +37,9 @@ import { useRoute } from 'vue-router'
 import http from '@/utils/http'
 
 import blog from '@/components/Blog'
-import defaultContent from '@/components/center/DefaultContent'
 export default {
     components: {
         blog,
-        defaultContent,
     },
     props: {
         pageSize: {
@@ -207,7 +211,7 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
-.list {
+.collect_list {
     min-height: 625px;
 }
 </style>

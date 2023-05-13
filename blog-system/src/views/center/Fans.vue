@@ -2,23 +2,28 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 15:20:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 09:17:20
- * @Description: 个人主页-用户粉丝
+ * @LastEditTime: 2023-05-14 01:24:28
+ * @Description: 用户主页-粉丝模块
 -->
 <template>
-    <div>
+    <!-- S 粉丝模块 -->
+    <div class="fans_wrap">
+        <!-- 粉丝列表 -->
         <div class="fans_list">
+            <!-- 用户组件 -->
             <user-item
                 v-for="item in fansList"
                 :key="item.id"
                 :user="item"
                 @showMessageBox="showMessageBox"
             ></user-item>
+            <!-- 默认内容组件 -->
             <default-content
                 v-if="total === 0"
                 message="好看的皮囊千篇一律，有趣的灵魂万里挑一，快来关注他吧"
             ></default-content>
         </div>
+        <!-- 分页组件 -->
         <pagination
             v-if="isShowPagination"
             :currentPage="currentPage"
@@ -27,6 +32,7 @@
             @nextPage="nextPage"
         ></pagination>
     </div>
+    <!-- E 粉丝模块 -->
 </template>
 
 <script>
@@ -36,11 +42,9 @@ import { useRoute } from 'vue-router'
 import http from '@/utils/http'
 
 import userItem from '@/components/center/UserItem'
-import defaultContent from '@/components/center/DefaultContent'
 export default {
     components: {
         userItem,
-        defaultContent,
     },
     props: {
         pageSize: {

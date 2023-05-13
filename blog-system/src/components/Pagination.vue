@@ -2,10 +2,11 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-05-12 01:31:23
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 01:40:30
+ * @LastEditTime: 2023-05-14 02:14:40
  * @Description: 分页组件
 -->
 <template>
+    <!-- 分页组件 -->
     <div class="list_pagination">
         <div class="operate_prev" @click="prevPage">上一页</div>
         <span class="page_number">{{ currentPage }} / {{ pages }}</span>

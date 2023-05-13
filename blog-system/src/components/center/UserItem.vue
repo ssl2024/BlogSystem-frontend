@@ -1,13 +1,25 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-26 15:26:02
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 01:57:48
+ * @Description: 用户组件
+-->
 <template>
+    <!-- S 用户组件 -->
     <div class="user_item" @click="toUserPage(user.id)">
+        <!-- 用户信息 -->
         <div class="user_info">
+            <!-- 头像 -->
             <div class="user_avatar">
                 <img :src="user.avatar" alt="头像" />
             </div>
+            <!-- 昵称 -->
             <div class="user_name">
                 <span>{{ user.nickname }}</span>
             </div>
         </div>
+        <!-- 用户状态(是否关注) -->
         <div v-if="!isCurrentUser" class="user_status">
             <div v-show="isFollowed" @click.stop="unFollow(user.id)">
                 已关注
@@ -17,6 +29,7 @@
             </div>
         </div>
     </div>
+    <!-- E 用户组件 -->
 </template>
 
 <script>

@@ -2,29 +2,41 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:20
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 09:56:01
- * @Description: 个人资料
+ * @LastEditTime: 2023-05-14 01:48:44
+ * @Description: 用户信息页-用户信息模块
 -->
 <template>
+    <!-- S 用户信息模块 -->
     <div class="profile_setting">
+        <!-- 标题 -->
         <div class="setting_title">个人资料</div>
+        <!-- 用户信息列表项 -->
         <ul class="setting_list">
+            <!-- 头像 -->
             <li class="setting_avatar">
                 <span>头像</span>
                 <img :src="user.avatar" alt="用户头像" />
+                <input
+                    type="text"
+                    v-model.trim="user.avatar"
+                    ref="userAvatar"
+                />
                 <span @click="updateUserAvatar">修改头像</span>
             </li>
+            <!-- 用户名 -->
             <li class="setting_item">
                 <span>用户名</span>
                 <input type="text" v-model="user.nickname" />
             </li>
         </ul>
+        <!-- 保存修改按钮 -->
         <div class="setting_btn" @click="updateUser">保存修改</div>
     </div>
+    <!-- E 用户信息模块 -->
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from 'vue'
+import { onMounted, reactive, toRefs, ref } from 'vue'
 import { useStore } from 'vuex'
 
 import http from '@/utils/http'
@@ -37,6 +49,9 @@ export default {
             user: {},
         })
 
+        /* DOM 用户头像输入框 */
+        const userAvatar = ref(null)
+
         onMounted(() => {
             // 获取当前用户信息
             getUserInfo().then(res => {
@@ -48,15 +63,24 @@ export default {
 
         /* click 修改头像 */
         const updateUserAvatar = () => {
-            emit('showMessageBox', {
-                message: '修改头像功能暂未实现，努力开发中',
-                type: 'error',
-            })
+            if (userAvatar.value.style.width === '') {
+                userAvatar.value.style.width = 370 + 'px'
+                userAvatar.value.style.marginLeft = 15 + 'px'
+                userAvatar.value.style.paddingLeft = 15 + 'px'
+                userAvatar.value.style.border = 1 + 'px'
+            } else {
+                userAvatar.value.style.width = ''
+                userAvatar.value.style.marginLeft = ''
+                userAvatar.value.style.paddingLeft = ''
+                userAvatar.value.style.border = ''
+            }
         }
         /* click 保存修改 */
         const updateUser = () => {
             updateUserInfo().then(res => {
                 if (res.data.code === 20031) {
+                    // 更新用户信息
+                    emit("updateUserInfo")
                     // 更新导航栏的用户昵称和头像
                     emit('showMessageBox', {
                         message: '修改信息成功',
@@ -81,6 +105,7 @@ export default {
         }
         return {
             ...toRefs(data),
+            userAvatar,
             updateUserAvatar,
             updateUser,
         }
@@ -134,6 +159,22 @@ $border_line: rgba(
                 border-radius: 50%;
             }
             :nth-child(3) {
+                width: 0px;
+                height: 33px;
+                margin-left: 0px;
+                padding-left: 0;
+                border: 0px solid #c2c8d1;
+                border-radius: 5px;
+                outline: none;
+                transition: all 0.3s;
+                &:hover {
+                    border: 1px solid #8491a2;
+                }
+                &:focus {
+                    border: 1px solid #b4e5f4;
+                }
+            }
+            :nth-child(4) {
                 width: 80px;
                 height: 35px;
                 margin-left: 15px;

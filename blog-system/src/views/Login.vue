@@ -2,28 +2,32 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-13 00:46:55
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-13 14:27:38
+ * @LastEditTime: 2023-05-14 00:46:04
  * @Description: 登录页面
 -->
 <template>
-    <!-- 登录组件 -->
-    <login
-        v-if="loginState === 1"
-        :user="user"
-        @changeLoginState="changeLoginState"
-        @showMessageBox="showMessageBox"
-    ></login>
-    <!-- 注册组件 -->
-    <register
-        v-if="loginState === 2"
-        @changeLoginState="changeLoginState"
-        @showMessageBox="showMessageBox"
-    ></register>
-    <!-- 忘记密码组件 -->
-    <forget
-        v-if="loginState === 3"
-        @changeLoginState="changeLoginState"
-    ></forget>
+    <!-- S 登录模块 -->
+    <div class="login_wrapper">
+        <!-- 登录组件 -->
+        <login
+            v-if="loginState === 1"
+            :user="user"
+            @changeLoginState="changeLoginState"
+            @showMessageBox="showMessageBox"
+        ></login>
+        <!-- 注册组件 -->
+        <register
+            v-if="loginState === 2"
+            @changeLoginState="changeLoginState"
+            @showMessageBox="showMessageBox"
+        ></register>
+        <!-- 忘记密码组件 -->
+        <forget
+            v-if="loginState === 3"
+            @changeLoginState="changeLoginState"
+        ></forget>
+    </div>
+    <!-- E 登录模块 -->
 </template>
 
 <script>
@@ -37,11 +41,6 @@ export default {
         login,
         register,
         forget,
-    },
-    props: {
-        pageSize: Number,
-        userInfoList: Array,
-        searchContent: String,
     },
     setup(_, { emit }) {
         const data = reactive({
@@ -83,13 +82,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped="scoped">
-// .login_wrapper {
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     width: 100vw;
-//     height: 100vh;
-//     background-color: skyblue;
-// }
-</style>
+<style></style>

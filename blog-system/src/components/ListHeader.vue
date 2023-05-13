@@ -1,15 +1,14 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-10 13:04:57
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 02:05:52
+ * @Description: 博客导航组件
+-->
 <template>
+    <!-- S 博客导航组件 -->
     <div class="list_header">
-        <!-- <ul class="nav_list">
-            <li class="nav_item">
-                <i class="iconfont icon-remen"></i>
-                <span>最热</span>
-            </li>
-            <li class="nav_item">
-                <i class="iconfont icon-remen"></i>
-                <span>最新</span>
-            </li>
-        </ul> -->
+        <!-- 选择列表 -->
         <div class="list_header_select">
             <!-- 列表当前选项 -->
             <div class="item_current" @click="showDropdownSelect">
@@ -31,6 +30,7 @@
             </ul>
         </div>
     </div>
+    <!-- E 博客导航组件 -->
 </template>
 
 <script>

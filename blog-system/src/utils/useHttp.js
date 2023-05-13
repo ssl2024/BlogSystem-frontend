@@ -2,8 +2,8 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-05-08 21:55:38
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-08 22:07:15
- * @Description: 展示和隐藏 loading 框
+ * @LastEditTime: 2023-05-14 02:18:37
+ * @Description: 对http请求进行封装，在发送http请求前展示loading框，在接收到http结果后隐藏loading框
  */
 import { ref } from 'vue'
 import http from '@/utils/http'

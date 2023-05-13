@@ -2,23 +2,29 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 19:51:45
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 09:12:02
- * @Description: 个人主页-用户发表的博客
+ * @LastEditTime: 2023-05-14 01:14:12
+ * @Description: 用户主页-博文模块
 -->
 <template>
-    <div>
-        <div class="list">
+    <!-- S 博文模块 -->
+    <div class="entry_wrap">
+        <!-- 博客列表 -->
+        <div class="entry_list">
+            <!-- 博客组件 -->
             <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
+            <!-- 默认内容组件 -->
             <default-content v-if="total === 0"></default-content>
         </div>
+        <!-- 分页组件 -->
         <pagination
-                v-if="isShowPagination"
-                :currentPage="currentPage"
-                :pages="pages"
-                @prevPage="prevPage"
-                @nextPage="nextPage"
-            ></pagination>
+            v-if="isShowPagination"
+            :currentPage="currentPage"
+            :pages="pages"
+            @prevPage="prevPage"
+            @nextPage="nextPage"
+        ></pagination>
     </div>
+    <!-- E 博文模块 -->
 </template>
 
 <script>
@@ -28,11 +34,9 @@ import { useRoute } from 'vue-router'
 import http from '@/utils/http'
 
 import blog from '@/components/Blog'
-import defaultContent from '@/components/center/DefaultContent'
 export default {
     components: {
         blog,
-        defaultContent,
     },
     props: {
         pageSize: {
@@ -175,7 +179,7 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
-.list {
+.entry_list {
     min-height: 625px;
 }
 </style>

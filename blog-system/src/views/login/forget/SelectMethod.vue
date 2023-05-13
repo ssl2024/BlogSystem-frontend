@@ -1,8 +1,18 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-14 01:29:25
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 00:49:11
+ * @Description: 登录页面-忘记密码模块(找回方式)
+-->
 <template>
+    <!-- S 找回方式模块 -->
     <form class="forget_form">
+        <!-- 账号框 -->
         <div class="forget_account">
             <input type="text" placeholder="请输入账号" />
         </div>
+        <!-- 验证方式 -->
         <div class="find">
             <div class="find_tips">验证方式</div>
             <div
@@ -24,8 +34,10 @@
                 <li class="method_item">邮箱验证</li>
             </ul>
         </div>
+        <!-- 下一步 -->
         <div class="forget_btn" @click="next">下一步</div>
     </form>
+    <!-- E 找回方式模块 -->
 </template>
 
 <script>
@@ -151,6 +163,11 @@ $border_line: skyblue;
         text-align: center;
         line-height: 50px;
         border-radius: 5px;
+        opacity: 0.8;
+        transition: all 0.3s;
+        &:hover {
+            opacity: 1;
+        }
     }
 }
 </style>

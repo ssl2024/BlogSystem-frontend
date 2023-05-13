@@ -1,4 +1,12 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-05-10 01:13:54
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 02:08:09
+ * @Description: 消息提示框组件
+-->
 <template>
+    <!-- 消息提示框组件 -->
     <div v-if="show" class="message_box" :class="type">
         <i class="iconfont" :class="'icon-' + type"></i>
         <span>{{ message }}</span>

@@ -1,6 +1,15 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-20 22:00:29
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 01:28:52
+ * @Description: 博客发布页面
+-->
 <template>
-    <div class="container">
-        <div class="header">
+    <!-- S 博客发布 -->
+    <div class="edit_wrap">
+        <!-- 博客标题 -->
+        <div class="edit_header">
             <div class="left_box">
                 <input
                     type="text"
@@ -15,12 +24,15 @@
                 </div>
             </div>
         </div>
+        <!-- 博客内容 -->
         <v-md-editor
-            v-model.trim="entry.content"
+            v-model.lazy="entry.content"
             :height="height"
         ></v-md-editor>
-        <div class="dialog" v-show="dialogState">
+        <!-- 博客分类与摘要 -->
+        <div class="edit_dialog" v-show="dialogState">
             <div class="dialog_title">发布文章</div>
+            <!-- 博客分类 -->
             <div class="entry_type">
                 <span>选择分类：</span>
                 <div
@@ -40,12 +52,12 @@
                     </li>
                 </ul>
             </div>
+            <!-- 博客封面 -->
             <div class="entry_cover">
                 <span>文章封面：</span>
-                <div class="cover_btn" @click="unloadPicture">
-                    <i class="iconfont icon-add"></i>
-                </div>
+                <input type="text" v-model.trim="entry.picture" />
             </div>
+            <!-- 博客摘要 -->
             <div class="entry_abstract">
                 <span>文章摘要：</span>
                 <textarea
@@ -55,6 +67,7 @@
                     v-model.trim="entry.blogAbstract"
                 ></textarea>
             </div>
+            <!-- 博客发布按钮 -->
             <div class="publish_btn">
                 <div class="btn_item" @click="cancel">取消</div>
                 <div v-show="isPublish" class="btn_item" @click="reConfirm">
@@ -66,15 +79,18 @@
             </div>
         </div>
     </div>
+    <!-- E 博客发布 -->
 </template>
 
 <script>
 import { onMounted, onUnmounted, reactive, toRefs } from 'vue'
+import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 
 import http from '@/utils/http'
 export default {
     setup(_, { emit }) {
+        const store = useStore()
         const router = useRouter()
         const route = useRoute()
 
@@ -85,6 +101,7 @@ export default {
                 title: '',
                 // 文章内容
                 content: '',
+                /* 文章摘要 */
                 blogAbstract: '',
                 // 文章类型
                 type: '',
@@ -106,7 +123,7 @@ export default {
              */
             isPublish: true,
             /* markdown编辑器的高度 */
-            height: '',
+            height: '0',
             /**
              * 是否显示对话框
              * false 不显示
@@ -124,14 +141,20 @@ export default {
         })
 
         onMounted(() => {
-            // 设置 markdown 编辑器的高度
-            data.height = window.innerHeight - 60 + 'px'
+            // 隐藏页脚
+            emit('changeFooterState', false)
+
             // 判断文章是否为修改
             if (route.params.id) {
                 data.isPublish = false
-                http.get('/blogs/' + route.params.id).then(
-                    res => (data.entry = res.data.data)
-                )
+                http.get('/blogs/' + route.params.id).then(res => {
+                    data.entry = res.data.data
+                    // 设置 markdown 编辑器的高度
+                    data.height = window.innerHeight - 60 + 'px'
+                })
+            } else {
+                // 设置 markdown 编辑器的高度
+                data.height = window.innerHeight - 60 + 'px'
             }
             // 获取数据库中的所有 type 类型
             http.get('/types').then(res => {
@@ -142,6 +165,8 @@ export default {
         })
 
         onUnmounted(() => {
+            // 显示页脚
+            emit('changeFooterState', true)
             // 清除定时器
             data.timeId && clearTimeout(data.timeId)
         })
@@ -181,7 +206,10 @@ export default {
                 return obj
             }
             // 判断文章摘要长度是否符合要求
-            if (entry.blogAbstract.length < 35) {
+            if (entry.blogAbstract === null) {
+                obj.msg = '文章摘要字符不能低于35个字符'
+                return obj
+            } else if (entry.blogAbstract.length < 35) {
                 obj.msg = '文章摘要字符不能低于35个字符'
                 return obj
             }
@@ -241,6 +269,13 @@ export default {
                 // 文章不符合要求
                 return showMessageBox({ message: temp.msg, type: 'warning' })
             }
+            // 判断当前用户是否为文章作者
+            if (store.state.userId !== data.entry.userId) {
+                return showMessageBox({
+                    message: '你不是文章作者，无权更新他人文章',
+                    type: 'error',
+                })
+            }
             updateEntryInfo(data.entry).then(res => {
                 if (res.data.code === 20031) {
                     showMessageBox({ message: '更新发布成功', type: 'success' })
@@ -281,7 +316,7 @@ $border_line: #e8e8ed;
 
 /* 博客发布页
 ----------------------------------------------------------------*/
-.container {
+.edit_wrap {
     position: absolute;
     top: 0;
     left: 0;
@@ -291,7 +326,7 @@ $border_line: #e8e8ed;
 
 /* 页眉
 ----------------------------------------------------------------*/
-.header {
+.edit_header {
     display: flex;
     height: 60px;
     padding: 0 40px;
@@ -338,8 +373,8 @@ $border_line: #e8e8ed;
 
 /* 对话框
 ----------------------------------------------------------------*/
-.dialog {
-    position: absolute;
+.edit_dialog {
+    position: fixed;
     top: 50%;
     left: 50%;
     width: 470px;
@@ -348,8 +383,8 @@ $border_line: #e8e8ed;
     border-radius: 2px;
     font-size: 14px;
     box-shadow: 0 1px 2px #f1f1f1;
-    transform: translate(-50%, -50%);
     z-index: 1;
+    transform: translate(-50%, -50%);
 
     /* 对话框 标题 */
     .dialog_title {
@@ -422,35 +457,49 @@ $border_line: #e8e8ed;
     .entry_cover {
         display: flex;
         padding: 20px 30px;
+        align-items: center;
 
-        /* 对话框 文章封面--上传封面按钮 */
-        .cover_btn {
-            position: relative;
-            width: 160px;
-            height: 85px;
-            border: 1px dashed #e5e6eb;
-            background-color: #fafafa;
-            color: #86909c;
-            cursor: pointer;
-
-            /* 对话框 文章封面--上传封面按钮(提示文字) */
-            &::before {
-                content: '上传首图';
-                position: absolute;
-                top: 45px;
-                left: 45px;
-                font-size: 15px;
-            }
-
-            /* 对话框 文章封面--上传封面按钮(+号) */
-            .iconfont {
-                position: absolute;
-                top: 15px;
-                left: 65px;
-                font-size: 18px;
-                font-weight: 600;
+        input {
+            width: 250px;
+            height: 30px;
+            padding-left: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            outline: none;
+            transition: all 0.3s;
+            &:hover {
+                border-color: skyblue;
             }
         }
+
+        // /* 对话框 文章封面--上传封面按钮 */
+        // .cover_btn {
+        //     position: relative;
+        //     width: 160px;
+        //     height: 85px;
+        //     border: 1px dashed #e5e6eb;
+        //     background-color: #fafafa;
+        //     color: #86909c;
+        //     cursor: pointer;
+
+        //     /* 对话框 文章封面--上传封面按钮(提示文字) */
+        //     &::before {
+        //         content: '上传首图';
+        //         position: absolute;
+        //         top: 45px;
+        //         left: 45px;
+        //         font-size: 15px;
+        //     }
+
+        //     /* 对话框 文章封面--上传封面按钮(+号) */
+        //     .iconfont {
+        //         position: absolute;
+        //         top: 15px;
+        //         left: 65px;
+        //         font-size: 18px;
+        //         font-weight: 600;
+        //     }
+        // }
     }
 
     /* 对话框 文章摘要 */

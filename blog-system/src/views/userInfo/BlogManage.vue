@@ -1,7 +1,18 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-12 11:51:20
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 01:51:36
+ * @Description: 用户信息页-博客管理模块
+-->
 <template>
+    <!-- S 博客管理模块 -->
     <div class="blog_setting">
+        <!-- 标题 -->
         <div class="setting_title">博客管理</div>
+        <!-- 搜索 -->
         <div class="manage_search">
+            <!-- 搜索项 -->
             <div class="search_condition_list">
                 <input
                     class="search_condition_item"
@@ -16,15 +27,19 @@
                     v-model.trim="searchType"
                 />
             </div>
+            <!-- 搜索按钮 -->
             <div class="search_btn" @click="searchEntry">搜索</div>
         </div>
+        <!-- 博客管理列表项 -->
         <div class="manage_blog_block">
+            <!-- 标题 -->
             <div class="blog_header">
                 <div class="title_item">标题</div>
                 <div class="title_item">类型</div>
                 <div class="title_item">更新时间</div>
                 <div class="title_item">操作</div>
             </div>
+            <!-- 博客列表项 -->
             <div class="blog_list">
                 <div class="blog_item" v-for="item in entryList" :key="item.id">
                     <div class="blog_item_title">{{ item.title }}</div>
@@ -47,7 +62,13 @@
                         </div>
                     </div>
                 </div>
+                <default-content
+                    v-if="total === 0"
+                    message="您暂未发布过博客哦，快去发布吧"
+                    :height="180"
+                ></default-content>
             </div>
+            <!-- 分页 -->
             <div class="blog_pagination">
                 <div class="pagination_list">
                     <div class="operate_prev" @click="prevPage">上一页</div>
@@ -56,12 +77,13 @@
                 <div class="operate_add" @click="addBlog">新增</div>
             </div>
         </div>
-        <!-- 确认对话框 -->
+        <!-- 确认对话框组件 -->
         <confirm-dialog
             :confirmState="confirmState"
             @selectResult="selectResult"
         ></confirm-dialog>
     </div>
+    <!-- E 博客管理模块 -->
 </template>
 
 <script>
@@ -92,6 +114,8 @@ export default {
             pageSize: 4,
             /* 一共多少页 */
             pages: 1,
+            /* 一共多少条 */
+            total: 1,
             /* 文章列表 */
             entryList: [],
             /**
@@ -123,6 +147,7 @@ export default {
             ).then(res => {
                 data.entryList = res.data.data.records
                 data.pages = res.data.data.pages
+                data.total = res.data.data.total
             })
         }
 

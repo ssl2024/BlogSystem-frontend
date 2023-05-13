@@ -1,6 +1,8 @@
 /*
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-23 22:48:35
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 02:15:35
  * @Description: 日期格式化，将时间戳格式化为 yyyy-MM-dd hh:mm:ss 格式
  */
 function dateFormatter(time) {

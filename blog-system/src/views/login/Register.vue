@@ -1,8 +1,18 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-13 21:39:59
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 00:53:13
+ * @Description: 登录页面-注册模块
+-->
 <template>
+    <!-- S 注册模块 -->
     <div class="register_block">
+        <!-- 标题 -->
         <div class="register_title">
             <span>注&nbsp;&nbsp;册</span>
         </div>
+        <!-- 注册表单 -->
         <form class="register_form">
             <div class="register_account" :placeholder="accountPlaceholder">
                 <input
@@ -90,10 +100,12 @@
             </div>
             <div class="register_btn" @click="register">立即注册</div>
         </form>
+        <!-- 其他选项(登录) -->
         <div class="register_other">
             <div class="goBackLogin" @click="goBackLogin">返回登录</div>
         </div>
     </div>
+    <!-- E 注册模块 -->
 </template>
 
 <script>
@@ -478,6 +490,11 @@ $border_line: #b6e4f4;
             line-height: 50px;
             cursor: pointer;
             border-radius: 5px;
+            opacity: 0.8;
+            transition: all 0.3s;
+            &:hover {
+                opacity: 1;
+            }
         }
     }
 

@@ -2,24 +2,35 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-13 14:56:36
+ * @LastEditTime: 2023-05-14 02:20:31
  * @Description: 根组件
 -->
 <template>
+    <!-- 导航栏组件 -->
     <navbar
         v-if="isLogin"
+        :updateUserTime="updateUserTime"
         @changeSearchEntry="changeSearchEntry"
         @showMessageBox="showMessageBox"
     ></navbar>
+    <!-- 展示的模块 -->
     <router-view
         :pageSize="pageSize"
         :userInfoList="userInfoList"
         :searchContent="searchContent"
+        @updateUserInfo="updateUserInfo"
         @showMessageBox="showMessageBox"
+        @changeFooterState="changeFooterState"
     ></router-view>
-    <footers v-if="isLogin" :htmlHeight="htmlHeight"></footers>
+    <!-- 页脚组件 -->
+    <footers
+        v-if="isLogin"
+        v-show="isShowFooter"
+        :htmlHeight="htmlHeight"
+    ></footers>
+    <!-- 加载框组件 -->
     <loading v-show="isLoading"></loading>
-    <!-- 消息提示框 -->
+    <!-- 消息提示框组件 -->
     <message-box
         :message="message"
         :messageId="messageId"
@@ -69,6 +80,14 @@ export default {
             messageType: '',
             /* html标签高度 */
             htmlHeight: 0,
+            /**
+             * 是否显示页脚
+             * true  显示
+             * false 不显示
+             */
+            isShowFooter: true,
+            /* 更新用户的时间戳(发生改变导航栏会重新获取头像和昵称) */
+            updateUserTime: '',
         })
 
         watch(
@@ -137,12 +156,21 @@ export default {
         const changeSearchEntry = searchContent => {
             data.searchContent = searchContent
         }
+        /* customEvent 更新用户信息 */
+        const updateUserInfo = () => {
+            let date = new Date()
+            data.updateUserTime = date.getTime()
+        }
         /* customEvent 显示消息提示框 */
         const showMessageBox = args => {
             let date = new Date()
             data.message = args.message
             data.messageType = args.type
             data.messageId = date.getTime()
+        }
+        /* customEvent 改变页脚显示状态 */
+        const changeFooterState = state => {
+            data.isShowFooter = state
         }
 
         /* http 获取用户列表 */
@@ -158,7 +186,9 @@ export default {
             isLogin,
             ...toRefs(data),
             changeSearchEntry,
+            updateUserInfo,
             showMessageBox,
+            changeFooterState,
         }
     },
 }
@@ -167,11 +197,7 @@ export default {
 <style lang="scss">
 html {
     position: relative;
-    // background-color: skyblue;
-    // background: url(@/assets/bg.webp)
-    //     no-repeat fixed;
-    background: url(https://pic3.zhimg.com/v2-3afda695650a99e5c7349b26745090ca_r.jpg)
-        no-repeat fixed;
+    background: url(@/assets/bg.jpg) no-repeat fixed;
     background-size: 100vw 100vh;
 }
 
@@ -179,11 +205,6 @@ body {
     width: 1170px;
     margin: 0 auto;
     padding: 0 15px;
-    // background-color: #f2f3f5;
-    // background-color: ;
-    // background-color: rgba($color: #b6e3f6, $alpha: 0.85);
     background-color: transparent;
-    // background-color: transparent;
-    // opacity: 0.8;
 }
 </style>

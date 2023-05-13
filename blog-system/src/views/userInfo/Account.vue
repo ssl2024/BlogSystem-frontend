@@ -2,23 +2,29 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:43
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 11:12:53
- * @Description: 账号设置
+ * @LastEditTime: 2023-05-14 01:47:09
+ * @Description: 用户信息页-账号设置模块
 -->
 <template>
+    <!-- S 账号设置模块 -->
     <div class="account_setting">
+        <!-- 标题 -->
         <div class="setting_title">账号设置</div>
+        <!-- 设置列表项 -->
         <ul class="setting_list">
+            <!-- 手机 -->
             <li class="setting_item">
                 <span>手机</span>
                 <span>未绑定</span>
                 <span @click="bindTel">绑定</span>
             </li>
+            <!-- 邮箱 -->
             <li class="setting_item">
                 <span>邮箱</span>
                 <span>未绑定</span>
                 <span @click="bindEmail">绑定</span>
             </li>
+            <!-- 密码 -->
             <li class="setting_item">
                 <span>密码</span>
                 <span></span>
@@ -26,6 +32,7 @@
             </li>
         </ul>
     </div>
+    <!-- E 账号设置模块 -->
 </template>
 
 <script>

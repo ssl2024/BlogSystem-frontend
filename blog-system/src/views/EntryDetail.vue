@@ -2,13 +2,14 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-13 14:04:22
- * @Description: 博客详情页
+ * @LastEditTime: 2023-05-14 01:42:43
+ * @Description: 博客详情页面
 -->
 <template>
+    <!-- S 博客详情 -->
     <div class="detail_block">
-        <!-- 博客内容 -->
         <div class="content">
+            <!-- 博客标题 -->
             <div class="content_header">
                 <div class="content_title">
                     <span>{{ entry.title }}</span>
@@ -30,10 +31,11 @@
                     </div>
                 </div>
             </div>
-            <div class="content_figure">
-                <!-- <img src="https://iph.href.lu/780x450" alt="博文图片" /> -->
-                <img src="http://cdn.sakurac.cn/blog42.jpg" alt="博文图片" />
+            <!-- 博客封面 -->
+            <div class="content_figure" v-if="entry.picture">
+                <img :src="entry.picture" alt="博文图片" />
             </div>
+            <!-- 博客内容 -->
             <v-md-editor
                 :model-value="entry.content"
                 :default-show-toc="true"
@@ -41,6 +43,7 @@
                 :include-level="[2, 3, 4]"
                 mode="preview"
             ></v-md-editor>
+            <!-- 评论发布区 -->
             <div id="comment" class="comment_form">
                 <div class="comment_title">评论</div>
                 <div class="comment_content">
@@ -65,6 +68,7 @@
                     发表评论
                 </div>
             </div>
+            <!-- 评论区标题 -->
             <div class="comment_title" v-show="commentCount">
                 全部评论 {{ commentCount }}
             </div>
@@ -73,22 +77,27 @@
                 v-for="(comment, index) in commentList"
                 :key="comment.id"
             >
+                <!-- 一级评论-头像 -->
                 <img
                     class="comment_avatar"
                     :src="avatar(comment.userId)"
                     alt="评论头像"
                 />
+                <!-- 一级评论-评论项 -->
                 <div class="comment_item">
-                    <!-- 一级评论 -->
+                    <!-- 评论主体 -->
                     <div
                         class="comment_main"
                         @mouseenter="showDeleteBtn(index, comment.userId)"
                         @mouseleave="hideDeleteBtn(index)"
                     >
+                        <!-- 评论者昵称 -->
                         <div class="user_nickname">
                             {{ nickname(comment.userId) }}
                         </div>
+                        <!-- 评论内容 -->
                         <div class="comment">{{ comment.content }}</div>
+                        <!-- 评论操作按钮(回复/删除) -->
                         <div class="operate_btn">
                             <span
                                 class="action_btn"
@@ -106,6 +115,7 @@
                                 >删除</span
                             >
                         </div>
+                        <!-- 评论回复框 -->
                         <div
                             class="reply_comment_content"
                             v-show="isShowReplyComment[index]"
@@ -120,6 +130,7 @@
                                 ref="replyComment"
                             ></div>
                         </div>
+                        <!-- 发布评论按钮 -->
                         <div
                             class="reply_submit_btn"
                             v-show="isShowReplyComment[index]"
@@ -140,11 +151,13 @@
                         v-for="(item, subIndex) in comment.children"
                         :key="item.id"
                     >
+                        <!-- 二级评论-头像 -->
                         <img
                             class="sub_comment_avatar"
                             :src="avatar(item.userId)"
                             alt="评论头像"
                         />
+                        <!-- 二级评论主体 -->
                         <div
                             class="sub_comment_main"
                             @mouseenter="
@@ -152,11 +165,14 @@
                             "
                             @mouseleave="hideSubDeleteBtn(index, subIndex)"
                         >
+                            <!-- 评论者昵称 -->
                             <div class="user_nickname">
                                 {{ nickname(item.userId) }} 回复
                                 {{ nickname(item.replyUserId) }}
                             </div>
+                            <!-- 评论内容 -->
                             <div class="comment">{{ item.content }}</div>
+                            <!-- 评论操作按钮(回复/删除) -->
                             <div class="sub_operate_btn">
                                 <span
                                     class="sub_action_btn"
@@ -177,6 +193,7 @@
                                     >删除</span
                                 >
                             </div>
+                            <!-- 评论回复框 -->
                             <div
                                 class="reply_sub_comment_content"
                                 v-show="isShowSubReplyComment[index][subIndex]"
@@ -195,6 +212,7 @@
                                     :ref="subReplyComment[index]"
                                 ></div>
                             </div>
+                            <!-- 评论发布按钮 -->
                             <div
                                 class="reply_sub_submit_btn"
                                 v-show="isShowSubReplyComment[index][subIndex]"
@@ -213,10 +231,13 @@
                     </div>
                 </div>
             </div>
+            <!-- /评论列表 -->
         </div>
-        <!-- 侧边栏 -->
+        <!-- /博客内容 -->
         <div class="aside">
+            <!-- 博客作者相关 -->
             <div class="aside_top">
+                <!-- 博客作者信息 -->
                 <div class="author_info" @click="toUserPage(user.id)">
                     <img
                         class="author_avatar"
@@ -230,6 +251,7 @@
                         {{ user.nickname }}
                     </div>
                 </div>
+                <!-- 关注/已关注按钮 -->
                 <div class="operate_btn" v-if="!isCurrentUser">
                     <div class="follow" v-show="!isFollowed" @click="addFollow">
                         <i class="iconfont"></i>
@@ -240,6 +262,7 @@
                         <span>已关注</span>
                     </div>
                 </div>
+                <!-- 作者关注粉丝数量 -->
                 <div class="follow_block">
                     <div
                         class="follow_item"
@@ -258,6 +281,7 @@
                         <span>{{ fansCount(fansList.length) }}</span>
                     </div>
                 </div>
+                <!-- 博客三连按钮 -->
                 <div class="operate_list">
                     <div class="operate_item" @click="likeEntry">
                         <i
@@ -297,6 +321,7 @@
                     </div>
                 </div>
             </div>
+            <!-- 博客目录导航 -->
             <div class="aside_mid">
                 <div class="toc" :class="isFixed ? 'fixed' : ''">
                     <div class="toc_title">目录导航</div>
@@ -304,7 +329,9 @@
                 </div>
             </div>
         </div>
+        <!-- /侧边栏 -->
     </div>
+    <!-- E 博客详情 -->
 </template>
 
 <script>

@@ -1,4 +1,12 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-26 15:26:02
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 01:58:46
+ * @Description: 验证码组件
+-->
 <template>
+    <!-- S 验证码组件 -->
     <div class="s-canvas">
         <canvas
             id="s-canvas"
@@ -6,6 +14,7 @@
             :height="contentHeight"
         ></canvas>
     </div>
+    <!-- E 验证码组件 -->
 </template>
 
 <script>

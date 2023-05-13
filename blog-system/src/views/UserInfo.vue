@@ -2,11 +2,13 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:01:27
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 23:08:58
- * @Description: 
+ * @LastEditTime: 2023-05-14 01:44:57
+ * @Description: 用户信息页面
 -->
 <template>
+    <!-- S 用户信息 -->
     <div class="setting_view">
+        <!-- 菜单列表 -->
         <ul class="menu_list">
             <router-link
                 to="/userInfo/profile"
@@ -55,10 +57,15 @@
                 <span>返回个人主页</span>
             </li>
         </ul>
+        <!-- 设置信息 -->
         <div class="setting_profile">
-            <router-view @showMessageBox="showMessageBox"></router-view>
+            <router-view
+                @updateUserInfo="updateUserInfo"
+                @showMessageBox="showMessageBox"
+            ></router-view>
         </div>
     </div>
+    <!-- E 用户信息 -->
 </template>
 
 <script>
@@ -69,6 +76,10 @@ export default {
         const store = useStore()
         const router = useRouter()
 
+        /* customEvent 更新用户信息 */
+        const updateUserInfo = () => {
+            emit('updateUserInfo')
+        }
         /* customEvent 显示消息框 */
         const showMessageBox = args => {
             emit('showMessageBox', {
@@ -82,6 +93,7 @@ export default {
             router.push(`/center/${store.state.userId}`)
         }
         return {
+            updateUserInfo,
             showMessageBox,
             goBack,
         }

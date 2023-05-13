@@ -1,7 +1,9 @@
 /*
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-20 01:18:10
- * @Description: 对数据请求的封装
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 02:17:27
+ * @Description: 对axios请求进行封装，给每次请求添加token以及同时发送多个axios请求
  */
 import axios from 'axios'
 

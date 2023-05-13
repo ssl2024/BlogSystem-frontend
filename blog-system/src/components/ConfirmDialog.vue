@@ -2,25 +2,31 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-05-09 19:26:08
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 11:33:50
+ * @LastEditTime: 2023-05-14 02:01:24
  * @Description: 确认对话框组件
 -->
 <template>
+    <!-- S 确认对话框组件 -->
     <div class="modal" v-show="confirmState">
+        <!-- 博客展示课 -->
         <div class="modal_content">
+            <!-- 标题 -->
             <div class="modal_header">
                 <h3>{{ title }}</h3>
                 <button class="close_btn" @click="cancel">&times;</button>
             </div>
+            <!-- 内容 -->
             <div class="modal_body">
                 <p>{{ message }}</p>
             </div>
+            <!-- 操作项(取消/确认) -->
             <div class="modal_footer">
                 <button class="btn cancel_btn" @click="cancel">取消</button>
                 <button class="btn confirm_btn" @click="confirm">确定</button>
             </div>
         </div>
     </div>
+    <!-- E 确认对话框组件 -->
 </template>
 
 <script>

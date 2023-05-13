@@ -2,13 +2,15 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 22:21:56
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 22:43:35
+ * @LastEditTime: 2023-05-14 02:03:55
  * @Description: 页脚组件
 -->
 <template>
-    <!-- {{ footerBottom }} -->
+    <!-- S 页脚组件 -->
     <div class="footer" ref="footer">
+        <!-- 页脚内容主体 -->
         <div class="content_main">
+            <!-- 网站和作者介绍 -->
             <div class="about_section">
                 <h4>网站简介</h4>
                 <p>
@@ -25,6 +27,7 @@
                     和 Java 进行项目开发，同时也能够丰富自己的项目经历。
                 </p>
             </div>
+            <!-- 联系方式 -->
             <div class="contact_section">
                 <h4>联系方式</h4>
                 <ul class="contact_list">
@@ -44,7 +47,7 @@
                         ><span>slshi2024@163.com</span>
                     </li>
                 </ul>
-                <h4>关注我</h4>
+                <h4>关注作者</h4>
                 <ul class="follow_list">
                     <li title="GitHub">
                         <a href="https://github.com/ssl2024" target="_blank"
@@ -76,6 +79,7 @@
             </div>
         </div>
     </div>
+    <!-- E 页脚组件 -->
 </template>
 
 <script>
@@ -129,7 +133,7 @@ $bg_color: #fff;
     // bottom: -350px;
     bottom: -500px;
     width: 100%;
-    padding: 40px 0;
+    padding: 30px 0;
     border-top: 1px solid rgba(71, 172, 191, 0.1);
     border-bottom: 1px solid rgba(71, 172, 191, 0.1);
     background-color: rgba($color: #fff, $alpha: 0.28);
@@ -146,15 +150,15 @@ $bg_color: #fff;
 
         /* 页脚 内容--所有h4标题 */
         h4 {
-            margin-bottom: 20px;
-            font-size: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
             font-weight: 500;
         }
 
         /* 页脚 内容--所有p标签 */
         p {
-            margin-bottom: 20px;
-            font-size: 16px;
+            margin-bottom: 10px;
+            font-size: 15px;
             text-align: justify;
             line-height: 1.5;
         }
@@ -185,7 +189,7 @@ $bg_color: #fff;
             /* 页脚 内容--关注(列表) */
             .follow_list {
                 display: flex;
-                margin-top: 20px;
+                margin-top: 10px;
                 align-items: center;
 
                 /* 页脚 内容--关注(列表项) */

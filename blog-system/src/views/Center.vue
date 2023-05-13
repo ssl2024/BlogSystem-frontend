@@ -1,7 +1,15 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-11 14:23:09
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 01:07:25
+ * @Description: 用户主页
+-->
 <template>
+    <!-- S 用户主页模块 -->
     <div class="user_center">
-        <!-- 左边用户个人信息 -->
         <div class="aside">
+            <!-- 用户个人信息 -->
             <div class="user_info">
                 <div class="user_avatar">
                     <img :src="userInfo.avatar" alt="用户头像" />
@@ -28,6 +36,7 @@
                     </div>
                 </div>
             </div>
+            <!-- 用户关注粉丝 -->
             <div class="follow_block">
                 <div
                     class="follow_item"
@@ -46,6 +55,7 @@
                     <span>{{ fansCount(userInfo.fansList.length) }}</span>
                 </div>
             </div>
+            <!-- 用户简介 -->
             <div class="user_profile">
                 <div class="profile_header">
                     <span>个人成就</span>
@@ -68,9 +78,11 @@
                 </div>
             </div>
         </div>
-        <!-- 右边用户相关信息 -->
+        <!-- /侧边栏模块 -->
         <div class="list_wrap">
+            <!-- 博客导航栏 -->
             <div class="list_header">
+                <!-- 博客导航栏列表项 -->
                 <ul class="list_nav">
                     <router-link
                         :to="`/center/${currentShowUserId}`"
@@ -138,6 +150,7 @@
                         </li>
                     </router-link>
                 </ul>
+                <!-- 博客搜索框 -->
                 <div class="list_search">
                     <input
                         type="text"
@@ -150,6 +163,7 @@
                     </div>
                 </div>
             </div>
+            <!-- 博客列表 -->
             <ul class="list_entry">
                 <router-view
                     :pageSize="sidePageSize"
@@ -159,7 +173,9 @@
                 ></router-view>
             </ul>
         </div>
+        <!-- /博客列表模块 -->
     </div>
+    <!-- E 用户主页模块 -->
 </template>
 
 <script>

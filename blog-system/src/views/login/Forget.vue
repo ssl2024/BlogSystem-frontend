@@ -1,19 +1,32 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-13 21:39:44
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 00:51:07
+ * @Description: 登录页面-忘记密码模块
+-->
 <template>
+    <!-- S 忘记密码模块 -->
     <div class="forget_block">
+        <!-- 标题 -->
         <div class="forget_title">
             <span>找回密码</span>
         </div>
+        <!-- 找回方式模块 -->
         <select-method
             v-show="findState === 1"
             :findMethod="findMethod"
             @changeFindMethod="changeFindMethod"
             @next="next"
         ></select-method>
+        <!-- 重置密码模块 -->
         <reset-password v-show="findState === 2"></reset-password>
+        <!-- 其他选项 -->
         <div class="forget_other">
             <div class="goBackLogin" @click="goBackLogin">返回登录</div>
         </div>
     </div>
+    <!-- E 忘记密码模块 -->
 </template>
 
 <script>

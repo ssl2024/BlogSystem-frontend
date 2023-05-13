@@ -1,12 +1,23 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-14 01:41:50
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-14 00:48:46
+ * @Description: 登录页面-忘记密码模块(重置密码)
+-->
 <template>
+    <!-- S 重置密码模块 -->
     <form class="forget_form">
+        <!-- 验证方式 -->
         <div class="validation_method">
             <span class="method_info">157****6364</span>
             <span class="check_code" @click="sendCheckCode">发送验证码</span>
         </div>
+        <!-- 验证码 -->
         <div class="check_code">
             <input type="text" placeholder="验证码" />
         </div>
+        <!-- 输入密码框 -->
         <div class="forget_pwd">
             <input type="password" placeholder="请输入新密码" ref="newPwd" />
             <i
@@ -20,6 +31,7 @@
                 @click="changeNewPwdState"
             ></i>
         </div>
+        <!-- 确认密码框 -->
         <div class="forget_pwd">
             <input type="password" placeholder="请确认密码" ref="rePwd" />
             <i
@@ -33,8 +45,10 @@
                 @click="changeRePwdState"
             ></i>
         </div>
+        <!-- 完成 -->
         <div class="forget_btn" @click="forget">完&nbsp;&nbsp;成</div>
     </form>
+    <!-- E 重置密码模块 -->
 </template>
 
 <script>
@@ -156,6 +170,11 @@ $border_line: skyblue;
         text-align: center;
         line-height: 50px;
         border-radius: 5px;
+        opacity: 0.8;
+        transition: all 0.3s;
+        &:hover {
+            opacity: 1;
+        }
     }
 }
 </style>

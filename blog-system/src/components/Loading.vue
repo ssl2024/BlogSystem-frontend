@@ -2,10 +2,11 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-05-08 19:16:32
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 00:50:09
- * @Description: Loading组件
+ * @LastEditTime: 2023-05-14 02:06:54
+ * @Description: 加载框组件
 -->
 <template>
+    <!-- 加载框组件 -->
     <div class="loading">
         <div class="loading_spinner"></div>
         <span class="loading_tips">加载中...</span>
