@@ -1,3 +1,10 @@
+/*
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-04-09 22:48:58
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-13 14:53:17
+ * @Description:
+ */
 import { createApp } from 'vue'
 
 /* markdown 相关配置 */
@@ -36,7 +43,8 @@ VMdEditor.use(githubTheme, {
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import messageBox from '@/components/MessageBox' // 引入消息提示框
+import messageBox from '@/components/MessageBox' // 引入消息提示框组件
+import pagination from '@/components/Pagination' // 引入分页组件
 import '@/assets/font/iconfont.css' // 引入字体图标
 
 createApp(App)
@@ -44,4 +52,5 @@ createApp(App)
     .use(router)
     .use(VMdEditor)
     .component('message-box', messageBox)
+    .component('pagination', pagination)
     .mount('#app')

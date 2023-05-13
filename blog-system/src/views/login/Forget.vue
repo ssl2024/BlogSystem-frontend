@@ -68,7 +68,7 @@ export default {
 /* 登录页面--忘记密码
 ----------------------------------------------------------------*/
 .forget_block {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     padding: 30px 70px;

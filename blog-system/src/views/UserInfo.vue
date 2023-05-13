@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:01:27
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-11 23:52:07
+ * @LastEditTime: 2023-05-12 23:08:58
  * @Description: 
 -->
 <template>
@@ -51,7 +51,7 @@
                 </li>
             </router-link>
             <li class="go_back" @click="goBack">
-                <i class="iconfont icon-zhuanruzijin"></i>
+                <i class="iconfont icon-Exit-"></i>
                 <span>返回个人主页</span>
             </li>
         </ul>
@@ -103,7 +103,8 @@ $bg_check_color: #f0f0f5;
 
 /* 左边当前选中菜单项 */
 .current {
-    background-color: $bg_check_color;
+    background-color: rgba($color: #62aec5, $alpha: 0.7);
+    color: #fff;
 }
 
 /* 用户信息页面
@@ -111,7 +112,7 @@ $bg_check_color: #f0f0f5;
 .setting_view {
     display: flex;
     height: 475px;
-    margin-top: 125px;
+    margin-top: 160px;
 }
 
 /* 左边菜单栏
@@ -121,7 +122,7 @@ $bg_check_color: #f0f0f5;
     width: 200px;
     margin-right: 15px;
     padding: 10px;
-    background-color: rgba($color: $bg_color, $alpha: 0.5);
+    background-color: rgba($color: $bg_color, $alpha: 0.85);
     font-size: 15px;
     /* 左边菜单栏 列表项 */
     .menu_item {
@@ -129,8 +130,10 @@ $bg_check_color: #f0f0f5;
         padding-left: 30px;
         line-height: 48px;
         cursor: pointer;
+        transition: all 0.3s;
         &:hover {
-            background-color: $bg_check_color;
+            background-color: rgba($color: #62aec5, $alpha: 0.7);
+            color: #fff;
         }
     }
     /* 左边菜单栏 返回个人主页 */
@@ -142,8 +145,8 @@ $bg_check_color: #f0f0f5;
         height: 48px;
         margin: 0 10px;
         padding: 0 20px;
-        background-color: #e8f3ff;
-        color: #1d7dfa;
+        background-color: rgba($color: #62aec5, $alpha: 0.7);
+        color: #fff;
         text-align: center;
         line-height: 48px;
         cursor: pointer;
@@ -155,6 +158,6 @@ $bg_check_color: #f0f0f5;
 .setting_profile {
     flex: 1;
     padding: 0 20px;
-    background-color: rgba($color: #fff, $alpha: 0.8);
+    background-color: rgba($color: $bg_color, $alpha: 0.85);
 }
 </style>

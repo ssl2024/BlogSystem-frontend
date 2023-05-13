@@ -385,11 +385,11 @@ $bg_color: transparent;
             outline: none;
             transition: all 0.3s;
             &:hover {
-                border-color: #feaaaa;
+                border-color: #999;
             }
             &:focus {
                 width: 375px;
-                border-color: skyblue;
+                border-color: #b8e3f4;
                 ~ .search_icon {
                     right: 124px;
                     background-color: rgba($color: #47acbf, $alpha: 0.4);

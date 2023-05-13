@@ -51,19 +51,19 @@
                     <span>个人成就</span>
                 </div>
                 <div class="entry_count">
-                    <i class="iconfont icon-dangan"></i>
+                    <i class="iconfont icon-yuedureading19-copy"></i>
                     <span>共发表博文 {{ userInfo.entryCount }} 篇</span>
                 </div>
                 <div class="browse_count">
-                    <i class="iconfont icon-yudu"></i>
+                    <i class="iconfont icon-yuedujilu"></i>
                     <span>博文被阅读 {{ userInfo.browsedCount }} 次</span>
                 </div>
                 <div class="like_count">
-                    <i class="iconfont icon-dianzan1"></i>
+                    <i class="iconfont icon-dianzan-mian"></i>
                     <span>博文被点赞 {{ userInfo.likedCount }} 次</span>
                 </div>
                 <div class="follow_count">
-                    <i class="iconfont icon-shoucang"></i>
+                    <i class="iconfont icon-shoucangku"></i>
                     <span>博文被收藏 {{ userInfo.likedCount }} 次</span>
                 </div>
             </div>
@@ -527,7 +527,7 @@ $bg_color: #fff;
             line-height: 20px;
 
             .iconfont {
-                color: #7bb9ff;
+                color: skyblue;
             }
 
             /* 个人成就下面数据中间的字体 */

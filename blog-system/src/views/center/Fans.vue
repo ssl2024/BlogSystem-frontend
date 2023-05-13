@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 15:20:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-11 17:44:24
+ * @LastEditTime: 2023-05-12 09:17:20
  * @Description: 个人主页-用户粉丝
 -->
 <template>
@@ -19,11 +19,13 @@
                 message="好看的皮囊千篇一律，有趣的灵魂万里挑一，快来关注他吧"
             ></default-content>
         </div>
-        <div class="list_pagination" v-if="isShowPagination">
-            <div class="operate_prev" @click="prevPage">上一页</div>
-            <span>{{ currentPage }} / {{ pages }}</span>
-            <div class="operate_next" @click="nextPage">下一页</div>
-        </div>
+        <pagination
+            v-if="isShowPagination"
+            :currentPage="currentPage"
+            :pages="pages"
+            @prevPage="prevPage"
+            @nextPage="nextPage"
+        ></pagination>
     </div>
 </template>
 
@@ -181,23 +183,5 @@ export default {
     min-height: 460px;
     height: 460px;
     // background-color: rgba($color: #fff, $alpha: 0.85);
-}
-
-.list_pagination {
-    display: flex;
-    margin-top: 15px;
-    font-size: 13px;
-    justify-content: space-between;
-    align-items: center;
-
-    [class^='operate'] {
-        width: 105px;
-        height: 35px;
-        border: 1px solid skyblue;
-        text-align: center;
-        line-height: 35px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
 }
 </style>

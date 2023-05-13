@@ -9,11 +9,6 @@
                     :entry="item"
                 ></blog>
             </div>
-            <!-- <div class="list_pagination" v-if="isShowPagination">
-                <div class="operate_prev" @click="prevPage">上一页</div>
-                <span class="page_number">{{ currentPage }} / {{ pages }}</span>
-                <div class="operate_next" @click="nextPage">下一页</div>
-            </div> -->
             <pagination
                 v-if="isShowPagination"
                 :currentPage="currentPage"
@@ -64,12 +59,10 @@ import http from '@/utils/http'
 
 import blog from '@/components/Blog'
 import listHeader from '@/components/ListHeader'
-import pagination from '@/components/Pagination'
 export default {
     components: {
         blog,
         listHeader,
-        pagination,
     },
     props: {
         pageSize: {
@@ -264,44 +257,6 @@ $bg_color: #fff;
 ----------------------------------------------------------------*/
 .list_container {
     width: 860px;
-
-    /* 左边博客 分页 */
-    // .list_pagination {
-    //     display: flex;
-    //     padding: 5px;
-    //     border: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
-    //     // border-bottom: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
-    //     // background-color: rgba($color: $bg_color, $alpha: 0.1);
-    //     background-color: transparent;
-    //     border-radius: 0 0 5px 5px;
-    //     box-shadow: 0 4px 4px rgb(0 0 0 / 0.1), 0 2px 2px rgb(0 0 0 / 0.1);
-    //     font-size: 13px;
-    //     justify-content: space-between;
-    //     align-items: center;
-
-    //     /* 左边博客 分页--上/下一页按钮 */
-    //     [class^='operate'] {
-    //         position: relative;
-    //         width: 120px;
-    //         height: 45px;
-    //         background-color: rgba($color: #fefefe, $alpha: 0.8);
-    //         text-align: center;
-    //         line-height: 45px;
-    //         cursor: pointer;
-    //         border-radius: 5px;
-    //         transition: all 0.3s;
-    //         &:hover {
-    //             background-color: rgba($color: #62aec5, $alpha: 0.7);
-    //             color: #fff;
-    //         }
-    //     }
-
-    //     /* 左边博客 分页--页码 */
-    //     .page_number {
-    //         color: #fff;
-    //         opacity: 0.8;
-    //     }
-    // }
 }
 
 /* 右边侧边栏

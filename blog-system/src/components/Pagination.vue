@@ -73,7 +73,7 @@ export default {
         border-radius: 5px;
         transition: all 0.3s;
         &:hover {
-            background-color: rgba($color: #62aec5, $alpha: 0.7);
+            background-color: rgba($color: #45b8cc, $alpha: 0.7);
             color: #fff;
         }
     }

@@ -281,7 +281,10 @@ export default {
 
 <style lang="scss" scoped="scoped">
 /* 边框分隔线颜色 */
-$border_line: #e8e8ed;
+$border_line: rgba(
+    $color: #b3e2f2,
+    $alpha: 1,
+);
 
 /* 新增按钮颜色 */
 $color_update: skyblue;
@@ -327,10 +330,10 @@ $color_pagination: #35bcb5;
                 border-radius: 5px;
                 outline: none;
                 &:hover {
-                    border: 1px solid salmon;
+                    border: 1px solid #8693a4;
                 }
                 &:focus {
-                    border: 1px solid skyblue;
+                    border: 1px solid #b4e5f6;
                 }
             }
         }
@@ -339,13 +342,17 @@ $color_pagination: #35bcb5;
         .search_btn {
             width: 80px;
             height: 35px;
-            background-color: #5bc0de;
+            background-color: rgba($color: #5bc0de, $alpha: 0.75);
             color: #fff;
             font-size: 15px;
             text-align: center;
             line-height: 35px;
             cursor: pointer;
             border-radius: 5px;
+            transition: all 0.15s;
+            &:hover {
+                background-color: rgba($color: #5bc0de, $alpha: 1);
+            }
         }
     }
 
@@ -383,10 +390,10 @@ $color_pagination: #35bcb5;
             line-height: 45px;
             justify-content: space-between;
             &:nth-child(odd) {
-                background-color: #f3f3f3;
+                background-color: rgba($color: #b4e5f3, $alpha: 0.7);
             }
             &:nth-child(even) {
-                background-color: #c2c8d1;
+                background-color: rgba($color: #e2f4ff, $alpha: 0.7);
             }
 
             /* 博客管理 博客展示--博客列表项(标题/类型/日期) */
@@ -454,6 +461,13 @@ $color_pagination: #35bcb5;
                 line-height: 30px;
                 cursor: pointer;
                 border-radius: 4px;
+                transition: all 0.25s;
+                &:hover {
+                    border: 1px solid transparent;
+                    background-color: rgba($color: #b4e2f2, $alpha: 0.7);
+                    color: #fff;
+                }
+
                 &:first-child {
                     margin-right: 10px;
                 }

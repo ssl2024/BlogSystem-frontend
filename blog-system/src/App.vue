@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-12 01:06:45
+ * @LastEditTime: 2023-05-13 14:56:36
  * @Description: 根组件
 -->
 <template>
@@ -17,7 +17,7 @@
         :searchContent="searchContent"
         @showMessageBox="showMessageBox"
     ></router-view>
-    <footers v-if="isLogin"></footers>
+    <footers v-if="isLogin" :htmlHeight="htmlHeight"></footers>
     <loading v-show="isLoading"></loading>
     <!-- 消息提示框 -->
     <message-box
@@ -25,25 +25,10 @@
         :messageId="messageId"
         :type="messageType"
     ></message-box>
-    <ul class="cs">
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-    </ul>
 </template>
 
 <script>
-import { reactive, toRefs, computed, onMounted, watch } from 'vue'
+import { reactive, toRefs, computed, onMounted, watch, onUpdated } from 'vue'
 import { useStore } from 'vuex'
 
 import http from '@/utils/http'
@@ -82,6 +67,8 @@ export default {
             messageId: -1,
             /* 消息提示框类型 */
             messageType: '',
+            /* html标签高度 */
+            htmlHeight: 0,
         })
 
         watch(
@@ -95,6 +82,11 @@ export default {
         onMounted(() => {
             // 获取用户热榜信息(浏览器F5刷新之后)
             getHotListInfo()
+        })
+
+        onUpdated(() => {
+            // 每次更新之后获取 html 标签的高度
+            data.htmlHeight = document.documentElement.offsetHeight
         })
 
         /* computed 登录状态 */
@@ -173,6 +165,16 @@ export default {
 </script>
 
 <style lang="scss">
+html {
+    position: relative;
+    // background-color: skyblue;
+    // background: url(@/assets/bg.webp)
+    //     no-repeat fixed;
+    background: url(https://pic3.zhimg.com/v2-3afda695650a99e5c7349b26745090ca_r.jpg)
+        no-repeat fixed;
+    background-size: 100vw 100vh;
+}
+
 body {
     width: 1170px;
     margin: 0 auto;
@@ -183,65 +185,5 @@ body {
     background-color: transparent;
     // background-color: transparent;
     // opacity: 0.8;
-}
-
-html {
-    // background-color: skyblue;
-    // background: url(@/assets/bg.webp)
-    //     no-repeat fixed;
-    background: url(https://pic3.zhimg.com/v2-3afda695650a99e5c7349b26745090ca_r.jpg)
-        no-repeat fixed;
-    background-size: 100vw 100vh;
-}
-.cs {
-    position: absolute;
-    top: 120px;
-    left: 50px;
-    li {
-        display: block;
-        width: 120px;
-        height: 30px;
-        margin-bottom: 15px;
-
-        &:nth-child(1) {
-            background-color: #cbe5d9;
-        }
-        &:nth-child(2) {
-            background-color: #d9cbe5;
-        }
-        &:nth-child(3) {
-            background-color: #e5d9cb;
-        }
-        &:nth-child(4) {
-            background-color: #cbe5e0;
-        }
-        &:nth-child(5) {
-            background-color: #e5cbe1;
-        }
-        &:nth-child(6) {
-            background-color: #cbe5eb;
-        }
-        &:nth-child(7) {
-            background-color: #f8bbd0;
-        }
-        &:nth-child(8) {
-            background-color: #e1bee7;
-        }
-        &:nth-child(9) {
-            background-color: #a5d6a7;
-        }
-        &:nth-child(10) {
-            background-color: #2e7d32;
-        }
-        &:nth-child(11) {
-            background-color: #ffcc80;
-        }
-        &:nth-child(12) {
-            background-color: #ff5722;
-        }
-        &:nth-child(13) {
-            background-color: #d2691e;
-        }
-    }
 }
 </style>

@@ -1,3 +1,10 @@
+<!--
+ * @Author: ssl slshi2024@163.com
+ * @Date: 2023-05-09 19:26:08
+ * @LastEditors: ssl slshi2024@163.com
+ * @LastEditTime: 2023-05-12 11:33:50
+ * @Description: 确认对话框组件
+-->
 <template>
     <div class="modal" v-show="confirmState">
         <div class="modal_content">
@@ -80,7 +87,7 @@ export default {
 
     /* 确认对话框 内容主体 */
     .modal_content {
-        max-width: 500px;
+        max-width: 450px;
         width: 100%;
         background-color: rgba($color: #fff, $alpha: 0.9);
         // color: rgba($color: #000000, $alpha: 0.7);
@@ -90,7 +97,7 @@ export default {
         /* 确认对话框 内容主体--标题 */
         .modal_header {
             position: relative;
-            padding: 20px;
+            padding: 15px 20px;
 
             /* 确认对话框 内容主体--标题(标题内容) */
             h3 {
@@ -118,7 +125,7 @@ export default {
 
         /* 确认对话框 内容主体--提示内容 */
         .modal_body {
-            padding: 20px;
+            padding: 15px 20px;
 
             p {
                 margin: 0;
@@ -130,7 +137,7 @@ export default {
         /* 确认对话框 内容主体--操作项(确认/取消) */
         .modal_footer {
             display: flex;
-            padding: 20px;
+            padding: 15px 20px;
             justify-content: flex-end;
 
             /* 确认对话框 内容主体--所有按钮 */
@@ -149,7 +156,7 @@ export default {
                 margin-right: 10px;
                 background-color: rgba($color: #e74c3c, $alpha: 0.7);
                 color: #fff;
-                transition: all 0.15s;
+                transition: all 0.2s;
                 &:hover {
                     background-color: rgba($color: #e74c3c, $alpha: 1);
                 }
@@ -159,7 +166,7 @@ export default {
             .confirm_btn {
                 background-color: rgba($color: #45b8cc, $alpha: 0.7);
                 color: #fff;
-                transition: all 0.15s;
+                transition: all 0.2s;
                 &:hover {
                     background-color: rgba($color: #45b8cc, $alpha: 1);
                 }

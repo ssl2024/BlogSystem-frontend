@@ -343,7 +343,7 @@ $border_line: #b6e4f4;
 /* 登录页面--注册
 ----------------------------------------------------------------*/
 .register_block {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     padding: 30px 70px;

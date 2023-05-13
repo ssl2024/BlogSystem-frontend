@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:20
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-10 19:44:45
+ * @LastEditTime: 2023-05-12 09:56:01
  * @Description: 个人资料
 -->
 <template>
@@ -48,7 +48,10 @@ export default {
 
         /* click 修改头像 */
         const updateUserAvatar = () => {
-            alert('修改头像功能暂未实现')
+            emit('showMessageBox', {
+                message: '修改头像功能暂未实现，努力开发中',
+                type: 'error',
+            })
         }
         /* click 保存修改 */
         const updateUser = () => {
@@ -87,7 +90,10 @@ export default {
 
 <style lang="scss" scoped="scoped">
 /* 边框分隔线颜色 */
-$border_line: #e8e8ed;
+$border_line: rgba(
+    $color: #b3e2f2,
+    $alpha: 1,
+);
 
 /* 个人信息页面--个人资料 
 ----------------------------------------------------------------*/
@@ -134,8 +140,9 @@ $border_line: #e8e8ed;
                 text-align: center;
                 line-height: 35px;
                 cursor: pointer;
+                transition: all 0.1s;
                 &:hover {
-                    color: skyblue;
+                    color: #5db5cb;
                 }
             }
         }
@@ -162,10 +169,10 @@ $border_line: #e8e8ed;
                 border-radius: 5px;
                 outline: none;
                 &:hover {
-                    border: 1px solid salmon;
+                    border: 1px solid #8491a2;
                 }
                 &:focus {
-                    border: 1px solid skyblue;
+                    border: 1px solid #b4e5f4;
                 }
             }
         }
@@ -177,13 +184,17 @@ $border_line: #e8e8ed;
         bottom: 30px;
         width: 100px;
         height: 35px;
-        background-color: #1e80ff;
+        background-color: rgba($color: #1e80ff, $alpha: 0.7);
         color: #fff;
         font-size: 14px;
         text-align: center;
         line-height: 35px;
         cursor: pointer;
         border-radius: 5px;
+        transition: all 0.2s;
+        &:hover {
+            background-color: rgba($color: #1e80ff, $alpha: 1);
+        }
     }
 }
 </style>

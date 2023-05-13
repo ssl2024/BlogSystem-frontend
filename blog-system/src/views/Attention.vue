@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:53:57
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-11 23:49:35
+ * @LastEditTime: 2023-05-12 09:11:25
  * @Description: 关注页面
 -->
 <template>
@@ -14,11 +14,13 @@
                     :key="item.id"
                     :entry="item"
                 ></blog>
-                <div class="list_pagination" v-if="isShowPagination">
-                    <div class="operate_prev" @click="prevPage">上一页</div>
-                    <span>{{ currentPage }} / {{ pages }}</span>
-                    <div class="operate_next" @click="nextPage">下一页</div>
-                </div>
+                <pagination
+                    v-if="isShowPagination"
+                    :currentPage="currentPage"
+                    :pages="pages"
+                    @prevPage="prevPage"
+                    @nextPage="nextPage"
+                ></pagination>
             </div>
             <div class="aside"></div>
         </div>
@@ -204,26 +206,6 @@ export default {
     /* 关注页面 文章内容 */
     .content {
         width: 870px;
-
-        /* 关注页面 文章内容--分页 */
-        .list_pagination {
-            display: flex;
-            margin-top: 15px;
-            font-size: 13px;
-            justify-content: space-between;
-            align-items: center;
-
-            /* 关注页面 文章内容--分页(上/下一页按钮) */
-            [class^='operate'] {
-                width: 105px;
-                height: 35px;
-                border: 1px solid skyblue;
-                text-align: center;
-                line-height: 35px;
-                cursor: pointer;
-                border-radius: 5px;
-            }
-        }
     }
     .aside {
         width: 300px;

@@ -2,11 +2,11 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-11 23:50:48
+ * @LastEditTime: 2023-05-13 14:04:22
  * @Description: 博客详情页
 -->
 <template>
-    <div class="detail_block" @scroll="scroll">
+    <div class="detail_block">
         <!-- 博客内容 -->
         <div class="content">
             <div class="content_header">
@@ -36,6 +36,9 @@
             </div>
             <v-md-editor
                 :model-value="entry.content"
+                :default-show-toc="true"
+                :toc-nav-position-right="true"
+                :include-level="[2, 3, 4]"
                 mode="preview"
             ></v-md-editor>
             <div id="comment" class="comment_form">
@@ -294,12 +297,26 @@
                     </div>
                 </div>
             </div>
+            <div class="aside_mid">
+                <div class="toc" :class="isFixed ? 'fixed' : ''">
+                    <div class="toc_title">目录导航</div>
+                    <div class="toc_list" ref="tocElement"></div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { reactive, toRefs, onMounted, ref, computed, onUnmounted } from 'vue'
+import {
+    reactive,
+    toRefs,
+    onMounted,
+    ref,
+    computed,
+    onUnmounted,
+    watch,
+} from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -317,8 +334,8 @@ export default {
         const replyComment = ref('')
         /* DOM 二级评论回复框 */
         let subReplyComment = []
-        // const md = new MarkdownIt()
-        let timeId
+        /* DOM 目录导航栏 */
+        let tocElement = ref(null)
 
         const data = reactive({
             /* 博客信息 */
@@ -389,9 +406,18 @@ export default {
              * false 不显示
              */
             isShowSubDeleteBtn: [],
+            /* 定时器引用 */
+            timeId: null,
+            /**
+             * 是否显示目录导航栏
+             * true  显示
+             * false 不显示
+             */
+            isFixed: false,
         })
 
         onMounted(() => {
+            window.addEventListener('scroll', handleScroll)
             // 获取文章的相关信息
             http.all([
                 getEntryDetail(data.id),
@@ -445,7 +471,7 @@ export default {
                 }
             })
             // 10秒后文章浏览次数加1
-            timeId = setTimeout(() => {
+            data.timeId = setTimeout(() => {
                 data.entry.browseCount++
                 updateEntry()
             }, 10000)
@@ -453,8 +479,20 @@ export default {
 
         onUnmounted(() => {
             // 清除增加浏览次数的定时器(在当前页面没有停留10s则不会增加浏览次数)
-            clearTimeout(timeId)
+            data.timeId && clearTimeout(data.timeId)
+            // 清除 window.scroll 事件
+            window.addEventListener('scroll', handleScroll)
         })
+
+        watch(
+            () => data.entry.content,
+            () => {
+                let toc = document.querySelector(
+                    '#app > div.detail_block > div.content > div.v-md-editor.v-md-editor--preview.v-md-editor--left-area-reverse > div.v-md-editor__left-area > div.v-md-editor__left-area-body > div > div.scrollbar__wrap > div > ul'
+                )
+                tocElement.value.appendChild(toc)
+            }
+        )
 
         /* computed 博客更新时间 */
         const dateTime = computed(() => {
@@ -530,8 +568,16 @@ export default {
             })
         }
 
-        const scroll = () => {
-            console.log(1)
+        /* scroll 屏幕滚动事件 */
+        const handleScroll = () => {
+            // 判断屏幕的滚动距离
+            if (document.documentElement.scrollTop > 430) {
+                // 给目录导航栏添加 CSS 样式
+                data.isFixed = true
+            } else {
+                // 给目录导航栏移除 CSS 样式
+                data.isFixed = false
+            }
         }
 
         /* filter 评论过滤 */
@@ -1041,6 +1087,7 @@ export default {
             comment,
             replyComment,
             subReplyComment,
+            tocElement,
             dateTime,
             likeCount,
             collectCount,
@@ -1077,6 +1124,59 @@ export default {
 <style lang="scss">
 pre {
     padding: 15px;
+}
+
+/* 目录固定样式 */
+.fixed {
+    position: fixed;
+    top: 20px;
+}
+
+/* 导航栏 */
+.toc {
+    width: 250px;
+    padding: 0 15px;
+    background-color: #fff;
+
+    /* 导航栏 标题 */
+    .toc_title {
+        height: 55px;
+        border-bottom: 1px solid rgba($color: #62aec5, $alpha: 0.7);
+        font-size: 18px;
+        line-height: 55px;
+    }
+
+    /* 导航栏 列表 */
+    .toc_list {
+        overflow-x: hidden;
+        overflow-y: auto;
+        width: 260px;
+        max-height: 418px;
+        margin-top: 5px;
+
+        /* 导航栏 列表--列表项 */
+        .v-md-editor__toc-nav-item {
+            font-size: 12px;
+            transition: all 0.1s;
+            &:hover {
+                background-color: rgba($color: #62aec5, $alpha: 0.7);
+                color: #fff;
+            }
+        }
+
+        /* 设置滚动条宽度和颜色 */
+        &::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+            background-color: #fff;
+        }
+
+        /* 设置滚动条滑块的样式 */
+        &::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background-color: rgba($color: #62aec5, $alpha: 0.6);
+        }
+    }
 }
 </style>
 
@@ -1383,6 +1483,7 @@ $border_line: #e8e8ed;
 /* 右边侧边栏
 ----------------------------------------------------------------*/
 .aside {
+    position: relative;
     width: 280px;
 }
 
@@ -1391,6 +1492,7 @@ $border_line: #e8e8ed;
 .aside_top {
     // position: fixed;
     // width: 240px;
+    margin-bottom: 20px;
     padding: 25px 20px;
     background-color: $bg_color;
 

@@ -58,10 +58,10 @@
             <div class="publish_btn">
                 <div class="btn_item" @click="cancel">取消</div>
                 <div v-show="isPublish" class="btn_item" @click="reConfirm">
-                    确定并发布
+                    发布
                 </div>
                 <div v-show="!isPublish" class="btn_item" @click="updateEntry">
-                    确定并更新
+                    更新
                 </div>
             </div>
         </div>
@@ -317,13 +317,18 @@ $border_line: #e8e8ed;
         .confirm_btn {
             width: 80px;
             height: 35px;
-            background-color: #1d7dfa;
+            background-color: rgba($color: #1d7dfa, $alpha: 0.7);
             color: #fff;
             font-size: 14px;
             text-align: center;
             line-height: 35px;
             cursor: pointer;
             border-radius: 5px;
+            transition: all 0.2s;
+            &:hover {
+                background-color: rgba($color: #1d7dfa, $alpha: 1);
+            }
+
             &:nth-child(1) {
                 margin-right: 20px;
             }
@@ -404,9 +409,10 @@ $border_line: #e8e8ed;
             .type_item {
                 height: 30px;
                 padding-left: 10px;
-                transition: all 0.2s;
+                transition: all 0.25s;
                 &:hover {
-                    background-color: skyblue;
+                    background-color: rgba($color: #62aec5, $alpha: 0.7);
+                    color: #fff;
                 }
             }
         }
@@ -472,13 +478,22 @@ $border_line: #e8e8ed;
 
         /* 对话框 底部按钮项 */
         .btn_item {
-            width: 90px;
-            height: 30px;
-            border: 1px solid skyblue;
+            // width: 90px;
+            // height: 30px;
+            width: 80px;
+            height: 35px;
+            background-color: rgba($color: #1d7dfa, $alpha: 0.7);
+            color: #fff;
+            font-size: 14px;
             text-align: center;
-            line-height: 30px;
+            line-height: 35px;
             cursor: pointer;
-            border-radius: 3px;
+            border-radius: 5px;
+            transition: all 0.2s;
+            &:hover {
+                background-color: rgba($color: #1d7dfa, $alpha: 1);
+            }
+
             &:nth-child(1) {
                 margin-right: 20px;
             }

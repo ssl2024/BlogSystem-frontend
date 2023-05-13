@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 19:51:45
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-11 17:29:41
+ * @LastEditTime: 2023-05-12 09:12:02
  * @Description: 个人主页-用户发表的博客
 -->
 <template>
@@ -11,11 +11,13 @@
             <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
             <default-content v-if="total === 0"></default-content>
         </div>
-        <div class="list_pagination" v-if="isShowPagination">
-            <div class="operate_prev" @click="prevPage">上一页</div>
-            <span>{{ currentPage }} / {{ pages }}</span>
-            <div class="operate_next" @click="nextPage">下一页</div>
-        </div>
+        <pagination
+                v-if="isShowPagination"
+                :currentPage="currentPage"
+                :pages="pages"
+                @prevPage="prevPage"
+                @nextPage="nextPage"
+            ></pagination>
     </div>
 </template>
 
@@ -175,22 +177,5 @@ export default {
 <style lang="scss" scoped="scoped">
 .list {
     min-height: 625px;
-}
-.list_pagination {
-    display: flex;
-    margin-top: 15px;
-    font-size: 13px;
-    justify-content: space-between;
-    align-items: center;
-
-    [class^='operate'] {
-        width: 105px;
-        height: 35px;
-        border: 1px solid skyblue;
-        text-align: center;
-        line-height: 35px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
 }
 </style>

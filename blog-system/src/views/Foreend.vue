@@ -12,11 +12,13 @@
                     :entry="item"
                 ></blog>
             </div>
-            <div class="list_pagination" v-if="isShowPagination">
-                <div class="operate_prev" @click="prevPage">上一页</div>
-                <span>{{ currentPage }} / {{ pages }}</span>
-                <div class="operate_next" @click="nextPage">下一页</div>
-            </div>
+            <pagination
+                v-if="isShowPagination"
+                :currentPage="currentPage"
+                :pages="pages"
+                @prevPage="prevPage"
+                @nextPage="nextPage"
+            ></pagination>
         </div>
         <div class="aside">
             <div class="hot_list">
@@ -259,26 +261,6 @@ $bg_color: #fff;
 ----------------------------------------------------------------*/
 .list_container {
     width: 860px;
-
-    /* 左边博客 分页 */
-    .list_pagination {
-        display: flex;
-        margin-top: 15px;
-        font-size: 13px;
-        justify-content: space-between;
-        align-items: center;
-
-        /* 左边博客 分页 上/下一页按钮 */
-        [class^='operate'] {
-            width: 105px;
-            height: 35px;
-            border: 1px solid skyblue;
-            text-align: center;
-            line-height: 35px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-    }
 }
 
 /* 右边侧边栏
