@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-20 22:00:29
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:28:52
+ * @LastEditTime: 2023-05-14 15:16:50
  * @Description: 博客发布页面
 -->
 <template>
@@ -222,6 +222,7 @@ export default {
         window.onresize = () => {
             data.height = window.innerHeight - 60 + 'px'
         }
+
         /* click 右上角取消 */
         const goBack = () => {
             router.back()
@@ -314,6 +315,21 @@ export default {
 /* 边框分隔线颜色 */
 $border_line: #e8e8ed;
 
+/* 边框颜色 */
+$border_color: #e5e6eb;
+
+/* 边框 hover 颜色 */
+$border_hover_color: #b8e3f3;
+
+/* 白色字体颜色 */
+$white_color: #fff;
+
+/* 白色背景色 */
+$bg_white_color: #fff;
+
+/* 蓝色背景色 */
+$bg_blue_color: #1d7dfa;
+
 /* 博客发布页
 ----------------------------------------------------------------*/
 .edit_wrap {
@@ -324,17 +340,17 @@ $border_line: #e8e8ed;
     height: 100%;
 }
 
-/* 页眉
+/* 博客标题栏
 ----------------------------------------------------------------*/
 .edit_header {
     display: flex;
     height: 60px;
     padding: 0 40px;
     justify-content: space-between;
-    background-color: #fff;
+    background-color: $bg_white_color;
     align-items: center;
 
-    /* 页眉 标题框 */
+    /* 博客标题栏 标题框 */
     input {
         width: 900px;
         height: 60px;
@@ -344,16 +360,16 @@ $border_line: #e8e8ed;
         outline: none;
     }
 
-    /* 页眉 右边按钮 */
+    /* 博客标题栏 右边按钮 */
     .right_box {
         display: flex;
 
-        /* 页眉 右边按钮项 */
+        /* 博客标题栏 右边按钮项 */
         .confirm_btn {
             width: 80px;
             height: 35px;
-            background-color: rgba($color: #1d7dfa, $alpha: 0.7);
-            color: #fff;
+            background-color: rgba($color: $bg_blue_color, $alpha: 0.7);
+            color: $white_color;
             font-size: 14px;
             text-align: center;
             line-height: 35px;
@@ -361,9 +377,8 @@ $border_line: #e8e8ed;
             border-radius: 5px;
             transition: all 0.2s;
             &:hover {
-                background-color: rgba($color: #1d7dfa, $alpha: 1);
+                background-color: rgba($color: $bg_blue_color, $alpha: 1);
             }
-
             &:nth-child(1) {
                 margin-right: 20px;
             }
@@ -379,7 +394,7 @@ $border_line: #e8e8ed;
     left: 50%;
     width: 470px;
     border: 1px solid #ddd;
-    background-color: #fff;
+    background-color: $bg_white_color;
     border-radius: 2px;
     font-size: 14px;
     box-shadow: 0 1px 2px #f1f1f1;
@@ -409,12 +424,12 @@ $border_line: #e8e8ed;
             width: 250px;
             height: 30px;
             padding-left: 10px;
-            border: 1px solid #e5e6eb;
+            border: 1px solid $border_color;
             cursor: pointer;
             border-radius: 3px;
             transition: all 0.3s;
             &:hover {
-                border-color: skyblue;
+                border-color: $border_hover_color;
             }
 
             /* 对话框 文章类型--当前选项(向下箭头) */
@@ -435,8 +450,8 @@ $border_line: #e8e8ed;
             overflow-y: scroll;
             width: 260px;
             height: 120px;
-            border: 1px solid #e5e6eb;
-            background-color: #fff;
+            border: 1px solid $border_color;
+            background-color: $bg_white_color;
             border-radius: 3px;
             z-index: 1;
 
@@ -447,7 +462,7 @@ $border_line: #e8e8ed;
                 transition: all 0.25s;
                 &:hover {
                     background-color: rgba($color: #62aec5, $alpha: 0.7);
-                    color: #fff;
+                    color: $white_color;
                 }
             }
         }
@@ -459,47 +474,19 @@ $border_line: #e8e8ed;
         padding: 20px 30px;
         align-items: center;
 
+        /* 对话框 文章封面--文章封面地址 */
         input {
             width: 250px;
             height: 30px;
             padding-left: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid $border_color;
             border-radius: 3px;
             outline: none;
             transition: all 0.3s;
             &:hover {
-                border-color: skyblue;
+                border-color: $border_hover_color;
             }
         }
-
-        // /* 对话框 文章封面--上传封面按钮 */
-        // .cover_btn {
-        //     position: relative;
-        //     width: 160px;
-        //     height: 85px;
-        //     border: 1px dashed #e5e6eb;
-        //     background-color: #fafafa;
-        //     color: #86909c;
-        //     cursor: pointer;
-
-        //     /* 对话框 文章封面--上传封面按钮(提示文字) */
-        //     &::before {
-        //         content: '上传首图';
-        //         position: absolute;
-        //         top: 45px;
-        //         left: 45px;
-        //         font-size: 15px;
-        //     }
-
-        //     /* 对话框 文章封面--上传封面按钮(+号) */
-        //     .iconfont {
-        //         position: absolute;
-        //         top: 15px;
-        //         left: 65px;
-        //         font-size: 18px;
-        //         font-weight: 600;
-        //     }
-        // }
     }
 
     /* 对话框 文章摘要 */
@@ -513,9 +500,20 @@ $border_line: #e8e8ed;
             width: 318px;
             height: 130px;
             padding: 6px 10px;
+            border: 1px solid $border_color;
             font-size: 14px;
+            text-align: justify;
             line-height: 18px;
+            border-radius: 5px;
             resize: none;
+            outline: 1px solid transparent;
+            transition: all 0.3s;
+            &:hover {
+                border-color: $border_hover_color;
+            }
+            &:focus {
+                outline: 1px solid skyblue;
+            }
         }
     }
 
@@ -527,12 +525,10 @@ $border_line: #e8e8ed;
 
         /* 对话框 底部按钮项 */
         .btn_item {
-            // width: 90px;
-            // height: 30px;
             width: 80px;
             height: 35px;
-            background-color: rgba($color: #1d7dfa, $alpha: 0.7);
-            color: #fff;
+            background-color: rgba($color: $bg_blue_color, $alpha: 0.7);
+            color: $white_color;
             font-size: 14px;
             text-align: center;
             line-height: 35px;
@@ -540,9 +536,8 @@ $border_line: #e8e8ed;
             border-radius: 5px;
             transition: all 0.2s;
             &:hover {
-                background-color: rgba($color: #1d7dfa, $alpha: 1);
+                background-color: rgba($color: $bg_blue_color, $alpha: 1);
             }
-
             &:nth-child(1) {
                 margin-right: 20px;
             }

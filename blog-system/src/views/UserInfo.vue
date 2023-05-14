@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:01:27
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:44:57
+ * @LastEditTime: 2023-05-14 14:24:21
  * @Description: 用户信息页面
 -->
 <template>
@@ -102,11 +102,14 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
-/* 背景颜色 */
-$bg_color: #fff;
+/* 白色背景颜色 */
+$bg_white_color: #fff;
 
-/* 当前选中背景色 */
-$bg_check_color: #f0f0f5;
+/* 白色字体颜色 */
+$white_color: #fff;
+
+/* 蓝色背景颜色 */
+$bg_blue_color: #62aec5;
 
 /* 所有字体图标 */
 .iconfont {
@@ -115,11 +118,11 @@ $bg_check_color: #f0f0f5;
 
 /* 左边当前选中菜单项 */
 .current {
-    background-color: rgba($color: #62aec5, $alpha: 0.7);
-    color: #fff;
+    background-color: rgba($color: $bg_blue_color, $alpha: 0.7);
+    color: $white_color;
 }
 
-/* 用户信息页面
+/* 用户信息模块
 ----------------------------------------------------------------*/
 .setting_view {
     display: flex;
@@ -134,8 +137,9 @@ $bg_check_color: #f0f0f5;
     width: 200px;
     margin-right: 15px;
     padding: 10px;
-    background-color: rgba($color: $bg_color, $alpha: 0.85);
+    background-color: rgba($color: $bg_white_color, $alpha: 0.85);
     font-size: 15px;
+
     /* 左边菜单栏 列表项 */
     .menu_item {
         height: 48px;
@@ -144,10 +148,11 @@ $bg_check_color: #f0f0f5;
         cursor: pointer;
         transition: all 0.3s;
         &:hover {
-            background-color: rgba($color: #62aec5, $alpha: 0.7);
-            color: #fff;
+            background-color: rgba($color: $bg_blue_color, $alpha: 0.7);
+            color: $white_color;
         }
     }
+
     /* 左边菜单栏 返回个人主页 */
     .go_back {
         position: absolute;
@@ -157,8 +162,8 @@ $bg_check_color: #f0f0f5;
         height: 48px;
         margin: 0 10px;
         padding: 0 20px;
-        background-color: rgba($color: #62aec5, $alpha: 0.7);
-        color: #fff;
+        background-color: rgba($color: $bg_blue_color, $alpha: 0.7);
+        color: $white_color;
         text-align: center;
         line-height: 48px;
         cursor: pointer;
@@ -170,6 +175,6 @@ $bg_check_color: #f0f0f5;
 .setting_profile {
     flex: 1;
     padding: 0 20px;
-    background-color: rgba($color: $bg_color, $alpha: 0.85);
+    background-color: rgba($color: $bg_white_color, $alpha: 0.85);
 }
 </style>

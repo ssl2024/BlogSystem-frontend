@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:20
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:51:36
+ * @LastEditTime: 2023-05-14 14:32:27
  * @Description: 用户信息页-博客管理模块
 -->
 <template>
@@ -134,23 +134,6 @@ export default {
             getEntryList()
         })
 
-        /* 获取文章列表 */
-        const getEntryList = (title = '', type = '') => {
-            // 搜索条件处理
-            title = title !== '' ? [title] : null
-            type = type !== '' ? [type] : null
-            getLoginUserEntryList(
-                data.currentPage,
-                data.pageSize,
-                title,
-                type
-            ).then(res => {
-                data.entryList = res.data.data.records
-                data.pages = res.data.data.pages
-                data.total = res.data.data.total
-            })
-        }
-
         /* computed 文章时间 */
         const dateTime = computed(() => {
             return item => {
@@ -199,6 +182,23 @@ export default {
                         type: 'error',
                     })
                 }
+            })
+        }
+
+        /* 获取文章列表 */
+        const getEntryList = (title = '', type = '') => {
+            // 搜索条件处理
+            title = title !== '' ? [title] : null
+            type = type !== '' ? [type] : null
+            getLoginUserEntryList(
+                data.currentPage,
+                data.pageSize,
+                title,
+                type
+            ).then(res => {
+                data.entryList = res.data.data.records
+                data.pages = res.data.data.pages
+                data.total = res.data.data.total
             })
         }
 
@@ -289,10 +289,9 @@ export default {
         }
         return {
             ...toRefs(data),
-            dateTime,
-
             getEntryList,
             selectResult,
+            dateTime,
             searchEntry,
             blogUpdate,
             showConfirm,
@@ -320,7 +319,7 @@ $color_delete: salmon;
 /* 分页按钮颜色 */
 $color_pagination: #35bcb5;
 
-/* 个人信息页面--博客管理 
+/* 用户信息页--博客管理模块 
 ----------------------------------------------------------------*/
 .blog_setting {
     /* 博客管理 标题 */

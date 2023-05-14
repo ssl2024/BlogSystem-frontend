@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:59
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-04-28 15:41:38
+ * @LastEditTime: 2023-05-14 16:01:54
  * @Description: Vuex 全局变量定义
  */
 import { createStore } from 'vuex'
@@ -44,7 +44,7 @@ export default createStore({
         updateLoginState(state, loginState) {
             state.isLogin = loginState
         },
-        /* 更新 登录用户id */
+        /* 更新登录用户id */
         updateUserId(state, userId) {
             state.userId = userId
         },

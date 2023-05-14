@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:53:57
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:00:30
+ * @LastEditTime: 2023-05-14 14:56:09
  * @Description: 关注页面
 -->
 <template>
@@ -120,6 +120,7 @@ export default {
             })
         })
 
+        /* watch 导航栏搜索内容 */
         watch(
             () => props.searchContent,
             () => {
@@ -218,15 +219,17 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 博客区域 */
 .list_container {
     display: flex;
     margin-top: 125px;
 
-    /* 关注页面 文章内容 */
+    /* 博客列表 */
     .list_wrap {
         width: 870px;
     }
 }
+/* 侧边栏 */
 .aside {
     width: 300px;
 }

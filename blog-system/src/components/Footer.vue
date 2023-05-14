@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 22:21:56
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 02:03:55
+ * @LastEditTime: 2023-05-14 15:49:19
  * @Description: 页脚组件
 -->
 <template>
@@ -123,14 +123,11 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
-$bg_color: #fff;
-
 /* 页脚组件
 ----------------------------------------------------------------*/
 .footer {
     position: absolute;
     left: 0;
-    // bottom: -350px;
     bottom: -500px;
     width: 100%;
     padding: 30px 0;
@@ -138,7 +135,6 @@ $bg_color: #fff;
     border-bottom: 1px solid rgba(71, 172, 191, 0.1);
     background-color: rgba($color: #fff, $alpha: 0.28);
     box-shadow: 0 -4px 4px rgb(0 0 0 / 10%), 0 -2px 2px rgb(0 0 0 / 10%);
-    // transition: all 0.3s;
 
     /* 页脚 内容 */
     .content_main {
@@ -195,15 +191,19 @@ $bg_color: #fff;
                 /* 页脚 内容--关注(列表项) */
                 li {
                     margin-right: 10px;
+                    /* GItHub */
                     &:nth-child(1) .iconfont {
                         color: #231f20;
                     }
+                    /* 掘金 */
                     &:nth-child(2) .iconfont {
                         color: #006cff;
                     }
+                    /* CSDN */
                     &:nth-child(3) .iconfont {
                         color: #dd1700;
                     }
+                    /* 开源中国 */
                     &:nth-child(4) .iconfont {
                         color: #21b351;
                     }

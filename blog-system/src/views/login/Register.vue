@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-13 21:39:59
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 00:53:13
+ * @LastEditTime: 2023-05-14 14:41:10
  * @Description: 登录页面-注册模块
 -->
 <template>
@@ -177,6 +177,26 @@ export default {
             data.timeId && clearTimeout(data.timeId)
         })
 
+        /* 接收组件返回加密后的验证码值 */
+        const backImageCode = code => {
+            data.imgCode = code
+        }
+        /**
+         * 正则表达式判断
+         * param1 需要判断的字符串
+         * param2 正则表达式
+         * param3 字符串的最大长度(可选)
+         * return 布尔值
+         *  */
+        const matches = (str, reg, maxLen = -1) => {
+            // 没有指定最大长度
+            if (maxLen == -1) {
+                return reg.test(str)
+            } else {
+                return reg.test(str) && str.length < maxLen
+            }
+        }
+
         /* change 账号输入框 */
         const accountChange = () => {
             // 判断账号是否符合要求(6-12位字母或数字)
@@ -232,6 +252,7 @@ export default {
                     '密码不符合要求，密码只能为6-16位字母数字或小数点'
             }
         }
+
         /* click 立即注册 */
         const register = () => {
             // 判断账号框和密码框是否符合要求(success)
@@ -301,31 +322,11 @@ export default {
         const changeImageCode = () => {
             data.changeImgCode = !data.changeImgCode
         }
-        /* 接收组件返回加密后的验证码值 */
-        const backImageCode = code => {
-            data.imgCode = code
-        }
-        /**
-         * 正则表达式判断
-         * param1 需要判断的字符串
-         * param2 正则表达式
-         * param3 字符串的最大长度(可选)
-         * return 布尔值
-         *  */
-        const matches = (str, reg, maxLen = -1) => {
-            // 没有指定最大长度
-            if (maxLen == -1) {
-                return reg.test(str)
-            } else {
-                return reg.test(str) && str.length < maxLen
-            }
-        }
-
+        
         /* http 查询账号是否存在 */
         const accountState = account => {
             return http.get(`/users/query/${account}`)
         }
-
         /* http 注册用户 */
         const registerUser = user => {
             return http.post(`/users`, user)
@@ -352,7 +353,7 @@ export default {
 /* 边框分隔线颜色 */
 $border_line: #b6e4f4;
 
-/* 登录页面--注册
+/* 登录页面--注册模块
 ----------------------------------------------------------------*/
 .register_block {
     position: fixed;

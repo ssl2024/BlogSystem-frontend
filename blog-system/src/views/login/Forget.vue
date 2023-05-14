@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-13 21:39:44
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 00:51:07
+ * @LastEditTime: 2023-05-14 14:46:32
  * @Description: 登录页面-忘记密码模块
 -->
 <template>
@@ -55,6 +55,12 @@ export default {
             findState: 1,
         })
 
+
+        /* customEvent 更改找回密码状态 */
+        const next = () => {
+            data.findState = 2
+        }
+
         /* click 返回登录 */
         const goBackLogin = () => {
             emit('changeLoginState', { loginState: 1 })
@@ -63,22 +69,18 @@ export default {
         const changeFindMethod = newState => {
             data.findMethod = newState
         }
-        /* 更改找回密码状态 */
-        const next = () => {
-            data.findState = 2
-        }
         return {
             ...toRefs(data),
+            next,
             goBackLogin,
             changeFindMethod,
-            next,
         }
     },
 }
 </script>
 
 <style lang="scss" scoped="scoped">
-/* 登录页面--忘记密码
+/* 登录页面--忘记密码模块
 ----------------------------------------------------------------*/
 .forget_block {
     position: fixed;

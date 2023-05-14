@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-05-08 19:16:32
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 02:06:54
+ * @LastEditTime: 2023-05-14 15:50:47
  * @Description: 加载框组件
 -->
 <template>
@@ -18,7 +18,7 @@ export default {}
 </script>
 
 <style lang="scss" scoped="scoped">
-/* Loading 加载框组件
+/* 加载框组件
 ----------------------------------------------------------------*/
 .loading {
     display: flex;
@@ -33,7 +33,7 @@ export default {}
     justify-content: center;
     align-items: center;
 
-    /* Loading 转轮 */
+    /* 加载框 转轮 */
     .loading_spinner {
         width: 40px;
         height: 40px;
@@ -43,7 +43,7 @@ export default {}
         animation: spin 1s ease-in-out infinite;
     }
 
-    /* loading 提示 */
+    /* 加载框 提示文字 */
     .loading_tips {
         margin-top: 5px;
         color: #f6f6f6;

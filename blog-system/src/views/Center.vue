@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 14:23:09
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:07:25
+ * @LastEditTime: 2023-05-14 22:06:24
  * @Description: 用户主页
 -->
 <template>
@@ -254,14 +254,6 @@ export default {
             }
         })
 
-        /* customEvent 显示消息框 */
-        const showMessageBox = args => {
-            emit('showMessageBox', {
-                message: args.message,
-                type: args.type,
-            })
-        }
-
         /* init 页面数据初始化 */
         const init = userId => {
             // 判断是不是查看当前用户的主页
@@ -309,6 +301,13 @@ export default {
                 })
         }
 
+        /* customEvent 显示消息框 */
+        const showMessageBox = args => {
+            emit('showMessageBox', {
+                message: args.message,
+                type: args.type,
+            })
+        }
         /* customEvent 清空搜索框文本内容 */
         const clearSearchInput = () => {
             data.searchText = ''
@@ -417,7 +416,7 @@ $border_line: #e8e8ed;
 /* 背景颜色 */
 $bg_color: #fff;
 
-/* 个人主页-博文导航栏-当前选中项 */
+/* 个人主页 博文导航栏--当前选中项 */
 .current::after {
     width: 60% !important; // 权重太低不得不用 !important
 }
@@ -458,6 +457,9 @@ $bg_color: #fff;
             height: 100px;
             margin-bottom: 15px;
             border-radius: 50%;
+            img {
+                width: 100%;
+            }
         }
 
         /* 左边个人信息 用户信息--用户昵称 */
@@ -484,7 +486,7 @@ $bg_color: #fff;
             }
             /* 左边个人信息 用户信息--关注按钮(已关注) */
             .followed {
-                background-color: rgba($color: #fff, $alpha: 0.8);
+                background-color: rgba($color: $bg_color, $alpha: 0.8);
                 color: #8a919f;
             }
         }

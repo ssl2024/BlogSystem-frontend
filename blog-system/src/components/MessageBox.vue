@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-05-10 01:13:54
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 02:08:09
+ * @LastEditTime: 2023-05-14 15:51:41
  * @Description: 消息提示框组件
 -->
 <template>
@@ -87,6 +87,7 @@ export default {
     align-items: center;
     animation: show-message 3s ease-in-out forwards;
 
+    /* 字体图标 */
     :first-child {
         margin-right: 10px;
     }
@@ -98,6 +99,7 @@ export default {
     color: #67c23a;
 }
 
+/* 警告样式 */
 .warning {
     background-color: #fdf6ec;
     color: #e6a23c;
@@ -123,7 +125,7 @@ export default {
         top: 30px;
     }
     100% {
-        opacity: -1;
+        opacity: 0;
         top: -30px;
     }
 }

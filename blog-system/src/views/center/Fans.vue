@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 15:20:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:24:28
+ * @LastEditTime: 2023-05-14 14:52:56
  * @Description: 用户主页-粉丝模块
 -->
 <template>
@@ -181,11 +181,8 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
-/* 个人主页页面--粉丝列表
-----------------------------------------------------------------*/
+/* 粉丝列表 */
 .fans_list {
     min-height: 460px;
-    height: 460px;
-    // background-color: rgba($color: #fff, $alpha: 0.85);
 }
 </style>

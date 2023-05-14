@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-26 15:26:02
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:57:48
+ * @LastEditTime: 2023-05-14 15:43:26
  * @Description: 用户组件
 -->
 <template>
@@ -138,10 +138,8 @@ export default {
 /* 边框分隔线颜色 */
 $border_line: #cbe5eb;
 
-/* 背景颜色 */
-// $bg_color: #fff;
-
-/* 用户列表 列表项 */
+/* 用户组件
+----------------------------------------------------------------*/
 .user_item {
     display: flex;
     height: 80px;
@@ -152,13 +150,13 @@ $border_line: #cbe5eb;
     justify-content: space-between;
     align-items: center;
 
-    /* 用户列表 列表项--用户信息 */
+    /* 用户 用户信息 */
     .user_info {
         display: flex;
         font-size: 16px;
         align-items: center;
 
-        /* 用户列表 列表项--用户信息(头像) */
+        /* 用户 用户信息--头像 */
         img {
             width: 60px;
             height: 60px;
@@ -167,7 +165,7 @@ $border_line: #cbe5eb;
         }
     }
 
-    /* 用户列表 列表项--用户状态 */
+    /* 用户 用户状态 */
     .user_status {
         width: 90px;
         height: 30px;

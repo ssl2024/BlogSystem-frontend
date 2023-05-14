@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-14 01:29:25
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 00:49:11
+ * @LastEditTime: 2023-05-14 14:46:28
  * @Description: 登录页面-忘记密码模块(找回方式)
 -->
 <template>
@@ -55,21 +55,19 @@ export default {
             findMethodsState: false,
         })
 
-        /* click 下一步 */
-        const next = () => {
-            emit('next')
-        }
-
-        /* 切换验证方式 */
+        /* click 切换验证方式 */
         const changeMethod = e => {
             emit('changeFindMethod', e.target.innerText === '手机验证' ? 1 : 2)
             data.findMethodsState = false
+        }
+        /* click 下一步 */
+        const next = () => {
+            emit('next')
         }
         return {
             ...toRefs(props),
             ...toRefs(data),
             next,
-
             changeMethod,
         }
     },
@@ -86,7 +84,7 @@ $bg_color: #fff;
 /* 边框分隔线颜色 */
 $border_line: skyblue;
 
-/* 登录页面--忘记密码--找回方式
+/* 登录页面-忘记密码模块(找回方式)
 ----------------------------------------------------------------*/
 .forget_form {
     /* 找回方式 所有的输入框 */

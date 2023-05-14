@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-14 01:41:50
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 00:48:46
+ * @LastEditTime: 2023-05-14 14:44:12
  * @Description: 登录页面-忘记密码模块(重置密码)
 -->
 <template>
@@ -70,7 +70,9 @@ export default {
             rePwdState: false,
         })
 
+        /* DOM 输入密码框 */
         const newPwd = ref()
+        /* DOM 确认密码框 */
         const rePwd = ref()
 
         /* click 新密码小眼睛 */
@@ -78,13 +80,11 @@ export default {
             data.newPwdState = !data.newPwdState
             newPwd.value.type = data.newPwdState ? 'text' : 'password'
         }
-
         /* click 确认密码小眼睛 */
         const changeRePwdState = () => {
             data.rePwdState = !data.rePwdState
             rePwd.value.type = data.rePwdState ? 'text' : 'password'
         }
-
         /* click 发送验证码 */
         const sendCheckCode = () => {
             console.log('点击了发送验证码')
@@ -105,7 +105,7 @@ export default {
 /* 边框分隔线颜色 */
 $border_line: skyblue;
 
-/* 登录页面--忘记密码--重置密码
+/* 登录页面-忘记密码模块(重置密码)
 ----------------------------------------------------------------*/
 .forget_form {
     /* 重置密码 所有的输入框 */

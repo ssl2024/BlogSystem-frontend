@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-26 00:19:52
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:19:10
+ * @LastEditTime: 2023-05-14 14:53:32
  * @Description: 用户主页-关注模块
 -->
 <template>
@@ -185,11 +185,9 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
-/* 个人主页页面--关注列表
-----------------------------------------------------------------*/
+/* 关注列表 */
 .follow_list {
     min-height: 460px;
     height: 460px;
-    // background-color: rgba($color: #fff, $alpha: 0.85);
 }
 </style>

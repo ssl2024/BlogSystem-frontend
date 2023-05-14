@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 19:52:18
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:18:30
+ * @LastEditTime: 2023-05-14 14:51:49
  * @Description: 用户主页-收藏模块
 -->
 <template>
@@ -76,6 +76,7 @@ export default {
              */
             isShowPagination: false,
         })
+
         onMounted(() => {
             // 清除搜索框内容
             emit('clearSearchInput')
@@ -211,6 +212,7 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 收藏列表 */
 .collect_list {
     min-height: 625px;
 }

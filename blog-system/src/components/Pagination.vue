@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-05-12 01:31:23
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 02:14:40
+ * @LastEditTime: 2023-05-14 15:56:15
  * @Description: 分页组件
 -->
 <template>
@@ -49,12 +49,12 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 分页组件
+----------------------------------------------------------------*/
 .list_pagination {
     display: flex;
     padding: 5px;
     border: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
-    // border-bottom: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
-    // background-color: rgba($color: $bg_color, $alpha: 0.1);
     background-color: transparent;
     border-radius: 0 0 5px 5px;
     box-shadow: 0 4px 4px rgb(0 0 0 / 0.1), 0 2px 2px rgb(0 0 0 / 0.1);
@@ -62,7 +62,7 @@ export default {
     justify-content: space-between;
     align-items: center;
 
-    /* 左边博客 分页--上/下一页按钮 */
+    /* 分页 上/下一页按钮 */
     [class^='operate'] {
         position: relative;
         width: 120px;
@@ -79,7 +79,7 @@ export default {
         }
     }
 
-    /* 左边博客 分页--页码 */
+    /* 分页 页码 */
     .page_number {
         color: #fff;
         opacity: 0.8;

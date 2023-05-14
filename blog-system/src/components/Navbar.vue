@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:05:24
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 02:13:20
+ * @LastEditTime: 2023-05-14 15:55:14
  * @Description: 导航栏组件
 -->
 <template>
@@ -195,6 +195,7 @@ export default {
             document.removeEventListener('click', handleClick)
         })
 
+        /* watch 更新用户信息 */
         watch(
             () => props.updateUserTime,
             () => {
@@ -300,18 +301,16 @@ export default {
 /* 边框分隔线颜色 */
 $border_line: #e8e8ed;
 
-/* 背景颜色 */
-// $bg_color: rgba(
-//     $color: #fff,
-//     $alpha: 0.85,
-// );
+/* 透明背景色 */
 $bg_color: transparent;
+
+/* 白色字体颜色 */
+$white_color:#fff;
 
 /* 导航栏当前选中项 */
 .current {
-    // position: relative;
     background-color: rgba($color: #b4e2f2, $alpha: 0.7);
-    color: #fff;
+    color: $white_color;
     border-radius: 5px;
     &::after {
         opacity: 0;
@@ -325,11 +324,9 @@ $bg_color: transparent;
     left: 0;
     width: 100%;
     height: 93px;
-    // border-top: 1px solid #47acbf;
     border-top: 1px solid rgba($color: #47acbf, $alpha: 0.1);
     border-bottom: 1px solid rgba($color: #47acbf, $alpha: 0.1);
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1);
-    // background-color: red;
     justify-content: center;
     align-items: center;
 }
@@ -340,23 +337,18 @@ $bg_color: transparent;
     display: flex;
     position: relative;
     width: 1330px;
-    // margin-bottom: 20px;
     padding: 0 20px;
     background-color: $bg_color;
     align-items: center;
 
     /* 导航栏 网站logo */
     .logo {
-        // width: 80px;
-        // height: 44px;
         display: flex;
         width: 120px;
         height: 72px;
         margin-right: 30px;
         text-align: center;
         align-items: center;
-        // line-height: 72px;
-        /* 导航栏 网站logo--logo图片 */
         img {
             width: 100%;
         }
@@ -378,7 +370,7 @@ $bg_color: transparent;
             cursor: pointer;
             transition: all 0.4s ease-out;
             &:hover {
-                color: #fff;
+                color: $white_color;
                 &::after {
                     height: 100%;
                     border-radius: 5px;
@@ -425,7 +417,7 @@ $bg_color: transparent;
                 ~ .search_icon {
                     right: 124px;
                     background-color: rgba($color: #47acbf, $alpha: 0.4);
-                    color: #fff;
+                    color: $white_color;
                 }
             }
         }
@@ -451,7 +443,6 @@ $bg_color: transparent;
     .center {
         width: 260px;
         height: 45px;
-        // text-align: center;
         img {
             width: 45px;
             height: 45px;
@@ -465,8 +456,7 @@ $bg_color: transparent;
         top: 70px;
         right: 155px;
         width: 180px;
-        // background-color: $bg_color;
-        background-color: rgba($color: #fff, $alpha: 0.9);
+        background-color: rgba($color: $white_color, $alpha: 0.9);
         z-index: 1;
 
         /* 导航栏 用户简介--顶部 */
@@ -513,7 +503,7 @@ $bg_color: transparent;
                 transition: all 0.3s;
                 &:hover {
                     background-color: rgba($color: #62aec5, $alpha: 0.7);
-                    color: #fff;
+                    color: $white_color;
                 }
                 &:first-child {
                     border-right: 1px solid $border_line;
@@ -537,7 +527,7 @@ $bg_color: transparent;
                 transition: all 0.3s;
                 &:hover {
                     background-color: rgba($color: #62aec5, $alpha: 0.7);
-                    color: #fff;
+                    color: $white_color;
                 }
 
                 /* 导航栏 用户简介--底部(菜单项-字体图标) */

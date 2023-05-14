@@ -135,21 +135,21 @@ $border_line: rgba(
         }
     }
 
-    /* 博客 包装 */
+    /* 博客 内容 */
     .content_wrapper {
         flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
 
-        /* 博客 内容标题 */
+        /* 博客 内容--博客标题 */
         .content_title {
             color: #222226;
             font-size: 18px;
             line-height: 25px;
         }
 
-        /* 博客 内容主体 */
+        /* 博客 内容--博客摘要 */
         .content_main {
             display: -webkit-box;
             overflow: hidden;
@@ -160,7 +160,7 @@ $border_line: rgba(
             letter-spacing: 1px;
         }
 
-        /* 博客 数据列表 */
+        /* 博客 内容--数据列表 */
         .action_list {
             display: flex;
 

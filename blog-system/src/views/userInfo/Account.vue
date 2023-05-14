@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:43
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:47:09
+ * @LastEditTime: 2023-05-14 14:27:49
  * @Description: 用户信息页-账号设置模块
 -->
 <template>
@@ -62,7 +62,6 @@ export default {
                 type: 'error',
             })
         }
-
         return {
             ...toRefs(data),
             bindTel,
@@ -80,7 +79,7 @@ $border_line: rgba(
     $alpha: 1,
 );
 
-/* 个人信息页面--账号设置 
+/* 用户信息页--账号设置模块 
 ----------------------------------------------------------------*/
 .account_setting {
     /* 账号设置 标题 */

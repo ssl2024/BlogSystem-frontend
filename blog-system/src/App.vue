@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 02:20:31
+ * @LastEditTime: 2023-05-14 15:40:34
  * @Description: 根组件
 -->
 <template>
@@ -90,6 +90,7 @@ export default {
             updateUserTime: '',
         })
 
+        /* watch 用户登录状态 */
         watch(
             () => store.state.isLogin,
             () => {

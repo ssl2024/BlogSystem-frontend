@@ -179,6 +179,7 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+/* 博客列表 */
 .entry_list {
     min-height: 625px;
 }

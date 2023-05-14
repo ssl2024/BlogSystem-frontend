@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:56:23
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 00:56:24
+ * @LastEditTime: 2023-05-14 15:35:41
  * @Description: 后端页面
 -->
 <template>
@@ -124,6 +124,7 @@ export default {
             isShowPagination: false,
         })
 
+        /* watch 导航栏搜索内容 */
         watch(
             () => props.searchContent,
             () => {
@@ -261,6 +262,12 @@ export default {
 /* 背景颜色 */
 $bg_color: #fff;
 
+/* 热度榜单边框颜色 */
+$border_line: rgba(
+    $color: #cbe5eb,
+    $alpha: 0.4,
+);
+
 /* 后端页面 
 ----------------------------------------------------------------*/
 .container {
@@ -283,9 +290,10 @@ $bg_color: #fff;
     /* 右边侧边栏 热度榜单 */
     .hot_list {
         padding: 10px 0;
-        border-top: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
-        border-bottom: 1px solid rgba($color: #cbe5eb, $alpha: 0.4);
+        border-top: 1px solid $border_line;
+        border-bottom: 1px solid $border_line;
         background-color: rgba($color: $bg_color, $alpha: 0.1);
+        border-radius: 5px;
         box-shadow: 0 4px 4px rgb(0 0 0 / 0.1), 0 2px 2px rgb(0 0 0 / 0.1);
 
         /* 右边侧边栏 热度榜单--标题 */

@@ -21,12 +21,12 @@ import Follow from '@/views/center/Follow'
 import Edit from '@/views/Edit'
 
 const routes = [
-    /* 登录 */
+    /* 登录页面 */
     {
         path: '/login',
         component: Login,
     },
-    /* 关注 */
+    /* 关注页面 */
     {
         path: '/attention',
         component: Attention,
@@ -34,7 +34,7 @@ const routes = [
             required: true,
         },
     },
-    /* 推荐 */
+    /* 推荐也买你 */
     {
         path: '/rcommd',
         component: Rcommd,
@@ -42,7 +42,7 @@ const routes = [
             required: true,
         },
     },
-    /* 前端 */
+    /* 前端页面 */
     {
         path: '/foreend',
         component: Foreend,
@@ -50,25 +50,15 @@ const routes = [
             required: true,
         },
     },
-    /* 后端 */
+    /* 后端页面 */
     {
         path: '/backend',
         component: Backend,
         meta: {
             required: true,
         },
-        children: [
-            {
-                path: '/backend/hot',
-                component: Backend,
-            },
-            {
-                path: '/backend/new',
-                component: Backend,
-            },
-        ],
     },
-    /* 博客详情 */
+    /* 博客详情页 */
     {
         path: '/entryDetail/:id',
         component: EntryDetail,
@@ -76,7 +66,7 @@ const routes = [
             required: true,
         },
     },
-    /* 个人资料 */
+    /* 用户信息页 */
     {
         path: '/userInfo',
         component: UserInfo,
@@ -84,21 +74,24 @@ const routes = [
             required: true,
         },
         children: [
+            // 简介模块
             {
                 path: '/userInfo/profile',
                 component: Profile,
             },
+            // 账号模块
             {
                 path: '/userInfo/account',
                 component: Account,
             },
+            // 博客管理模块
             {
                 path: '/userInfo/blogManage',
                 component: BlogManage,
             },
         ],
     },
-    /* 个人主页 */
+    /* 用户主页 */
     {
         path: '/center',
         component: Center,
@@ -106,34 +99,34 @@ const routes = [
             required: true,
         },
         children: [
-            // 个人主页 博文
+            // 博文模块
             {
                 path: '/center/:id',
                 component: Entry,
             },
-            // 个人主页 赞过
+            // 赞过模块
             {
                 path: '/center/:id/like',
                 component: Like,
             },
-            // 个人主页 收藏
+            // 收藏模块
             {
                 path: '/center/:id/collect',
                 component: Collect,
             },
-            // 个人主页 粉丝
+            // 粉丝模块
             {
                 path: '/center/:id/fans',
                 component: Fans,
             },
-            // 个人主页 关注
+            // 关注模块
             {
                 path: '/center/:id/follow',
                 component: Follow,
             },
         ],
     },
-    /* 博客编辑 */
+    /* 博客发布页面 */
     {
         path: '/edit',
         component: Edit,
@@ -155,7 +148,7 @@ const router = createRouter({
     routes,
 })
 
-// 设置全局路由拦截
+/* 全局路由拦截 */
 router.beforeEach((to, from, next) => {
     // 判断要访问的路径是否需要进行验证
     if (to.meta.required) {
@@ -166,7 +159,7 @@ router.beforeEach((to, from, next) => {
             next({
                 path: '/login',
                 query: {
-                    // 携带当前用户想要去的路径参数(可通过 this.$route.query.redirect 获取)
+                    // 携带当前用户想要去的路径参数(可通过 route.query.redirect 获取)
                     redirect: to.fullPath,
                 },
             })

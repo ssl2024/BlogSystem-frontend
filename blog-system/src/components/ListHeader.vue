@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 13:04:57
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 02:05:52
+ * @LastEditTime: 2023-05-14 15:50:51
  * @Description: 博客导航组件
 -->
 <template>
@@ -73,17 +73,6 @@ export default {
             })
         })
 
-        /* http 获取类型列表 */
-        const getTypeList = classify => {
-            // 判断是否传递 classify
-            if (classify === -1) {
-                // 没有传递 classify 获取所有类型列表
-                return http.get(`/types`)
-            }
-            // 传递了 classify 传递指定的类型列表
-            return http.get(`/types/list/${classify}`)
-        }
-
         /* click 右边选项 */
         const showDropdownSelect = () => {
             data.ddsShow = !data.ddsShow
@@ -107,6 +96,17 @@ export default {
             emit('changeType', typeList)
             data.currentItem = e.target.innerText
             data.ddsShow = false
+        }
+
+        /* http 获取类型列表 */
+        const getTypeList = classify => {
+            // 判断是否传递 classify
+            if (classify === -1) {
+                // 没有传递 classify 获取所有类型列表
+                return http.get(`/types`)
+            }
+            // 传递了 classify 传递指定的类型列表
+            return http.get(`/types/list/${classify}`)
         }
         return {
             ...toRefs(data),

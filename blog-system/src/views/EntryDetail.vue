@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:42:43
+ * @LastEditTime: 2023-05-14 16:21:40
  * @Description: 博客详情页面
 -->
 <template>
@@ -355,15 +355,6 @@ export default {
         const route = useRoute()
         const router = useRouter()
 
-        /* DOM 评论输入框 */
-        const comment = ref('')
-        /* DOM 一级评论回复框 */
-        const replyComment = ref('')
-        /* DOM 二级评论回复框 */
-        let subReplyComment = []
-        /* DOM 目录导航栏 */
-        let tocElement = ref(null)
-
         const data = reactive({
             /* 博客信息 */
             entry: {},
@@ -443,6 +434,15 @@ export default {
             isFixed: false,
         })
 
+        /* DOM 评论输入框 */
+        const comment = ref('')
+        /* DOM 一级评论回复框 */
+        const replyComment = ref('')
+        /* DOM 二级评论回复框 */
+        let subReplyComment = []
+        /* DOM 目录导航栏 */
+        let tocElement = ref(null)
+
         onMounted(() => {
             window.addEventListener('scroll', handleScroll)
             // 获取文章的相关信息
@@ -511,6 +511,7 @@ export default {
             window.addEventListener('scroll', handleScroll)
         })
 
+        /* watch 文章内容改变 */
         watch(
             () => data.entry.content,
             () => {
@@ -595,18 +596,6 @@ export default {
             })
         }
 
-        /* scroll 屏幕滚动事件 */
-        const handleScroll = () => {
-            // 判断屏幕的滚动距离
-            if (document.documentElement.scrollTop > 430) {
-                // 给目录导航栏添加 CSS 样式
-                data.isFixed = true
-            } else {
-                // 给目录导航栏移除 CSS 样式
-                data.isFixed = false
-            }
-        }
-
         /* filter 评论过滤 */
         const commentFilter = comments => {
             // 更新博客信息
@@ -660,6 +649,18 @@ export default {
                 data.isShowSubDeleteBtn.push([...temp])
             }
             data.commentList = commentList
+        }
+
+        /* scroll 屏幕滚动事件 */
+        const handleScroll = () => {
+            // 判断屏幕的滚动距离
+            if (document.documentElement.scrollTop > 430) {
+                // 给目录导航栏添加 CSS 样式
+                data.isFixed = true
+            } else {
+                // 给目录导航栏移除 CSS 样式
+                data.isFixed = false
+            }
         }
 
         /* input 评论输入框 */
@@ -1149,6 +1150,7 @@ export default {
 </script>
 
 <style lang="scss">
+/* 代码块 */
 pre {
     padding: 15px;
 }
@@ -1191,14 +1193,14 @@ pre {
             }
         }
 
-        /* 设置滚动条宽度和颜色 */
+        /* 滚动条宽度和颜色 */
         &::-webkit-scrollbar {
             width: 4px;
             height: 4px;
             background-color: #fff;
         }
 
-        /* 设置滚动条滑块的样式 */
+        /* 滚动条滑块的样式 */
         &::-webkit-scrollbar-thumb {
             border-radius: 5px;
             background-color: rgba($color: #62aec5, $alpha: 0.6);
@@ -1208,14 +1210,23 @@ pre {
 </style>
 
 <style lang="scss" scoped="scoped">
-/* 背景颜色 */
+/* 白色背景色 */
 $bg_color: #fff;
 
-/* 字体颜色 */
+/* 白色字体颜色 */
 $color: #fff;
+
+/* 天蓝色字体颜色 */
+$sky_blue_color: skyblue;
 
 /* 边框分隔线颜色 */
 $border_line: #e8e8ed;
+
+/* 浅红色字体颜色 */
+$light_red_color: salmon;
+
+/* 灰色字体颜色 */
+$gray_color: #8a919f;
 
 /* 博客详情页面
 ----------------------------------------------------------------*/
@@ -1313,11 +1324,11 @@ $border_line: #e8e8ed;
                 border-radius: 5px;
                 outline: none;
                 &:focus {
-                    outline: 1px solid skyblue;
+                    outline: 1px solid $sky_blue_color;
                 }
                 &::before {
                     content: attr(placeholder);
-                    color: #8a919f;
+                    color: $gray_color;
                 }
             }
         }
@@ -1336,6 +1347,11 @@ $border_line: #e8e8ed;
             line-height: 40px;
             cursor: pointer;
             border-radius: 5px;
+            opacity: 0.7;
+            transition: all 0.3s;
+            &:hover {
+                opacity: 1;
+            }
         }
     }
 
@@ -1378,7 +1394,7 @@ $border_line: #e8e8ed;
             [class$='action_btn'] {
                 cursor: pointer;
                 &:hover {
-                    color: skyblue;
+                    color: $sky_blue_color;
                 }
                 .iconfont {
                     font-size: 15px;
@@ -1423,11 +1439,11 @@ $border_line: #e8e8ed;
                 border-radius: 5px;
                 outline: none;
                 &:focus {
-                    outline: 1px solid skyblue;
+                    outline: 1px solid $sky_blue_color;
                 }
                 &::before {
                     content: attr(placeholder);
-                    color: #8a919f;
+                    color: $gray_color;
                 }
             }
 
@@ -1445,6 +1461,11 @@ $border_line: #e8e8ed;
                 line-height: 35px;
                 cursor: pointer;
                 border-radius: 5px;
+                opacity: 0.7;
+                transition: all 0.3s;
+                &:hover {
+                    opacity: 1;
+                }
             }
         }
 
@@ -1472,11 +1493,11 @@ $border_line: #e8e8ed;
                 border-radius: 5px;
                 outline: none;
                 &:focus {
-                    outline: 1px solid skyblue;
+                    outline: 1px solid $sky_blue_color;
                 }
                 &::before {
                     content: attr(placeholder);
-                    color: #8a919f;
+                    color: $gray_color;
                 }
             }
 
@@ -1494,6 +1515,11 @@ $border_line: #e8e8ed;
                 line-height: 35px;
                 cursor: pointer;
                 border-radius: 5px;
+                opacity: 0.7;
+                transition: all 0.3s;
+                &:hover {
+                    opacity: 1;
+                }
             }
 
             /* 左边博客内容 评论列表--回复者列表(回复者头像) */
@@ -1563,14 +1589,14 @@ $border_line: #e8e8ed;
 
             /* 右边作者相关 关注按钮 */
             &:nth-child(1) {
-                background-color: skyblue;
+                background-color: $sky_blue_color;
                 color: $color;
             }
 
             /* 右边作者相关 已关注按钮 */
             &:nth-child(2) {
                 background-color: #f2f3f5;
-                color: #8a919f;
+                color: $gray_color;
             }
         }
     }
@@ -1591,7 +1617,7 @@ $border_line: #e8e8ed;
             flex-direction: column;
             justify-content: center;
             &:hover {
-                color: skyblue;
+                color: $sky_blue_color;
             }
             &:first-child {
                 border-right: 1px solid $border_line;
@@ -1630,14 +1656,13 @@ $border_line: #e8e8ed;
                 padding: 0 5px;
                 color: $color;
                 border-radius: 8px;
-
                 &:nth-child(odd) {
-                    background-color: salmon;
+                    background-color: $light_red_color;
                 }
                 &:nth-child(even) {
-                    background-color: #8a919f;
+                    background-color: $gray_color;
                     &:hover {
-                        background-color: salmon;
+                        background-color: $light_red_color;
                     }
                 }
             }
@@ -1647,13 +1672,13 @@ $border_line: #e8e8ed;
                 font-size: 25px;
                 line-height: 50px;
                 &:nth-child(1) {
-                    color: #8a919f;
+                    color: $gray_color;
                     &:hover {
-                        color: salmon;
+                        color: $light_red_color;
                     }
                 }
                 &:nth-child(2) {
-                    color: salmon;
+                    color: $light_red_color;
                 }
             }
         }

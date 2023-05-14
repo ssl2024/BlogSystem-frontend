@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:20
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:48:44
+ * @LastEditTime: 2023-05-14 14:37:49
  * @Description: 用户信息页-用户信息模块
 -->
 <template>
@@ -115,17 +115,16 @@ export default {
 
 <style lang="scss" scoped="scoped">
 /* 边框分隔线颜色 */
-$border_line: rgba(
-    $color: #b3e2f2,
-    $alpha: 1,
-);
+$border_line: #b3e2f2;
 
-/* 个人信息页面--个人资料 
+/* 用户信息页--用户信息模块 
 ----------------------------------------------------------------*/
 .profile_setting {
     position: relative;
     width: 895px;
     height: 475px;
+
+    /* 用户信息 标题 */
     .setting_title {
         height: 55px;
         font-size: 22px;
@@ -134,25 +133,22 @@ $border_line: rgba(
         border-bottom: 1px solid $border_line;
     }
 
-    /* 个人资料 列表 */
+    /* 用户信息 列表 */
     .setting_list {
         padding: 15px 0;
         font-size: 14px;
         line-height: 55px;
 
-        /* 个人资料 列表--用户头像 */
+        /* 用户信息 列表--用户头像 */
         .setting_avatar {
             display: flex;
             height: 100px;
             margin-bottom: 10px;
             font-size: 14px;
             align-items: center;
-
-            /* 个人资料 列表--用户头像(标题) */
             :nth-child(1) {
                 width: 80px;
             }
-            /* 个人资料 列表--用户头像(头像) */
             :nth-child(2) {
                 width: 100px;
                 height: 100px;
@@ -188,19 +184,19 @@ $border_line: rgba(
             }
         }
 
-        /* 个人资料 列表--列表项 */
+        /* 用户信息 列表--列表项 */
         .setting_item {
             display: flex;
             border-top: 1px solid $border_line;
             border-bottom: 1px solid $border_line;
             align-items: center;
 
-            /* 个人资料 列表--列表项(标题) */
+            /* 用户信息 列表--列表项(标题) */
             :nth-child(1) {
                 width: 80px;
             }
 
-            /* 个人资料 列表--列表项(用户昵称) */
+            /* 用户信息 列表--列表项(用户昵称) */
             :nth-child(2) {
                 width: 370px;
                 height: 33px;
@@ -218,7 +214,7 @@ $border_line: rgba(
             }
         }
     }
-    /* 个人资料 保存修改 */
+    /* 用户信息 保存修改 */
     .setting_btn {
         position: absolute;
         left: 30px;
