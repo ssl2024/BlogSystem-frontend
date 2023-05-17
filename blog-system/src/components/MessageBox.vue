@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-05-10 01:13:54
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 15:51:41
+ * @LastEditTime: 2023-05-17 15:30:27
  * @Description: 消息提示框组件
 -->
 <template>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { ref, watchEffect, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 
 export default {
     props: {
@@ -50,18 +50,33 @@ export default {
             timer && clearTimeout(timer)
         })
 
-        watchEffect(() => {
-            if (props.messageId != -1) {
-                // 创建消息提示框
-                show.value = true
-                // 如果存在定时器则清除定时器
-                timer && clearTimeout(timer)
-                // 在一定的延迟时间后卸载消息提示框
-                timer = setTimeout(() => {
-                    show.value = false
-                }, props.duration)
+        watch(
+            () => props.messageId,
+            () => {
+                if (props.messageId != -1) {
+                    // 判断当前显示状态
+                    if (show.value) {
+                        // 显示中，销毁当前消息提示框，重新创建
+                        show.value = false
+                        clearTimeout(timer)
+                        setTimeout(() => {
+                            createMessageBox()
+                        }, 0)
+                    } else {
+                        createMessageBox()
+                    }
+                }
             }
-        })
+        )
+
+        /* 创建消息提示框 */
+        const createMessageBox = () => {
+            show.value = true
+            timer = setTimeout(() => {
+                show.value = false
+                clearTimeout(timer)
+            }, props.duration)
+        }
 
         return {
             show,

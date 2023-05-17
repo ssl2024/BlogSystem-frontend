@@ -66,7 +66,7 @@
 
 ## 技术栈和依赖项
 
-- 前端：Vue3、Vuex、Vue Router、Axios、Ant Design Vue
+- 前端：Vue3、Vuex、Vue Router、Axios
 - 后端：SpringBoot、MyBatisPlus、MySQL
 
 详细依赖信息请参考 package.json 文件。

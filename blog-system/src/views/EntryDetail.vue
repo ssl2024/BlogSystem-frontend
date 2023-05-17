@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 16:21:40
+ * @LastEditTime: 2023-05-16 00:24:45
  * @Description: 博客详情页面
 -->
 <template>
@@ -1282,6 +1282,7 @@ $gray_color: #8a919f;
     /* 左边博客内容 展示图 */
     .content_figure {
         margin-bottom: 20px;
+        padding-left: 20px;
         img {
             width: 780px;
             height: 450px;

@@ -3,7 +3,7 @@
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
  * @LastEditTime: 2023-05-14 14:25:22
- * @Description: Eslint配置文件
+ * @Description: eslint配置文件
  */
 module.exports = {
     root: true,

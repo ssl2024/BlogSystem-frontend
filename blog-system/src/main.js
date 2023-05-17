@@ -45,15 +45,14 @@ import router from './router'
 import store from './store'
 import messageBox from '@/components/MessageBox' // 引入消息提示框组件
 import pagination from '@/components/Pagination' // 引入分页组件
-import defaultContent from "@/components/DefaultContent"; // 引入默认内容组件
+import defaultContent from '@/components/DefaultContent' // 引入默认内容组件
 import '@/assets/font/iconfont.css' // 引入字体图标
-
 
 createApp(App)
     .use(store)
     .use(router)
-        .use(VMdEditor)
-        .component('message-box', messageBox)
-        .component('pagination', pagination)
-        .component('default-content', defaultContent)
-        .mount('#app')
+    .use(VMdEditor)
+    .component('message-box', messageBox)
+    .component('pagination', pagination)
+    .component('default-content', defaultContent)
+    .mount('#app')

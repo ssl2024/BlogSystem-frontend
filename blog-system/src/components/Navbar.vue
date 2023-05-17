@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:05:24
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 15:55:14
+ * @LastEditTime: 2023-05-15 19:47:54
  * @Description: 导航栏组件
 -->
 <template>
@@ -316,7 +316,7 @@ $white_color:#fff;
         opacity: 0;
     }
 }
-
+/* 导航栏整体样式 */
 .nav_wrapper {
     display: flex;
     position: absolute;
