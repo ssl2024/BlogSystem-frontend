@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:56:02
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-18 14:12:11
+ * @LastEditTime: 2023-05-18 18:24:55
  * @Description: 前端页面
 -->
 <template>
@@ -16,7 +16,7 @@
                 @changeType="changeType"
             ></list-header>
             <!-- 博客列表 -->
-            <div class="list_wrap">
+            <div class="list_wrap" v-show="total !== 0">
                 <blog
                     v-for="item in entryList"
                     :key="item.id"
@@ -24,6 +24,12 @@
                     :authorName="authorInfo.get(item.authorId)"
                 ></blog>
             </div>
+            <!-- 默认内容组件 -->
+            <default-content
+                v-if="total === 0"
+                message="页面空空如也，试试其他的看看"
+                :height="698"
+            ></default-content>
             <!-- 分页组件 -->
             <pagination
                 v-if="isShowPagination"
@@ -109,6 +115,8 @@ export default {
             pageSize: props.pageSize,
             /* 一共多少页 */
             pages: 1,
+            /* 一共多少条 */
+            total: 1,
             /* 当前文章类型 */
             type: [],
             /* 搜索内容 */
@@ -180,6 +188,8 @@ export default {
                         })
                     }
                 }
+                // 获取文章列表的长度
+                data.total = data.entryList.length
             }
         )
 
@@ -311,6 +321,11 @@ $border_line: rgba(
 ----------------------------------------------------------------*/
 .list_container {
     width: 860px;
+
+    /* 左边博客 博客列表 */
+    .list_wrap {
+        min-height: 698px;
+    }
 }
 
 /* 右边侧边栏

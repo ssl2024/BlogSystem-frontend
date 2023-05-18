@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:05:24
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-18 14:24:21
+ * @LastEditTime: 2023-05-18 14:53:50
  * @Description: 导航栏组件
 -->
 <template>
@@ -59,8 +59,11 @@
                     :placeholder="placeholder"
                     v-model.trim="searchContent"
                     @keydown.enter="searchEntry"
-                    @focus="placeholder = '你想知道些什么'"
-                    @blur="placeholder = '搜索博客'"
+                    @focus="
+                        placeholder =
+                            pageLocation <= 3 ? '你想知道些什么' : placeholder
+                    "
+                    @blur="placeholder = navPlaceholder"
                 />
                 <div class="search_icon" @click="searchEntry">
                     <i class="iconfont icon-sousuo"></i>
@@ -128,7 +131,15 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted, reactive, toRefs, ref, watch } from 'vue'
+import {
+    onMounted,
+    onUnmounted,
+    reactive,
+    toRefs,
+    ref,
+    watch,
+    computed,
+} from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
@@ -163,7 +174,7 @@ export default {
             /* 搜索框内容 */
             searchContent: '',
             /* 搜索框placeholder */
-            placeholder: '搜索博客',
+            placeholder: '搜索推荐',
             /* 定时器引用 */
             timeId: null,
         })
@@ -237,6 +248,29 @@ export default {
                 }
             }
         )
+
+        /* computed 导航栏blur后placeholder */
+        const navPlaceholder = computed(() => {
+            let placeholder = ''
+            switch (props.pageLocation) {
+                case 0:
+                    placeholder = '搜索关注'
+                    break
+                case 1:
+                    placeholder = '搜索推荐'
+                    break
+                case 2:
+                    placeholder = '搜索前端'
+                    break
+                case 3:
+                    placeholder = '搜索后端'
+                    break
+                default:
+                    placeholder = '不能全局搜索哦'
+            }
+            return placeholder
+        })
+
         /* click document */
         const handleClick = event => {
             // 判断是否显示用户简介
@@ -315,6 +349,7 @@ export default {
         return {
             ...toRefs(data),
             avatar,
+            navPlaceholder,
             searchEntry,
             toUserPage,
             toUserInfo,

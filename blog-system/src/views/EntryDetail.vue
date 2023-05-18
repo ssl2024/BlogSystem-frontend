@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-16 00:24:45
+ * @LastEditTime: 2023-05-18 17:56:56
  * @Description: 博客详情页面
 -->
 <template>
@@ -52,21 +52,13 @@
                         :src="avatar(userId)"
                         alt="当前用户头像"
                     />
-                    <div
+                    <textarea
                         class="comment_main"
-                        contenteditable="true"
-                        :placeholder="comment_placeholder"
-                        @input="inputComment"
+                        placeholder="善语结善缘，恶言伤人心"
                         ref="comment"
-                    ></div>
+                    ></textarea>
                 </div>
-                <div
-                    class="submit_btn"
-                    @click="submitComment"
-                    @keydown="submitComment"
-                >
-                    发表评论
-                </div>
+                <div class="submit_btn" @click="submitComment">发表评论</div>
             </div>
             <!-- 评论区标题 -->
             <div class="comment_title" v-show="commentCount">
@@ -97,6 +89,10 @@
                         </div>
                         <!-- 评论内容 -->
                         <div class="comment">{{ comment.content }}</div>
+                        <!-- 评论时间 -->
+                        <div class="comment_time">
+                            {{ commentTime(comment.createTime) }}
+                        </div>
                         <!-- 评论操作按钮(回复/删除) -->
                         <div class="operate_btn">
                             <span
@@ -120,15 +116,11 @@
                             class="reply_comment_content"
                             v-show="isShowReplyComment[index]"
                         >
-                            <div
+                            <textarea
                                 class="reply_comment_main"
-                                contenteditable="true"
                                 :placeholder="nickname(comment.userId, true)"
-                                @input="
-                                    inputReplyComment(comment.userId, index)
-                                "
                                 ref="replyComment"
-                            ></div>
+                            ></textarea>
                         </div>
                         <!-- 发布评论按钮 -->
                         <div
@@ -172,6 +164,10 @@
                             </div>
                             <!-- 评论内容 -->
                             <div class="comment">{{ item.content }}</div>
+                            <!-- 评论时间 -->
+                            <div class="comment_time">
+                                {{ commentTime(item.createTime) }}
+                            </div>
                             <!-- 评论操作按钮(回复/删除) -->
                             <div class="sub_operate_btn">
                                 <span
@@ -198,19 +194,11 @@
                                 class="reply_sub_comment_content"
                                 v-show="isShowSubReplyComment[index][subIndex]"
                             >
-                                <div
+                                <textarea
                                     class="reply_sub_comment_main"
-                                    contenteditable="true"
                                     :placeholder="nickname(item.userId, true)"
-                                    @input="
-                                        inputSubReplyComment(
-                                            item.userId,
-                                            index,
-                                            subIndex
-                                        )
-                                    "
                                     :ref="subReplyComment[index]"
-                                ></div>
+                                ></textarea>
                             </div>
                             <!-- 评论发布按钮 -->
                             <div
@@ -348,7 +336,7 @@ import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 
 import http from '@/utils/http'
-import dateFormatter from '@/utils/dateFormatter'
+import date from '@/utils/dateFormatter'
 export default {
     setup(_, { emit }) {
         const store = useStore()
@@ -432,6 +420,8 @@ export default {
              * false 不显示
              */
             isFixed: false,
+            /* 评论定时器引用 */
+            commentTimer: null,
         })
 
         /* DOM 评论输入框 */
@@ -525,7 +515,12 @@ export default {
         /* computed 博客更新时间 */
         const dateTime = computed(() => {
             return item => {
-                return dateFormatter(item)
+                return date.dateTimeFormatter(item)
+            }
+        })
+        const commentTime = computed(() => {
+            return item => {
+                return date.dateFormatter(item)
             }
         })
         /* computed 博客点赞次数 */
@@ -663,33 +658,6 @@ export default {
             }
         }
 
-        /* input 评论输入框 */
-        const inputComment = e => {
-            // 是否显示评论框 placeholder
-            data.comment_placeholder =
-                e.target.innerText.length > 0 ? '' : '善语结善缘，恶言伤人心'
-        }
-        /* input 一级评论回复框 */
-        const inputReplyComment = (userId, index) => {
-            // 是否显示评论回复框 placeholder
-            const placeholder =
-                replyComment.value[index].innerText.length > 0
-                    ? ''
-                    : '回复' + data.userCache[userId].nickname
-            replyComment.value[index].setAttribute('placeholder', placeholder)
-        }
-        /* input 二级评论回复框 */
-        const inputSubReplyComment = (userId, index, subIndex) => {
-            const placeholder =
-                subReplyComment[index].value[subIndex].innerText.length > 0
-                    ? ''
-                    : '回复' + data.userCache[userId].nickname
-            subReplyComment[index].value[subIndex].setAttribute(
-                'placeholder',
-                placeholder
-            )
-        }
-
         /* mouseenter 一级评论 */
         const showDeleteBtn = (index, commentUserId) => {
             if (data.userId === commentUserId) {
@@ -819,8 +787,8 @@ export default {
         }
         /* click 发表评论 */
         const submitComment = () => {
-            // comment.value.innerText  -->  获取 评论框中的内容
-            const content = comment.value.innerText
+            // comment.value.value  -->  获取 评论框中的内容
+            const content = comment.value.value
             // 判断评论长度
             if (content.length === 0) {
                 showMessageBox({ message: '评论不能为空', type: 'warning' })
@@ -845,7 +813,7 @@ export default {
                         }
                     })
                     // 清空评论框中的数据
-                    comment.value.innerText = ''
+                    comment.value.value = ''
                 } else {
                     showMessageBox({ message: '发表评论失败', type: 'error' })
                 }
@@ -853,7 +821,7 @@ export default {
         }
         /* click 一级评论回复的发布按钮 */
         const submitReplyComment = (index, parentId, replyUserId) => {
-            const content = replyComment.value[index].innerText
+            const content = replyComment.value[index].value
             // 判断评论长度
             if (content.length === 0) {
                 showMessageBox({ message: '评论不能为空', type: 'warning' })
@@ -878,7 +846,7 @@ export default {
                         }
                     })
                     // 清空评论框中的数据
-                    replyComment.value[index].innerText = ''
+                    replyComment.value[index].value = ''
                     // 设置 placeholder
                     replyComment.value[index].setAttribute(
                         'placeholder',
@@ -898,7 +866,7 @@ export default {
             parentId,
             replyUserId
         ) => {
-            const content = subReplyComment[index].value[subIndex].innerText
+            const content = subReplyComment[index].value[subIndex].value
             // 判断评论长度
             if (content.length === 0) {
                 showMessageBox({ message: '评论不能为空', type: 'warning' })
@@ -923,7 +891,7 @@ export default {
                         }
                     })
                     // 清空评论框中的数据
-                    subReplyComment[index].value[subIndex].innerText = ''
+                    subReplyComment[index].value[subIndex].value = ''
                     // 设置 placeholder
                     subReplyComment[index].value[subIndex].setAttribute(
                         'placeholder',
@@ -1117,15 +1085,13 @@ export default {
             subReplyComment,
             tocElement,
             dateTime,
+            commentTime,
             likeCount,
             collectCount,
             fansCount,
             nickname,
             avatar,
             scroll,
-            inputComment,
-            inputReplyComment,
-            inputSubReplyComment,
             showDeleteBtn,
             showSubDeleteBtn,
             hideDeleteBtn,
@@ -1320,10 +1286,13 @@ $gray_color: #8a919f;
                 width: 685px;
                 min-height: 100px;
                 padding: 10px 12px;
+                border: none;
                 background-color: #f7f8f9;
+                font-family: '微软雅黑';
                 font-size: 15px;
                 border-radius: 5px;
                 outline: none;
+                resize: none;
                 &:focus {
                     outline: 1px solid $sky_blue_color;
                 }
@@ -1430,15 +1399,19 @@ $gray_color: #8a919f;
 
             /* 左边博客内容 评论列表--楼主评论主体(回复评论框) */
             .reply_comment_main {
+                display: block;
                 width: 656px;
                 height: 50px;
                 margin-top: 5px;
                 margin-bottom: 50px;
                 padding: 10px 12px;
+                border: none;
                 background-color: #f7f8f9;
+                font-family: '微软雅黑';
                 font-size: 15px;
                 border-radius: 5px;
                 outline: none;
+                resize: none;
                 &:focus {
                     outline: 1px solid $sky_blue_color;
                 }
@@ -1468,6 +1441,15 @@ $gray_color: #8a919f;
                     opacity: 1;
                 }
             }
+
+            /* 左边博客内容 评论列表--楼主评论主体(评论时间) */
+            .comment_time {
+                position: absolute;
+                top: 0;
+                right: 15px;
+                color: #8a919f;
+                font-size: 14px;
+            }
         }
 
         /* 左边博客内容 评论列表--回复者列表 */
@@ -1478,21 +1460,36 @@ $gray_color: #8a919f;
             padding: 15px;
             background-color: #f1f2f5;
 
+            /* 左边博客内容 评论列表--二级评论 */
             .sub_comment_main {
+                position: relative;
                 width: 620px;
+
+                /* 左边博客内容 评论列表--二级评论时间 */
+                .comment_time {
+                    position: absolute;
+                    top: 0;
+                    right: 10px;
+                    color: #8a919f;
+                    font-size: 13px;
+                }
             }
 
             /* 左边博客内容 评论列表--回复者列表(回复评论框) */
             .reply_sub_comment_main {
+                display: block;
                 width: 596px;
                 height: 50px;
                 margin-top: 5px;
                 margin-bottom: 40px;
                 padding: 10px 12px;
+                border: none;
                 background-color: #f7f8f9;
+                font-family: '微软雅黑';
                 font-size: 15px;
                 border-radius: 5px;
                 outline: none;
+                resize: none;
                 &:focus {
                     outline: 1px solid $sky_blue_color;
                 }

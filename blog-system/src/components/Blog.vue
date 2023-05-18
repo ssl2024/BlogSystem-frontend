@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 00:08:54
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-18 14:07:18
+ * @LastEditTime: 2023-05-18 17:08:15
  * @Description: 博客组件
 -->
 <template>
@@ -63,7 +63,7 @@
 import { computed, reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 
-import dateFormatter from '@/utils/dateFormatter'
+import date from '@/utils/dateFormatter'
 export default {
     props: {
         entry: {
@@ -85,7 +85,7 @@ export default {
         /* computed 博客更新时间 */
         const updateTime = computed(() => {
             return item => {
-                return dateFormatter(item)
+                return date.dateTimeFormatter(item)
             }
         })
 
