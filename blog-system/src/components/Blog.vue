@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 00:08:54
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 01:55:40
+ * @LastEditTime: 2023-05-18 14:07:18
  * @Description: 博客组件
 -->
 <template>
@@ -44,10 +44,10 @@
                 <li
                     class="action_item"
                     @click.stop="toUserCenter(entry.authorId)"
-                    :title="'查看 ' + nickname + ' 主页'"
+                    :title="'查看 ' + authorName + ' 主页'"
                 >
                     <i class="iconfont icon-user"></i>
-                    <span>{{ nickname }}</span>
+                    <span>{{ authorName }}</span>
                 </li>
             </ul>
         </div>
@@ -60,30 +60,26 @@
 </template>
 
 <script>
-import { computed, onMounted, reactive, toRefs } from 'vue'
+import { computed, reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 
-import http from '@/utils/http'
 import dateFormatter from '@/utils/dateFormatter'
 export default {
-    props: ['entry'],
+    props: {
+        entry: {
+            type: Object,
+            required: true,
+        },
+        authorName: {
+            type: String,
+        },
+    },
     setup(props) {
         const router = useRouter()
 
         const data = reactive({
             /* 文章信息 */
             entry: props.entry,
-            /* 作者昵称 */
-            nickname: '',
-        })
-
-        onMounted(() => {
-            // 获取当前博客的作者昵称
-            http.get(`/users/${data.entry.authorId}`).then(res => {
-                if (res.data.code === 20041) {
-                    data.nickname = res.data.data.nickname
-                }
-            })
         })
 
         /* computed 博客更新时间 */

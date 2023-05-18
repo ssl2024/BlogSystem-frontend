@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:05:24
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-15 19:47:54
+ * @LastEditTime: 2023-05-18 14:24:21
  * @Description: 导航栏组件
 -->
 <template>
@@ -136,6 +136,10 @@ import http from '@/utils/http'
 export default {
     props: {
         updateUserTime: String,
+        pageLocation: {
+            type: Number,
+            required: true,
+        },
     },
     setup(props, { emit }) {
         const store = useStore()
@@ -158,7 +162,7 @@ export default {
             isShowProfile: false,
             /* 搜索框内容 */
             searchContent: '',
-            /* 搜索框占位符 */
+            /* 搜索框placeholder */
             placeholder: '搜索博客',
             /* 定时器引用 */
             timeId: null,
@@ -207,6 +211,32 @@ export default {
             }
         )
 
+        /* watch 切换页面 */
+        watch(
+            () => props.pageLocation,
+            () => {
+                // 清空搜索框内容
+                data.searchContent = ''
+                // 判断页面位置
+                switch (props.pageLocation) {
+                    case 0:
+                        data.placeholder = '搜索关注'
+                        break
+                    case 1:
+                        data.placeholder = '搜索推荐'
+                        break
+                    case 2:
+                        data.placeholder = '搜索前端'
+                        break
+                    case 3:
+                        data.placeholder = '搜索后端'
+                        break
+                    default:
+                        data.placeholder = '不能全局搜索哦'
+                        break
+                }
+            }
+        )
         /* click document */
         const handleClick = event => {
             // 判断是否显示用户简介
@@ -305,7 +335,7 @@ $border_line: #e8e8ed;
 $bg_color: transparent;
 
 /* 白色字体颜色 */
-$white_color:#fff;
+$white_color: #fff;
 
 /* 导航栏当前选中项 */
 .current {

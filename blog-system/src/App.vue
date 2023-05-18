@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 22:48:58
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 15:40:34
+ * @LastEditTime: 2023-05-18 14:10:55
  * @Description: 根组件
 -->
 <template>
@@ -10,6 +10,7 @@
     <navbar
         v-if="isLogin"
         :updateUserTime="updateUserTime"
+        :pageLocation="pageLocation"
         @changeSearchEntry="changeSearchEntry"
         @showMessageBox="showMessageBox"
     ></navbar>
@@ -21,6 +22,7 @@
         @updateUserInfo="updateUserInfo"
         @showMessageBox="showMessageBox"
         @changeFooterState="changeFooterState"
+        @changePageLocation="changePageLocation"
     ></router-view>
     <!-- 页脚组件 -->
     <footers
@@ -68,7 +70,7 @@ export default {
         const data = reactive({
             /* 首页中每页博客条数 */
             pageSize: 10,
-            /* 用户信息列表 */
+            /* 用户热榜信息列表 */
             userInfoList: [],
             /* 导航栏搜索框内容 */
             searchContent: '',
@@ -88,6 +90,16 @@ export default {
             isShowFooter: true,
             /* 更新用户的时间戳(发生改变导航栏会重新获取头像和昵称) */
             updateUserTime: '',
+            /**
+             * 当前页面位置
+             * 0    关注页面
+             * 1    推荐页面
+             * 2    前端页面
+             * 3    后端页面
+             * 4    用户主页
+             * 5    个人信息页面
+             */
+            pageLocation: 1,
         })
 
         /* watch 用户登录状态 */
@@ -118,36 +130,9 @@ export default {
         const getHotListInfo = () => {
             // 判断用户是否登录
             if (store.state.isLogin) {
-                // 获取所有用户信息
-                getUserIdList().then(res => {
+                getUserHotList().then(res => {
                     if (res.data.code === 20041) {
-                        // 对用户信息列表进行清空
-                        data.userInfoList = []
-                        res.data.data.forEach(item => {
-                            let tempObj = {
-                                id: item.id,
-                                nickname: item.nickname,
-                                avatar: item.avatar,
-                            }
-                            getUserAchievement(item.id).then(res => {
-                                if (res.data.code === 20041) {
-                                    // 计算用户的受欢迎程序
-                                    /*
-                                    1. 发表博客数量 30热度
-                                    2. 被浏览次数   1热度
-                                    3. 被点赞次数   5热度
-                                    4. 被收藏次数   5热度
-                                */
-                                    let hot = 0
-                                    hot += res.data.data.entryCount * 30
-                                    hot += res.data.data.browsedCount * 1
-                                    hot += res.data.data.likedCount * 5
-                                    hot += res.data.data.collectedCount * 5
-                                    tempObj.hot = hot
-                                }
-                            })
-                            data.userInfoList.push(tempObj)
-                        })
+                        data.userInfoList = res.data.data
                     }
                 })
             }
@@ -173,14 +158,14 @@ export default {
         const changeFooterState = state => {
             data.isShowFooter = state
         }
-
-        /* http 获取用户列表 */
-        const getUserIdList = () => {
-            return http.get(`/users`)
+        /* customEvent 改变当前页面位置 */
+        const changePageLocation = location => {
+            data.pageLocation = location
         }
-        /* http 获取用户的个人成就 */
-        const getUserAchievement = userId => {
-            return http.get(`/blogs/count/${userId}`)
+
+        /* http 获取用户热榜 */
+        const getUserHotList = () => {
+            return http.get(`/users/list`)
         }
         return {
             isLoading,
@@ -190,6 +175,7 @@ export default {
             updateUserInfo,
             showMessageBox,
             changeFooterState,
+            changePageLocation,
         }
     },
 }

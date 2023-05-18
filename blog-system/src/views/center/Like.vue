@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 19:52:00
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 14:53:59
+ * @LastEditTime: 2023-05-18 13:45:05
  * @Description: 用户主页-点赞模块
 -->
 <template>
@@ -11,7 +11,12 @@
         <!-- 点赞列表 -->
         <div class="like_list">
             <!-- 博客组件 -->
-            <blog v-for="item in entryList" :key="item.id" :entry="item"></blog>
+            <blog
+                v-for="item in entryList"
+                :key="item.id"
+                :entry="item"
+                :authorName="authorInfo.get(item.authorId)"
+            ></blog>
             <!-- 默认内容组件 -->
             <default-content
                 v-if="total === 0"
@@ -75,6 +80,8 @@ export default {
              * false 不显示
              */
             isShowPagination: false,
+            /* 存储用户主页-博文模块博客用户id 及其信息 */
+            authorInfo: new Map(),
         })
 
         onMounted(() => {
@@ -136,6 +143,34 @@ export default {
                             res.data.data.total > data.pageSize ? true : false
                     }
                 })
+            }
+        )
+
+        /* watch 文章列表 */
+        watch(
+            () => data.entryList,
+            () => {
+                // 遍历文章列表，获取对应的用户id
+                data.entryList.forEach(item => {
+                    // 向 map 中添加没有的用户信息
+                    if (!data.authorInfo.has(item.authorId)) {
+                        data.authorInfo.set(item.authorId, null)
+                    }
+                })
+                // 遍历用户id集合，获取对应的用户昵称
+                for (const item of data.authorInfo.keys()) {
+                    // 判断 map 中是否有对应的昵称信息，防止重复发送 http 请求
+                    if (data.authorInfo.get(item) === null) {
+                        getUserInfo(item).then(res => {
+                            if (res.data.code === 20041) {
+                                data.authorInfo.set(
+                                    res.data.data.id,
+                                    res.data.data.nickname
+                                )
+                            }
+                        })
+                    }
+                }
             }
         )
 
@@ -201,6 +236,10 @@ export default {
                 title,
                 id: ids,
             })
+        }
+        /* http 获取用户信息 */
+        const getUserInfo = userId => {
+            return http.get(`/users/${userId}`)
         }
         return {
             ...toRefs(data),

@@ -71,10 +71,16 @@
 <script>
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { onMounted } from 'vue'
 export default {
     setup(_, { emit }) {
         const store = useStore()
         const router = useRouter()
+
+        onMounted(() => {
+            // 修改导航栏placeholder
+            emit('changePageLocation', 5)
+        })
 
         /* customEvent 更新用户信息 */
         const updateUserInfo = () => {

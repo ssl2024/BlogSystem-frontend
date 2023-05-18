@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:53:57
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 14:56:09
+ * @LastEditTime: 2023-05-18 14:06:19
  * @Description: 关注页面
 -->
 <template>
@@ -16,6 +16,7 @@
                     v-for="item in entryList"
                     :key="item.id"
                     :entry="item"
+                    :authorName="authorInfo.get(item.authorId)"
                 ></blog>
                 <pagination
                     v-if="isShowPagination"
@@ -84,9 +85,13 @@ export default {
              * false 不显示
              */
             isShowPagination: false,
+            /* 存储关注页面博客用户id 及其信息 */
+            authorInfo: new Map(),
         })
 
         onMounted(() => {
+            // 修改导航栏placeholder
+            emit('changePageLocation', 0)
             // 获取当前登录用户关注的用户id列表
             getFollowIdList(data.loginUserId).then(res => {
                 if (res.data.code === 20041) {
@@ -140,6 +145,34 @@ export default {
                         data.pages = res.data.data.pages
                     }
                 })
+            }
+        )
+
+        /* watch 文章列表 */
+        watch(
+            () => data.entryList,
+            () => {
+                // 遍历文章列表，获取对应的用户id
+                data.entryList.forEach(item => {
+                    // 向 map 中添加没有的用户信息
+                    if (!data.authorInfo.has(item.authorId)) {
+                        data.authorInfo.set(item.authorId, null)
+                    }
+                })
+                // 遍历用户id集合，获取对应的用户昵称
+                for (const item of data.authorInfo.keys()) {
+                    // 判断 map 中是否有对应的昵称信息，防止重复发送 http 请求
+                    if (data.authorInfo.get(item) === null) {
+                        getUserInfo(item).then(res => {
+                            if (res.data.code === 20041) {
+                                data.authorInfo.set(
+                                    res.data.data.id,
+                                    res.data.data.nickname
+                                )
+                            }
+                        })
+                    }
+                }
             }
         )
 
@@ -208,6 +241,10 @@ export default {
                 title,
                 authorId: authorIds,
             })
+        }
+        /* http 获取用户信息 */
+        const getUserInfo = userId => {
+            return http.get(`/users/${userId}`)
         }
         return {
             ...toRefs(data),

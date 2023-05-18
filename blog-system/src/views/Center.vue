@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 14:23:09
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 22:06:24
+ * @LastEditTime: 2023-05-18 14:14:00
  * @Description: 用户主页
 -->
 <template>
@@ -235,9 +235,12 @@ export default {
         })
 
         onMounted(() => {
+            // 修改导航栏placeholder
+            emit('changePageLocation', 4)
             init(route.params.id)
         })
 
+        /* watch 路径参数 */
         watch(
             () => route.params.id,
             () => {
