@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-11 19:51:45
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-18 13:41:44
+ * @LastEditTime: 2023-05-19 15:35:13
  * @Description: 用户主页-博文模块
 -->
 <template>
@@ -102,6 +102,7 @@ export default {
                     if (res.data.code === 20041) {
                         data.entryList = res.data.data.records
                         data.pages = res.data.data.pages
+                        data.total = res.data.data.total
                         data.isShowPagination =
                             res.data.data.total > data.pageSize ? true : false
                     }

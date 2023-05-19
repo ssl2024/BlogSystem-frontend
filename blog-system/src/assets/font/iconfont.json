@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "257406",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e6a7",
+      "unicode_decimal": 59047
+    },
+    {
       "icon_id": "724359",
       "name": "阅读",
       "font_class": "yuedureading19-copy",
@@ -18,13 +25,6 @@
       "font_class": "yuedujilu",
       "unicode": "e61c",
       "unicode_decimal": 58908
-    },
-    {
-      "icon_id": "1302496",
-      "name": "exit",
-      "font_class": "exit",
-      "unicode": "e60a",
-      "unicode_decimal": 58890
     },
     {
       "icon_id": "5950861",
@@ -41,32 +41,11 @@
       "unicode_decimal": 59453
     },
     {
-      "icon_id": "1068809",
-      "name": "收藏",
-      "font_class": "weibiaoti2fuzhi03",
-      "unicode": "e620",
-      "unicode_decimal": 58912
-    },
-    {
       "icon_id": "3978295",
       "name": "收藏库",
       "font_class": "shoucangku",
       "unicode": "e641",
       "unicode_decimal": 58945
-    },
-    {
-      "icon_id": "6260305",
-      "name": "收藏夹",
-      "font_class": "shoucangjia",
-      "unicode": "e614",
-      "unicode_decimal": 58900
-    },
-    {
-      "icon_id": "9874518",
-      "name": "KHCFDC_收藏",
-      "font_class": "shoucang",
-      "unicode": "e6d9",
-      "unicode_decimal": 59097
     },
     {
       "icon_id": "4546550",

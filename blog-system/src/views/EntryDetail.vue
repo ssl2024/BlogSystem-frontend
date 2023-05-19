@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-18 17:56:56
+ * @LastEditTime: 2023-05-19 23:29:33
  * @Description: 博客详情页面
 -->
 <template>
@@ -348,8 +348,6 @@ export default {
             entry: {},
             /* 发布该博客的用户信息 */
             user: {},
-            /* 评论框的 placeholder */
-            comment_placeholder: '善语结善缘，恶言伤人心',
             /* 当前文章 id */
             id: route.params.id,
             /* 当前登录的用户id */
@@ -376,6 +374,10 @@ export default {
             userCache: {},
             /* 评论数 */
             commentCount: 0,
+            /* 浏览定时器引用 */
+            browseTimeId: null,
+            /* 节流定时器引用 */
+            timer: null,
             /**
              * 是否是当前用户
              * true  是当前用户(不展示关注/关注)
@@ -412,16 +414,12 @@ export default {
              * false 不显示
              */
             isShowSubDeleteBtn: [],
-            /* 定时器引用 */
-            timeId: null,
             /**
              * 是否显示目录导航栏
              * true  显示
              * false 不显示
              */
             isFixed: false,
-            /* 评论定时器引用 */
-            commentTimer: null,
         })
 
         /* DOM 评论输入框 */
@@ -488,7 +486,7 @@ export default {
                 }
             })
             // 10秒后文章浏览次数加1
-            data.timeId = setTimeout(() => {
+            data.browseTimeId = setTimeout(() => {
                 data.entry.browseCount++
                 updateEntry()
             }, 10000)
@@ -496,7 +494,7 @@ export default {
 
         onUnmounted(() => {
             // 清除增加浏览次数的定时器(在当前页面没有停留10s则不会增加浏览次数)
-            data.timeId && clearTimeout(data.timeId)
+            data.browseTimeId && clearTimeout(data.browseTimeId)
             // 清除 window.scroll 事件
             window.addEventListener('scroll', handleScroll)
         })
@@ -518,29 +516,54 @@ export default {
                 return date.dateTimeFormatter(item)
             }
         })
+
+        /* computed 评论时间 */
         const commentTime = computed(() => {
-            return item => {
-                return date.dateFormatter(item)
+            return time => {
+                let lagTime = Math.floor(new Date().getTime() / 1000) - time
+
+                if (lagTime < 60) {
+                    // 间隔小于1分钟
+                    return '刚刚'
+                } else if (lagTime < 3600) {
+                    // 间隔小于1小时
+                    return Math.round(lagTime / 60) + ' 分前'
+                } else if (lagTime < 86400) {
+                    // 间隔小于1天
+                    return Math.round(lagTime / 3600) + ' 时前'
+                } else if (lagTime < 172800) {
+                    // 间隔小于2天
+                    return '昨天'
+                } else if (lagTime < 2592000) {
+                    // 间隔小于30天
+                    return Math.round(lagTime / 86400) + ' 天前'
+                } else {
+                    return date.dateFormatter
+                }
             }
         })
+
         /* computed 博客点赞次数 */
         const likeCount = computed(() => {
             return likeCount => {
                 return likeCount
             }
         })
+
         /* computed 博客收藏次数 */
         const collectCount = computed(() => {
             return collectCount => {
                 return collectCount
             }
         })
+
         /* computed 作者粉丝数 */
         const fansCount = computed(() => {
             return fansCount => {
                 return fansCount
             }
         })
+
         /* computed 评论者昵称 */
         const nickname = computed(() => {
             return (userId, flag) => {
@@ -563,6 +586,7 @@ export default {
                 return ''
             }
         })
+
         /* computed 评论者头像 */
         const avatar = computed(() => {
             return userId => {
@@ -606,7 +630,7 @@ export default {
                     commentList.forEach(comment => {
                         // 证明是二级评论
                         if (comment.id === item.parentId) {
-                            comment.children.push(item)
+                            comment.children.unshift(item)
                         }
                     })
                 } else {
@@ -643,18 +667,23 @@ export default {
                 data.isShowSubReplyComment.push([...temp])
                 data.isShowSubDeleteBtn.push([...temp])
             }
-            data.commentList = commentList
+            data.commentList = commentList.reverse()
         }
 
         /* scroll 屏幕滚动事件 */
         const handleScroll = () => {
-            // 判断屏幕的滚动距离
-            if (document.documentElement.scrollTop > 430) {
-                // 给目录导航栏添加 CSS 样式
-                data.isFixed = true
-            } else {
-                // 给目录导航栏移除 CSS 样式
-                data.isFixed = false
+            if (!data.timer) {
+                data.timer = setTimeout(() => {
+                    // 判断屏幕的滚动距离
+                    if (document.documentElement.scrollTop > 380) {
+                        // 给目录导航栏添加 CSS 样式
+                        data.isFixed = true
+                    } else {
+                        // 给目录导航栏移除 CSS 样式
+                        data.isFixed = false
+                    }
+                    data.timer = null
+                }, 100)
             }
         }
 
@@ -1503,7 +1532,7 @@ $gray_color: #8a919f;
             .reply_sub_submit_btn {
                 position: absolute;
                 right: 10px;
-                bottom: 10px;
+                bottom: -5px;
                 width: 80px;
                 height: 35px;
                 background: #1e80ff;

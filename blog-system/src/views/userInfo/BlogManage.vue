@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-12 11:51:20
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 14:32:27
+ * @LastEditTime: 2023-05-18 22:49:03
  * @Description: 用户信息页-博客管理模块
 -->
 <template>
@@ -92,7 +92,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 import http from '@/utils/http'
-import dateFormatter from '@/utils/dateFormatter'
+import date from '@/utils/dateFormatter'
 
 import confirmDialog from '@/components/ConfirmDialog'
 export default {
@@ -137,7 +137,7 @@ export default {
         /* computed 文章时间 */
         const dateTime = computed(() => {
             return item => {
-                return dateFormatter(item)
+                return date.dateTimeFormatter(item)
             }
         })
 

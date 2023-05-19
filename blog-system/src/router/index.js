@@ -1,35 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '@/views/Login'
-import Attention from '@/views/Attention'
-import Rcommd from '@/views/Rcommd'
-import Foreend from '@/views/Foreend'
-import Backend from '@/views/Backend'
-import EntryDetail from '@/views/EntryDetail'
-
-import UserInfo from '@/views/UserInfo'
-import Profile from '@/views/userInfo/Profile'
-import Account from '@/views/userInfo/Account'
-import BlogManage from '@/views/userInfo/BlogManage'
-
-import Center from '@/views/Center'
-import Entry from '@/views/center/Entry'
-import Like from '@/views/center/Like'
-import Collect from '@/views/center/Collect'
-import Fans from '@/views/center/Fans'
-import Follow from '@/views/center/Follow'
-
-import Edit from '@/views/Edit'
 
 const routes = [
     /* 登录页面 */
     {
         path: '/login',
-        component: Login,
+        component: () => import('@/views/Login'),
     },
     /* 关注页面 */
     {
         path: '/attention',
-        component: Attention,
+        component: () => import('@/views/Attention'),
         meta: {
             required: true,
         },
@@ -37,7 +17,7 @@ const routes = [
     /* 推荐也买你 */
     {
         path: '/rcommd',
-        component: Rcommd,
+        component: () => import('@/views/Rcommd'),
         meta: {
             required: true,
         },
@@ -45,7 +25,7 @@ const routes = [
     /* 前端页面 */
     {
         path: '/foreend',
-        component: Foreend,
+        component: () => import('@/views/Foreend'),
         meta: {
             required: true,
         },
@@ -53,7 +33,7 @@ const routes = [
     /* 后端页面 */
     {
         path: '/backend',
-        component: Backend,
+        component: () => import('@/views/Backend'),
         meta: {
             required: true,
         },
@@ -61,7 +41,7 @@ const routes = [
     /* 博客详情页 */
     {
         path: '/entryDetail/:id',
-        component: EntryDetail,
+        component: () => import('@/views/EntryDetail'),
         meta: {
             required: true,
         },
@@ -69,7 +49,7 @@ const routes = [
     /* 用户信息页 */
     {
         path: '/userInfo',
-        component: UserInfo,
+        component: () => import('@/views/UserInfo'),
         meta: {
             required: true,
         },
@@ -77,24 +57,24 @@ const routes = [
             // 简介模块
             {
                 path: '/userInfo/profile',
-                component: Profile,
+                component: () => import('@/views/userInfo/Profile'),
             },
             // 账号模块
             {
                 path: '/userInfo/account',
-                component: Account,
+                component: () => import('@/views/userInfo/Account'),
             },
             // 博客管理模块
             {
                 path: '/userInfo/blogManage',
-                component: BlogManage,
+                component: () => import('@/views/userInfo/BlogManage'),
             },
         ],
     },
     /* 用户主页 */
     {
         path: '/center',
-        component: Center,
+        component: () => import('@/views/Center'),
         meta: {
             required: true,
         },
@@ -102,38 +82,38 @@ const routes = [
             // 博文模块
             {
                 path: '/center/:id',
-                component: Entry,
+                component: () => import('@/views/center/Entry'),
             },
             // 赞过模块
             {
                 path: '/center/:id/like',
-                component: Like,
+                component: () => import('@/views/center/Like'),
             },
             // 收藏模块
             {
                 path: '/center/:id/collect',
-                component: Collect,
+                component: () => import('@/views/center/Collect'),
             },
             // 粉丝模块
             {
                 path: '/center/:id/fans',
-                component: Fans,
+                component: () => import('@/views/center/Fans'),
             },
             // 关注模块
             {
                 path: '/center/:id/follow',
-                component: Follow,
+                component: () => import('@/views/center/Follow'),
             },
         ],
     },
     /* 博客发布页面 */
     {
         path: '/edit',
-        component: Edit,
+        component: () => import('@/views/Edit'),
         children: [
             {
                 path: '/edit/:id',
-                component: Edit,
+                component: () => import('@/views/Edit'),
             },
         ],
     },

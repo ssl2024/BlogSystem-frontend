@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-09 23:56:02
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-18 18:24:55
+ * @LastEditTime: 2023-05-20 00:40:04
  * @Description: 前端页面
 -->
 <template>
@@ -27,7 +27,7 @@
             <!-- 默认内容组件 -->
             <default-content
                 v-if="total === 0"
-                message="页面空空如也，试试其他的看看"
+                message="页面空空如也，试试其他的吧"
                 :height="698"
             ></default-content>
             <!-- 分页组件 -->

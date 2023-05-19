@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4007235 */
-  src: url('iconfont.woff2?t=1683903407512') format('woff2'),
-       url('iconfont.woff?t=1683903407512') format('woff'),
-       url('iconfont.ttf?t=1683903407512') format('truetype');
+  src: url('iconfont.woff2?t=1684483628819') format('woff2'),
+       url('iconfont.woff?t=1684483628819') format('woff'),
+       url('iconfont.ttf?t=1684483628819') format('truetype');
 }
 
 .iconfont {
@@ -13,16 +13,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-close:before {
+  content: "\e6a7";
+}
+
 .icon-yuedureading19-copy:before {
   content: "\e629";
 }
 
 .icon-yuedujilu:before {
   content: "\e61c";
-}
-
-.icon-exit:before {
-  content: "\e60a";
 }
 
 .icon-dianzan-mian:before {
@@ -33,20 +33,8 @@
   content: "\e83d";
 }
 
-.icon-weibiaoti2fuzhi03:before {
-  content: "\e620";
-}
-
 .icon-shoucangku:before {
   content: "\e641";
-}
-
-.icon-shoucangjia:before {
-  content: "\e614";
-}
-
-.icon-shoucang:before {
-  content: "\e6d9";
 }
 
 .icon-csdn:before {

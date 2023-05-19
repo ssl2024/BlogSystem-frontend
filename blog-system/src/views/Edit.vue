@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-20 22:00:29
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 15:16:50
+ * @LastEditTime: 2023-05-20 00:59:54
  * @Description: 博客发布页面
 -->
 <template>
@@ -138,6 +138,8 @@ export default {
             typeListState: false,
             /* 定时器引用 */
             timeId: null,
+            /* 防抖定时器引用 */
+            debounceTimer: null,
         })
 
         onMounted(() => {
@@ -220,7 +222,10 @@ export default {
 
         /* 浏览器窗口大小改变 */
         window.onresize = () => {
-            data.height = window.innerHeight - 60 + 'px'
+            data.debounceTimer && clearTimeout(data.debounceTimer)
+            data.debounceTimer = setTimeout(() => {
+                data.height = window.innerHeight - 60 + 'px'
+            }, 100)
         }
 
         /* click 右上角取消 */

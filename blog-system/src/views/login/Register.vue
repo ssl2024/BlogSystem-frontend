@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-13 21:39:59
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-14 14:41:10
+ * @LastEditTime: 2023-05-20 00:46:35
  * @Description: 登录页面-注册模块
 -->
 <template>
@@ -20,6 +20,7 @@
                     placeholder="请输入账号"
                     v-model.trim="account"
                     @change="accountChange"
+                    autocomplete="username"
                 />
                 <i
                     v-show="accountTips === 'success'"
@@ -37,6 +38,8 @@
                     ref="pwd"
                     v-model.trim="pwdText"
                     @change="pwdChange"
+                    autocomplete="new-password"
+                    onpaste="return false;"
                 />
                 <i
                     v-show="!pwdState"
@@ -64,6 +67,8 @@
                     ref="rePwd"
                     v-model.trim="rePwdText"
                     @change="pwdChange"
+                    autocomplete="new-password"
+                    onpaste="return false;"
                 />
                 <i
                     v-show="!rePwdState"
@@ -322,7 +327,7 @@ export default {
         const changeImageCode = () => {
             data.changeImgCode = !data.changeImgCode
         }
-        
+
         /* http 查询账号是否存在 */
         const accountState = account => {
             return http.get(`/users/query/${account}`)

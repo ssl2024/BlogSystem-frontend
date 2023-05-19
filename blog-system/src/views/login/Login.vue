@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-13 21:05:52
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-17 14:57:14
+ * @LastEditTime: 2023-05-20 00:46:43
  * @Description: 登录页面-登录模块
 -->
 <template>
@@ -18,6 +18,7 @@
                 <input
                     type="text"
                     placeholder="请输入账号"
+                    autocomplete="current-password"
                     v-model.trim="account"
                 />
             </div>
@@ -25,6 +26,8 @@
                 <input
                     type="password"
                     placeholder="请输入密码"
+                    autocomplete="current-password"
+                    onpaste="return false;"
                     ref="pwd"
                     v-model.trim="pwdText"
                     @keydown.enter="login"
