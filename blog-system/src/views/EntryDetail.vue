@@ -2,7 +2,7 @@
  * @Author: ssl slshi2024@163.com
  * @Date: 2023-04-10 20:45:12
  * @LastEditors: ssl slshi2024@163.com
- * @LastEditTime: 2023-05-19 23:29:33
+ * @LastEditTime: 2023-06-18 09:47:09
  * @Description: 博客详情页面
 -->
 <template>
@@ -493,6 +493,8 @@ export default {
         })
 
         onUnmounted(() => {
+            // 修改导航栏placeholder
+            emit('changePageLocation', 5)
             // 清除增加浏览次数的定时器(在当前页面没有停留10s则不会增加浏览次数)
             data.browseTimeId && clearTimeout(data.browseTimeId)
             // 清除 window.scroll 事件
@@ -538,7 +540,8 @@ export default {
                     // 间隔小于30天
                     return Math.round(lagTime / 86400) + ' 天前'
                 } else {
-                    return date.dateFormatter
+                    // 显示具体日期
+                    return date.dateFormatter(time)
                 }
             }
         })
